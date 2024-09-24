@@ -89,11 +89,10 @@ class FloatingPoint8 extends FloatingPoint {
   /// Calculate mantissa width and sanitize
   static int _calculateMantissaWidth(int exponentWidth) {
     final mantissaWidth = 7 - exponentWidth;
-    if (((exponentWidth == 4) & (mantissaWidth == 3)) |
-        ((exponentWidth == 5) & (mantissaWidth == 2))) {
-      return mantissaWidth;
-    } else {
+    if (!FloatingPoint8Value.isLegal(exponentWidth, mantissaWidth)) {
       throw RohdHclException('FloatingPoint8 must follow E4M3 or E5M2');
+    } else {
+      return mantissaWidth;
     }
   }
 
