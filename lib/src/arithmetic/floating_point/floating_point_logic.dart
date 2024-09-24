@@ -12,6 +12,7 @@
 
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/src/arithmetic/floating_point/floating_point_value.dart';
+import 'package:rohd_hcl/src/exceptions.dart';
 
 /// Flexible floating point logic representation
 class FloatingPoint extends LogicStructure {
@@ -81,4 +82,22 @@ class FloatingPoint64 extends FloatingPoint {
       : super(
             exponentWidth: FloatingPoint64Value.exponentWidth,
             mantissaWidth: FloatingPoint64Value.mantissaWidth);
+}
+
+/// Eight-bit floating point representation for deep learning
+class FloatingPoint8 extends FloatingPoint {
+  /// Calculate mantissa width and sanitize
+  static int _calculateMantissaWidth(int exponentWidth) {
+    final mantissaWidth = 7 - exponentWidth;
+    if (((exponentWidth == 4) & (mantissaWidth == 3)) |
+        ((exponentWidth == 5) & (mantissaWidth == 2))) {
+      return mantissaWidth;
+    } else {
+      throw RohdHclException('FloatingPoint8 must follow E4M3 or E5M2');
+    }
+  }
+
+  /// Construct an 8-bit floating point number
+  FloatingPoint8({required super.exponentWidth})
+      : super(mantissaWidth: _calculateMantissaWidth(exponentWidth));
 }

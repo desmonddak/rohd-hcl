@@ -854,8 +854,9 @@ class FloatingPoint8Value extends FloatingPointValue {
         throw RohdHclException('Number exceeds E5M2 range');
       }
     }
-    return FloatingPointValue.fromDouble(inDouble,
-        exponentWidth: exponentWidth,
-        mantissaWidth: mantissaWidth) as FloatingPoint8Value;
+    final fpv = FloatingPointValue.fromDouble(inDouble,
+        exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+    return FloatingPoint8Value(
+        sign: fpv.sign, exponent: fpv.exponent, mantissa: fpv.mantissa);
   }
 }
