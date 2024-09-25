@@ -31,16 +31,23 @@ class FixedPointValue implements Comparable<FixedPointValue> {
 
   /// Constructor of a [FixedPointValue] from integer and fraction values
   FixedPointValue(
-      {required this.sign, required this.integer, required this.fraction}) {
+      {required this.sign,
+      this.integer = LogicValue.empty,
+      this.fraction = LogicValue.empty}) {
+    if (sign.width != 1) {
+      throw RohdHclException('sign width must be 1');
+    }
+    if ((integer == LogicValue.empty) & (fraction == LogicValue.empty)) {
+      throw RohdHclException('integer or fraction must be non-empty');
+    }
     if (sign.isZero) {
       value = [sign, integer, fraction].swizzle();
     } else {
-      value = ~([LogicValue.zero, integer, fraction].swizzle())+ 1;
+      value = ~[LogicValue.zero, integer, fraction].swizzle() + 1;
     }
   }
 
   /// TODO: Implement this
   @override
   int compareTo(Object other) => 0;
-
 }
