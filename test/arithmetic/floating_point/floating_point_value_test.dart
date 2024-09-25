@@ -258,4 +258,20 @@ void main() {
         FloatingPointValue.fromDouble(val, exponentWidth: 4, mantissaWidth: 4);
     expect(fpConvert, equals(fpTrunc));
   });
+
+  test('FPV: comparison', () {
+    final fp = FloatingPointValue.ofSeparatedBinaryStrings('0 0101 0101');
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('0 0101 0101')),
+        0);
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0101')),
+        greaterThan(0));
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('0 0101 1101')),
+        lessThan(0));
+  });
 }

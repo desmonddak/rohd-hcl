@@ -494,7 +494,7 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
         (mantissa.width != other.mantissa.width)) {
       throw Exception('FloatingPointValue widths must match for comparison');
     }
-    final signCompare = sign.compareTo(other.sign);
+    final signCompare = other.sign.compareTo(sign);
     if (signCompare != 0) {
       return signCompare;
     } else {
