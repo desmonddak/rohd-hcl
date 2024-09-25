@@ -55,11 +55,11 @@ class FixedPointValue implements Comparable<FixedPointValue> {
   @override
   int compareTo(Object other) {
     if (other is! FixedPointValue) {
-      throw Exception('Input must be of type FixedPointValue');
+      throw RohdHclException('Input must be of type FixedPointValue');
     }
     if ((integer.width != other.integer.width) |
         (fraction.width != other.fraction.width)) {
-      throw Exception('integer and fraction widths must match for comparison');
+      throw RohdHclException('integer and fraction widths must match for comparison');
     }
     final signCompare = other.sign.compareTo(sign);
     if (signCompare != 0) {
