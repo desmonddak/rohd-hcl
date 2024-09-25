@@ -19,9 +19,9 @@ void main() {
     final corners = [
       // result, sign, integer, fraction
       ['00000000', 0, 0, 0],
-      ['01111111', 0, pow(2, m)-1, pow(2, n)-1],
-      ['10000001', 1, pow(2, m)-1, pow(2, n)-1],
-      ['11101100', 1, 2, 4],  // -2.5
+      ['01111111', 0, pow(2, m) - 1, pow(2, n) - 1],
+      ['10000001', 1, pow(2, m) - 1, pow(2, n) - 1],
+      ['11101100', 1, 2, 4], // -2.5
     ];
     for (var c = 0; c < corners.length; c++) {
       final val = LogicValue.ofString(corners[c][0] as String);
@@ -41,7 +41,7 @@ void main() {
       // result, sign, integer, fraction
       ['00000000', 0, 0, 0],
       ['00000001', 0, 1, 0],
-      ['01000000', 0, pow(2, m-1), 0],
+      ['01000000', 0, pow(2, m - 1), 0],
       ['11111111', 1, 1, 0],
     ];
     for (var c = 0; c < corners.length; c++) {
@@ -62,7 +62,7 @@ void main() {
       // result, sign, integer, fraction
       ['00000', 0, 0, 0],
       ['00001', 0, 0, 1],
-      ['01000', 0, 0, pow(2, n-1)],
+      ['01000', 0, 0, pow(2, n - 1)],
       ['11111', 1, 0, 1],
     ];
     for (var c = 0; c < corners.length; c++) {
@@ -76,4 +76,59 @@ void main() {
     }
   });
 
+  test('FXP: comparison', () {
+    final fxp1 = FixedPointValue(
+      sign: LogicValue.ofInt(0, 1),
+      integer: LogicValue.ofInt(4, 3),
+      fraction: LogicValue.ofInt(3, 3),
+    );
+    expect(
+        fxp1.compareTo(FixedPointValue(
+          sign: LogicValue.ofInt(0, 1),
+          integer: LogicValue.ofInt(4, 3),
+          fraction: LogicValue.ofInt(3, 3),
+        )),
+        0);
+    expect(
+        fxp1.compareTo(FixedPointValue(
+          sign: LogicValue.ofInt(0, 1),
+          integer: LogicValue.ofInt(4, 3),
+          fraction: LogicValue.ofInt(2, 3),
+        )),
+        greaterThan(0));
+    expect(
+        fxp1.compareTo(FixedPointValue(
+          sign: LogicValue.ofInt(0, 1),
+          integer: LogicValue.ofInt(4, 3),
+          fraction: LogicValue.ofInt(4, 3),
+        )),
+        lessThan(0));
+
+    final fxp2 = FixedPointValue(
+      sign: LogicValue.ofInt(1, 1),
+      integer: LogicValue.ofInt(4, 3),
+      fraction: LogicValue.ofInt(3, 3),
+    );
+    expect(
+        fxp2.compareTo(FixedPointValue(
+          sign: LogicValue.ofInt(1, 1),
+          integer: LogicValue.ofInt(4, 3),
+          fraction: LogicValue.ofInt(3, 3),
+        )),
+        0);
+    expect(
+        fxp2.compareTo(FixedPointValue(
+          sign: LogicValue.ofInt(1, 1),
+          integer: LogicValue.ofInt(4, 3),
+          fraction: LogicValue.ofInt(2, 3),
+        )),
+        lessThan(0));
+    expect(
+        fxp2.compareTo(FixedPointValue(
+          sign: LogicValue.ofInt(1, 1),
+          integer: LogicValue.ofInt(4, 3),
+          fraction: LogicValue.ofInt(4, 3),
+        )),
+        greaterThan(0));
+  });
 }

@@ -10,12 +10,14 @@
 //  Soner Yaldiz <soner.yaldiz@intel.com>
 
 import 'dart:math';
+import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
 /// A flexible representation of signed fixed-point values following Q notation
 /// (Qm.n format) as introduced by
 /// (Texas Instruments)[https://www.ti.com/lit/ug/spru565b/spru565b.pdf]
+@immutable
 class FixedPointValue implements Comparable<FixedPointValue> {
   /// The full fixed point value bit storage in two's complement
   late final LogicValue value;
@@ -47,7 +49,30 @@ class FixedPointValue implements Comparable<FixedPointValue> {
     }
   }
 
-  /// TODO: Implement this
+  /// Returns a negative integer if `this` less than [other],
+  /// a positive integer if `this` greater than [other],
+  /// and zero if `this` and [other] are equal.
   @override
-  int compareTo(Object other) => 0;
+  int compareTo(Object other) {
+    if (other is! FixedPointValue) {
+      throw Exception('Input must be of type FixedPointValue');
+    }
+    if ((integer.width != other.integer.width) |
+        (fraction.width != other.fraction.width)) {
+      throw Exception('integer and fraction widths must match for comparison');
+    }
+    final signCompare = other.sign.compareTo(sign);
+    if (signCompare != 0) {
+      return signCompare;
+    }
+    final flip = sign.isZero ? 1 : -1;
+    final integerCompare = integer.compareTo(other.integer);
+    if (integerCompare != 0) {
+      return flip * integerCompare;
+    }
+    final fractionCompare = fraction.compareTo(other.fraction);
+    return flip * fractionCompare;
+  }
+
+  // ofDouble, ofString
 }
