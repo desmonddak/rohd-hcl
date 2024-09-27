@@ -494,15 +494,17 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
         (mantissa.width != other.mantissa.width)) {
       throw Exception('FloatingPointValue widths must match for comparison');
     }
+
     final signCompare = other.sign.compareTo(sign);
     if (signCompare != 0) {
       return signCompare;
     } else {
       final expCompare = exponent.compareTo(other.exponent);
       if (expCompare != 0) {
-        return expCompare;
+        return sign.isZero ? expCompare : -expCompare;
       } else {
-        return mantissa.compareTo(other.mantissa);
+        final mantCompare = mantissa.compareTo(other.mantissa);
+        return sign.isZero ? mantCompare : -mantCompare;
       }
     }
   }

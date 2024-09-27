@@ -260,7 +260,9 @@ void main() {
   });
 
   test('FPV: comparison', () {
-    final fp = FloatingPointValue.ofSeparatedBinaryStrings('0 0101 0101');
+    FloatingPointValue fp;
+
+    fp = FloatingPointValue.ofSeparatedBinaryStrings('0 0101 0101');
     expect(
         fp.compareTo(
             FloatingPointValue.ofSeparatedBinaryStrings('0 0101 0101')),
@@ -272,6 +274,20 @@ void main() {
     expect(
         fp.compareTo(
             FloatingPointValue.ofSeparatedBinaryStrings('0 0101 1101')),
+        lessThan(0));
+
+    fp = FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0101');
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0101')),
+        0);
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0100 0101')),
+        lessThan(0));
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0100')),
         lessThan(0));
   });
 }

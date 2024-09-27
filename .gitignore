@@ -23,3 +23,5 @@ confapp/.vscode/*
 !.vscode/extensions.json
 !confapp/.vscode/extensions.json
 !confapp/.vscode/launch.json
+
+*.sv
