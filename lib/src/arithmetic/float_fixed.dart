@@ -64,12 +64,3 @@ class Float8ToFixedConverter extends Module {
     fixed <= mux(float[float.width - 1], ~number + 1, number);
   }
 }
-
-// Throw away before merge
-void main() async {
-  final float = Logic(width: 8);
-  final mode = Logic();
-  final dut = Float8ToFixedConverter(float, mode, outputWidth: 64);
-  await dut.build();
-  File('${dut.name}.sv').writeAsStringSync(dut.generateSynth());
-}
