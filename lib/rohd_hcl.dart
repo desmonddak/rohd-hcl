@@ -3,6 +3,7 @@
 
 export 'src/arbiters/arbiters.dart';
 export 'src/arithmetic/arithmetic.dart';
+export 'src/arithmetic/float_fixed.dart';
 export 'src/binary_gray.dart';
 export 'src/component_config/component_config.dart';
 export 'src/count.dart';
@@ -12,7 +13,6 @@ export 'src/error_checking/error_checking.dart';
 export 'src/exceptions.dart';
 export 'src/fifo.dart';
 export 'src/find.dart';
-export 'src/float_fixed.dart';
 export 'src/interfaces/interfaces.dart';
 export 'src/memory/memories.dart';
 export 'src/models/models.dart';
