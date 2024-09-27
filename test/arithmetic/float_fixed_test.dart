@@ -10,7 +10,7 @@ import 'package:rohd_hcl/rohd_hcl.dart';
 import 'package:test/test.dart';
 
 void main() async {
-  test('FPtoINT: simple', () async {
+  test('FP8toINT: simple', () async {
     final float = Logic(width: 8);
     final mode = Logic();
     final dut = Float8ToFixedConverter(float, mode, outputWidth: 64);
@@ -40,7 +40,7 @@ void main() async {
     }
   });
 
-  test('FPtoINT: exhaustive', () async {
+  test('FP8toINT: exhaustive', () async {
     final float = Logic(width: 8);
     final mode = Logic();
     final dut = Float8ToFixedConverter(float, mode, outputWidth: 64);
@@ -81,6 +81,31 @@ void main() async {
         fx8 = FixedPointValue.fromDouble(fp8.toDouble(), m: 47, n: 16);
         expect(dut.fixed.value.bitString, fx8.value.bitString);
       }
+    }
+  });
+
+  test('FP16toINT: simple', () async {
+    const eW = 5;
+    const mW = 10;
+    final bias = FloatingPointValue.computeBias(eW);
+    final sep = bias + mW - 1; 
+    final float = FloatingPoint(exponentWidth: eW, mantissaWidth: mW);
+    final mode = Logic();
+    final dut = FloatToFixedConverter(float);
+    await dut.build();
+
+    FloatingPointValue fp;
+    FixedPointValue fx;
+
+    final corners = <double>[];
+    mode.put(1);
+    corners.addAll([0, 1, -1, 1.625, -74.125]);
+    for (var c = 0; c < corners.length; c++) {
+      fp = FloatingPointValue.fromDouble(corners[c],
+          exponentWidth: eW, mantissaWidth: mW);
+      float.put(fp.value);
+      fx = FixedPointValue.fromDouble(fp.toDouble(), m: sep, n: sep);
+      expect(dut.fixed.value.bitString, fx.value.bitString);
     }
   });
 }

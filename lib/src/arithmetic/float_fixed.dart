@@ -14,6 +14,10 @@ import 'package:rohd_hcl/rohd_hcl.dart';
 /// a signed fixed-point following Q notation (Qm.n format) as introduced by
 /// (Texas Instruments)[https://www.ti.com/lit/ug/spru565b/spru565b.pdf].
 /// Infinities and NaN's are not supported. Conversion is lossless.
+/// Separator bit sep = bias + mantissa - 1
+/// fixed[2*sep] contains sign
+/// fixed[2*sep-1:sep] contains fractional part
+/// fixed[sep-1:0] contains fractional part
 class FloatToFixedConverter extends Module {
   /// Output port [fixed]
   Logic get fixed => output('fixed');
@@ -24,8 +28,24 @@ class FloatToFixedConverter extends Module {
     float = float.clone()..gets(addInput('float', float, width: float.width));
 
     final bias = FloatingPointValue.computeBias(float.exponent.width);
-    final fixedWidth = bias + float.mantissa.width - 1;
+    final sep = bias + float.mantissa.width - 1;
+    final fixedWidth = 2 * sep + 1;
     addOutput('fixed', width: fixedWidth);
+
+    final jBit = Logic(name: 'jBit')..gets(float.isNormal());
+    final shift = Logic(name: 'shift', width: float.exponent.width)
+      ..gets(
+          mux(jBit, float.exponent - 1, Const(0, width: float.exponent.width)));
+
+    final number = Logic(name: 'number', width: fixedWidth)
+      ..gets([
+            Const(0, width: fixedWidth - float.mantissa.width - 1),
+            jBit,
+            float.mantissa
+          ].swizzle() <<
+          shift);
+
+    fixed <= mux(float.sign, ~number + 1, number);
   }
 }
 
