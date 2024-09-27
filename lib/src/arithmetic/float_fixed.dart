@@ -7,9 +7,27 @@
 // 2024 September 25
 // Author: Soner Yaldiz <soner.yaldiz@intel.com>
 
-import 'dart:io';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
+
+/// [FloatToFixedConverter] converts a floating point input to
+/// a signed fixed-point following Q notation (Qm.n format) as introduced by
+/// (Texas Instruments)[https://www.ti.com/lit/ug/spru565b/spru565b.pdf].
+/// Infinities and NaN's are not supported. Conversion is lossless.
+class FloatToFixedConverter extends Module {
+  /// Output port [fixed]
+  Logic get fixed => output('fixed');
+
+  /// Constructor
+  FloatToFixedConverter(FloatingPoint float,
+      {super.name = 'FloatToFixedConverter'}) {
+    float = float.clone()..gets(addInput('float', float, width: float.width));
+
+    final bias = FloatingPointValue.computeBias(float.exponent.width);
+    final fixedWidth = bias + float.mantissa.width - 1;
+    addOutput('fixed', width: fixedWidth);
+  }
+}
 
 /// [Float8ToFixedConverter] converts 8-bit floating point (FP8)
 /// to signed fixed-point following Q notation (Qm.n format) as introduced by
