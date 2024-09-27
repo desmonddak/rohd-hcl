@@ -131,4 +131,24 @@ void main() {
         )),
         greaterThan(0));
   });
+
+  test('FXP: ofDouble toDouble', () {
+    final corners = [
+      ('00000000', 5, 2, 0.0),
+      ('00000000', 4, 3, 0.0),
+      ('11111111', 7, 0, -1.0),
+      ('00011010', 4, 3, 3.25),
+      ('11110010', 4, 3, -1.75),
+    ];
+    for (var c = 0; c < corners.length; c++) {
+      final str = corners[c].$1;
+      final m = corners[c].$2;
+      final n = corners[c].$3;
+      final val = corners[c].$4;
+      final fxp = FixedPointValue.fromDouble(val, m: m, n: n);
+
+      expect(str, fxp.value.bitString);
+      expect(val, fxp.toDouble());
+    }
+  });
 }

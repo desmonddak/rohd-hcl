@@ -8,7 +8,6 @@
 // Author: Soner Yaldiz <soner.yaldiz@intel.com>
 
 import 'package:rohd/rohd.dart';
-// import 'package:rohd_hcl/src/arithmetic/fixed_point/fixed_point_value.dart';
 import 'package:rohd_hcl/src/exceptions.dart';
 
 /// Fixed point logic representation

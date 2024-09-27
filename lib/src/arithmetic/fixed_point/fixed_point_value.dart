@@ -59,7 +59,8 @@ class FixedPointValue implements Comparable<FixedPointValue> {
     }
     if ((integer.width != other.integer.width) |
         (fraction.width != other.fraction.width)) {
-      throw RohdHclException('integer and fraction widths must match for comparison');
+      throw RohdHclException(
+          'Integer and fraction widths must match for comparison');
     }
     final signCompare = other.sign.compareTo(sign);
     if (signCompare != 0) {
@@ -74,5 +75,29 @@ class FixedPointValue implements Comparable<FixedPointValue> {
     return flip * fractionCompare;
   }
 
-  // ofDouble, ofString
+  /// Constructor of a [FixedPointValue] from a double rounding away from zero
+  factory FixedPointValue.fromDouble(double inDouble,
+      {required int m, required int n}) {
+    final s = inDouble >= 0 ? LogicValue.zero : LogicValue.one;
+
+    if (inDouble.abs().floor() > pow(2, m) - 1) {
+      throw RohdHclException('inDouble exceed integer part');
+    }
+    final integerPart = inDouble.abs().floor();
+
+    final fractionalPart =
+        LogicValue.ofInt((inDouble.abs() * pow(2, n)).round(), n);
+
+    return FixedPointValue(
+        sign: s,
+        integer: LogicValue.ofInt(integerPart, m),
+        fraction: fractionalPart);
+  }
+
+  ///
+  double toDouble() {
+    final value = integer.toInt().toDouble() +
+        (fraction.toInt().toDouble() / pow(2, fraction.width));
+    return sign.toBool() ? -value : value;
+  }
 }

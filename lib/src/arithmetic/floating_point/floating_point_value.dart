@@ -821,8 +821,6 @@ class FloatingPoint8Value extends FloatingPointValue {
 
   static double get _e4m3max => 448.toDouble();
   static double get _e5m2max => 57344.toDouble();
-  static double get _e4m3min => pow(2, -9).toDouble();
-  static double get _e5m2min => pow(2, -16).toDouble();
 
   /// Return if the exponent and mantissa widths match E4M3 or E5M2
   static bool isLegal(int exponentWidth, int mantissaWidth) {
@@ -894,11 +892,11 @@ class FloatingPoint8Value extends FloatingPointValue {
       throw RohdHclException('FloatingPoint8 must follow E4M3 or E5M2');
     }
     if (exponentWidth == 4) {
-      if ((inDouble > _e4m3max) | (inDouble < _e4m3min)) {
+      if ((inDouble > _e4m3max) | (inDouble < -_e4m3max)) {
         throw RohdHclException('Number exceeds E4M3 range');
       }
     } else if (exponentWidth == 5) {
-      if ((inDouble > _e5m2max) | (inDouble < _e5m2min)) {
+      if ((inDouble > _e5m2max) | (inDouble < -_e5m2max)) {
         throw RohdHclException('Number exceeds E5M2 range');
       }
     }
