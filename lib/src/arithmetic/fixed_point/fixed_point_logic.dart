@@ -22,7 +22,10 @@ class FixedPoint extends Logic {
 
   /// [FixedPoint] Constructor
   FixedPoint(
-      {required this.integerWidth, required this.fractionWidth, super.name})
+      {required this.integerWidth,
+      required this.fractionWidth,
+      super.name,
+      super.naming})
       : super(width: _fixedPointWidth(integerWidth, fractionWidth)) {
     if (integerWidth < 0) {
       throw RohdHclException('integerWidth must be non-negative');
