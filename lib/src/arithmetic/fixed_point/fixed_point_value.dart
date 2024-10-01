@@ -5,8 +5,6 @@
 //
 // 2024 September 24
 // Authors:
-//  Max Korbel <max.korbel@intel.com>
-//  Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com
 //  Soner Yaldiz <soner.yaldiz@intel.com>
 
 import 'dart:math';
@@ -31,7 +29,7 @@ class FixedPointValue implements Comparable<FixedPointValue> {
   /// The fractional part of the fixed point number
   final LogicValue fraction;
 
-  /// Constructor of a [FixedPointValue] from integer and fraction values
+  /// [FixedPointValue] constructor from integer and fraction values
   FixedPointValue(
       {required this.sign,
       this.integer = LogicValue.empty,
@@ -94,7 +92,7 @@ class FixedPointValue implements Comparable<FixedPointValue> {
         fraction: fractionalPart);
   }
 
-  ///
+  /// Returns the value of the fixed point number in a Dart [double] type
   double toDouble() {
     final value = integer.toInt().toDouble() +
         (fraction.toInt().toDouble() / pow(2, fraction.width));

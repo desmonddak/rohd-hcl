@@ -13,10 +13,10 @@ import 'package:rohd_hcl/src/exceptions.dart';
 /// Fixed point logic representation
 class FixedPoint extends Logic {
   /// [integerWidth] is the width of bits reserved for integer part
-  late final int integerWidth;
+  final int integerWidth;
 
   /// [fractionWidth] is the width of bits reserved for fractional part
-  late final int fractionWidth;
+  final int fractionWidth;
 
   static int _fixedPointWidth(int a, int b) => 1 + a + b;
 
@@ -31,4 +31,10 @@ class FixedPoint extends Logic {
       throw RohdHclException('fractionWidth must be non-negative');
     }
   }
+
+  /// Clone for I/O
+  FixedPoint clone({String? name}) => FixedPoint(
+        integerWidth: integerWidth,
+        fractionWidth: fractionWidth,
+      );
 }

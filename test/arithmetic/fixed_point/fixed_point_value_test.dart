@@ -3,8 +3,6 @@
 //
 // 2024 September 24
 // Authors:
-//  Max Korbel <max.korbel@intel.com>
-//  Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com
 //  Soner Yaldiz <soner.yaldiz@intel.com>
 
 import 'dart:math';

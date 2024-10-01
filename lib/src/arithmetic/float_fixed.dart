@@ -10,17 +10,27 @@
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
-/// [FloatToFixedConverter] converts a floating point input to
-/// a signed fixed-point following Q notation (Qm.n format) as introduced by
+/// [FloatToFixedConverter] converts a floating point input to a signed 
+/// fixed-point output following Q notation (Qm.n format) as introduced by
 /// (Texas Instruments)[https://www.ti.com/lit/ug/spru565b/spru565b.pdf].
 /// Infinities and NaN's are not supported. Conversion is lossless.
-/// Separator bit sep = bias + mantissa - 1
-/// fixed[2*sep] contains sign
-/// fixed[2*sep-1:sep] contains fractional part
-/// fixed[sep-1:0] contains fractional part
+/// The output is in two's complement and in Qw.w format where:
+/// w = bias + mantissa - 1
+/// fixed[2*w] is the sign bit
+/// fixed[2*w-1:w] is the integer part
+/// fixed[w-1:0] is the fractional part
 class FloatToFixedConverter extends Module {
+  /// Width of integer and fractional parts
+  late final int width;
+
   /// Output port [fixed]
-  Logic get fixed => output('fixed');
+  late final FixedPoint fixed =
+      FixedPoint(integerWidth: width, fractionWidth: width)
+        ..gets(output('fixed'));
+
+  /// Internal representation of the output port
+  late final FixedPoint _fixed =
+      FixedPoint(integerWidth: width, fractionWidth: width);
 
   /// Constructor
   FloatToFixedConverter(FloatingPoint float,
@@ -28,33 +38,35 @@ class FloatToFixedConverter extends Module {
     float = float.clone()..gets(addInput('float', float, width: float.width));
 
     final bias = FloatingPointValue.computeBias(float.exponent.width);
-    final sep = bias + float.mantissa.width - 1;
-    final fixedWidth = 2 * sep + 1;
-    addOutput('fixed', width: fixedWidth);
+    width = bias + float.mantissa.width - 1;
+    final outputWidth = 2 * width + 1;
+    addOutput('fixed', width: outputWidth) <= _fixed;
 
     final jBit = Logic(name: 'jBit')..gets(float.isNormal());
     final shift = Logic(name: 'shift', width: float.exponent.width)
       ..gets(
           mux(jBit, float.exponent - 1, Const(0, width: float.exponent.width)));
 
-    final number = Logic(name: 'number', width: fixedWidth)
+    final number = Logic(name: 'number', width: outputWidth)
       ..gets([
-            Const(0, width: fixedWidth - float.mantissa.width - 1),
+            Const(0, width: outputWidth - float.mantissa.width - 1),
             jBit,
             float.mantissa
           ].swizzle() <<
           shift);
 
-    fixed <= mux(float.sign, ~number + 1, number);
+    _fixed <= mux(float.sign, ~number + 1, number);
   }
 }
 
-/// [Float8ToFixedConverter] converts 8-bit floating point (FP8)
-/// to signed fixed-point following Q notation (Qm.n format) as introduced by
+/// [Float8ToFixedConverter] converts an 8-bit floating point (FP8) input
+/// to a signed fixed-point output following Q notation (Qm.n) as introduced by 
 /// (Texas Instruments)[https://www.ti.com/lit/ug/spru565b/spru565b.pdf].
 /// FP8 input must follow E4M3 or E5M2 as described in
 /// (FP8 formats for deep learning)[https://arxiv.org/pdf/2209.05433].
 /// Infinities and NaN's are not supported.
+/// The output is in two's complement and in Qw.w format where:
+/// w = bias + mantissa - 1
 /// if `mode` is true:
 ///   Input is treated as E4M3 and converted to Q9.9
 ///   `fixed[17:9] contains integer part
