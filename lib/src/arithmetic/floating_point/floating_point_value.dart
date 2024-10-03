@@ -103,8 +103,14 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
       -pow(2, exponentWidth - 1).toInt() + 2;
 
   /// Return the maximum exponent value
-  static int computeMaxExponent(int exponentWidth) =>
-      computeBias(exponentWidth);
+  static int computeMaxExponent(int exponentWidth, int mantissaWidth) {
+    if ((exponentWidth == 4) & (mantissaWidth == 3)) {
+      // FP8 E4M3 max exponent is 1111
+      return computeBias(exponentWidth) + 1;
+    } else {
+      return computeBias(exponentWidth);
+    }
+  }
 
   /// Return the bias of this [FloatingPointValue].
   int get bias => _bias;
@@ -219,7 +225,7 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
       : value = [sign, exponent, mantissa].swizzle(),
         _bias = computeBias(exponent.width),
         _minExp = computeMinExponent(exponent.width),
-        _maxExp = computeMaxExponent(exponent.width) {
+        _maxExp = computeMaxExponent(exponent.width, mantissa.width) {
     if (sign.width != 1) {
       throw RohdHclException('FloatingPointValue: sign width must be 1');
     }
@@ -375,7 +381,7 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
       required int mantissaWidth,
       bool normal = false}) {
     final largestExponent = FloatingPointValue.computeBias(exponentWidth) +
-        FloatingPointValue.computeMaxExponent(exponentWidth);
+        FloatingPointValue.computeMaxExponent(exponentWidth, mantissaWidth);
     final s = rv.nextLogicValue(width: 1).toInt();
     var e = BigInt.one;
     do {
@@ -494,15 +500,17 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
         (mantissa.width != other.mantissa.width)) {
       throw Exception('FloatingPointValue widths must match for comparison');
     }
-    final signCompare = sign.compareTo(other.sign);
+
+    final signCompare = other.sign.compareTo(sign);
     if (signCompare != 0) {
       return signCompare;
     } else {
       final expCompare = exponent.compareTo(other.exponent);
       if (expCompare != 0) {
-        return expCompare;
+        return sign.isZero ? expCompare : -expCompare;
       } else {
-        return mantissa.compareTo(other.mantissa);
+        final mantCompare = mantissa.compareTo(other.mantissa);
+        return sign.isZero ? mantCompare : -mantCompare;
       }
     }
   }
@@ -528,7 +536,7 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
 
   /// Return true if the represented floating point number is considered
   ///  NaN or 'Not a Number' due to overflow
-  // TODO(desmonddak): figure out the difference with Infinity
+  // TO-DO(desmonddak): figure out the difference with Infinity
   bool isNaN() {
     if ((exponent.width == 4) & (mantissa.width == 3)) {
       // FP8 E4M3 does not support infinities
@@ -537,7 +545,9 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
       return cond1 & cond2;
     } else {
       return exponent.toInt() ==
-          computeMaxExponent(exponent.width) + computeBias(exponent.width) + 1;
+          computeMaxExponent(exponent.width, mantissa.width) +
+              computeBias(exponent.width) +
+              1;
     }
   }
 
@@ -574,7 +584,7 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
       ' ${exponent.toString(includeWidth: false)}'
       ' ${mantissa.toString(includeWidth: false)}';
 
-  // TODO(desmonddak): what about floating point representations >> 64 bits?
+  // TO-DO(desmonddak): what about floating point representations >> 64 bits?
   FloatingPointValue _performOp(
       FloatingPointValue other, double Function(double a, double b) op) {
     // make sure multiplicand has the same sizes as this
@@ -821,8 +831,6 @@ class FloatingPoint8Value extends FloatingPointValue {
 
   static double get _e4m3max => 448.toDouble();
   static double get _e5m2max => 57344.toDouble();
-  static double get _e4m3min => pow(2, -9).toDouble();
-  static double get _e5m2min => pow(2, -16).toDouble();
 
   /// Return if the exponent and mantissa widths match E4M3 or E5M2
   static bool isLegal(int exponentWidth, int mantissaWidth) {
@@ -894,11 +902,11 @@ class FloatingPoint8Value extends FloatingPointValue {
       throw RohdHclException('FloatingPoint8 must follow E4M3 or E5M2');
     }
     if (exponentWidth == 4) {
-      if ((inDouble > _e4m3max) | (inDouble < _e4m3min)) {
+      if ((inDouble > _e4m3max) | (inDouble < -_e4m3max)) {
         throw RohdHclException('Number exceeds E4M3 range');
       }
     } else if (exponentWidth == 5) {
-      if ((inDouble > _e5m2max) | (inDouble < _e5m2min)) {
+      if ((inDouble > _e5m2max) | (inDouble < -_e5m2max)) {
         throw RohdHclException('Number exceeds E5M2 range');
       }
     }

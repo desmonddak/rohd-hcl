@@ -3,6 +3,7 @@
 
 export 'src/arbiters/arbiters.dart';
 export 'src/arithmetic/arithmetic.dart';
+export 'src/arithmetic/float_fixed.dart';
 export 'src/binary_gray.dart';
 export 'src/component_config/component_config.dart';
 export 'src/count.dart';

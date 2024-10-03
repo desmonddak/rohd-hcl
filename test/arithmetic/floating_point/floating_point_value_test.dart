@@ -150,15 +150,15 @@ void main() {
 
   test('FPV: E4M3', () {
     final corners = [
-      ['0 0000 000', 0.toDouble()],
-      ['0 1111 110', 448.toDouble()],
-      ['0 0001 000', pow(2, -6).toDouble()],
-      ['0 0000 111', 0.875 * pow(2, -6).toDouble()],
-      ['0 0000 001', pow(2, -9).toDouble()],
+      ('0 0000 000', 0.0),
+      ('0 1111 110', 448.0),
+      ('0 0001 000', pow(2, -6).toDouble()),
+      ('0 0000 111', 0.875 * pow(2, -6).toDouble()),
+      ('0 0000 001', pow(2, -9).toDouble()),
     ];
     for (var c = 0; c < corners.length; c++) {
-      final val = corners[c][1] as double;
-      final str = corners[c][0] as String;
+      final str = corners[c].$1;
+      final val = corners[c].$2;
       final fp = FloatingPointValue.fromDouble(val,
           exponentWidth: 4, mantissaWidth: 3);
       expect(val, fp.toDouble());
@@ -172,15 +172,15 @@ void main() {
 
   test('FP8: E5M2', () {
     final corners = [
-      ['0 00000 00', 0.toDouble()],
-      ['0 11110 11', 57344.toDouble()],
-      ['0 00001 00', pow(2, -14).toDouble()],
-      ['0 00000 11', 0.75 * pow(2, -14).toDouble()],
-      ['0 00000 01', pow(2, -16).toDouble()],
+      ('0 00000 00', 0.0),
+      ('0 11110 11', 57344.0),
+      ('0 00001 00', pow(2, -14).toDouble()),
+      ('0 00000 11', 0.75 * pow(2, -14).toDouble()),
+      ('0 00000 01', pow(2, -16).toDouble()),
     ];
     for (var c = 0; c < corners.length; c++) {
-      final val = corners[c][1] as double;
-      final str = corners[c][0] as String;
+      final str = corners[c].$1;
+      final val = corners[c].$2;
       final fp = FloatingPointValue.fromDouble(val,
           exponentWidth: 5, mantissaWidth: 2);
       expect(val, fp.toDouble());
@@ -257,5 +257,37 @@ void main() {
     final fpConvert =
         FloatingPointValue.fromDouble(val, exponentWidth: 4, mantissaWidth: 4);
     expect(fpConvert, equals(fpTrunc));
+  });
+
+  test('FPV: comparison', () {
+    FloatingPointValue fp;
+
+    fp = FloatingPointValue.ofSeparatedBinaryStrings('0 0101 0101');
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('0 0101 0101')),
+        0);
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0101')),
+        greaterThan(0));
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('0 0101 1101')),
+        lessThan(0));
+
+    fp = FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0101');
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0101')),
+        0);
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0100 0101')),
+        lessThan(0));
+    expect(
+        fp.compareTo(
+            FloatingPointValue.ofSeparatedBinaryStrings('1 0101 0100')),
+        lessThan(0));
   });
 }
