@@ -21,14 +21,18 @@ class SimpleMultiplier extends Module {
   late final Logic product;
 
   /// Construct a simple multiplier with runtime sign operation
-  SimpleMultiplier(Logic a, Logic b, Logic multASigned)
+  SimpleMultiplier(Logic a, Logic b, Logic multASigned, {Logic? clk})
       : super(name: 'my_test_module') {
     a = addInput('a', a, width: a.width);
     b = addInput('b', b, width: b.width);
+    if (clk != null) {
+      clk = addInput('clk', clk);
+    }
     multASigned = addInput('multASigned', multASigned);
     product = addOutput('product', width: a.width + b.width);
 
-    final mult = CompressionTreeMultiplier(a, b, 4, selectSigned: multASigned);
+    final mult =
+        CompressionTreeMultiplier(a, b, 4, selectSigned: multASigned, clk: clk);
     product <= mult.product;
   }
 }
@@ -463,8 +467,59 @@ void main() {
 
     final mod = curryMultiplierAsMultiplyAccumulate(4, KoggeStone.new,
         selectSign: signedOperands)(multA, multB, Const(0));
+    final golden = av * bv;
+    expect(mod.accumulate.value.toBigInt().toSigned(dataWidth * 2),
+        equals(golden));
+  });
 
-    checkMultiplyAccumulate(mod, av, bv, BigInt.zero, signedTest: true);
+  test('multiply nesting instantiation for trace error testing', () async {
+    const dataWidth = 5;
+
+    final av = BigInt.from(-16).toSigned(dataWidth);
+    final bv = BigInt.from(-6).toSigned(dataWidth);
+
+    final multA = Logic(name: 'multA', width: dataWidth);
+    final multB = Logic(name: 'multB', width: dataWidth);
+
+    final signedOperands = Logic(name: 'signedOperands');
+    // ignore: cascade_invocations
+    signedOperands.put(1);
+    multA.put(av);
+    multB.put(bv);
+
+    final mod = SimpleMultiplier(multA, multB, signedOperands);
+    final golden = av * bv;
+    expect(
+        mod.product.value.toBigInt().toSigned(dataWidth * 2), equals(golden));
+  });
+  test('multiply nesting instantiation for trace error testing with optional',
+      () async {
+    final clk = SimpleClockGenerator(10).clk;
+
+    const dataWidth = 5;
+
+    final av = BigInt.from(-16).toSigned(dataWidth);
+    final bv = BigInt.from(-6).toSigned(dataWidth);
+
+    final multA = Logic(name: 'multA', width: dataWidth);
+    final multB = Logic(name: 'multB', width: dataWidth);
+
+    final signedOperands = Logic(name: 'signedOperands');
+    // ignore: cascade_invocations
+    signedOperands.put(1);
+    multA.put(av);
+    multB.put(bv);
+
+    final mod = SimpleMultiplier(multA, multB, signedOperands, clk: clk);
+    unawaited(Simulator.run());
+    await clk.nextNegedge;
+
+    final golden = av * bv;
+    multA.put(0);
+    multB.put(0);
+    expect(
+        mod.product.value.toBigInt().toSigned(dataWidth * 2), equals(golden));
+    await Simulator.endSimulation();
   });
 
   test('single mac', () async {

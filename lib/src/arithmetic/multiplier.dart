@@ -113,18 +113,18 @@ class CompressionTreeMultiplier extends Multiplier {
           ppGen = PartialProductGeneratorCompactRectSignExtension.new,
       super.signed = false,
       super.name = 'compression_tree_multiplier'}) {
-    final internalSelectSigned =
+    selectSigned =
         (selectSigned != null) ? addInput('selectSigned', selectSigned) : null;
-    final iClk = (clk != null) ? addInput('clk', clk!) : null;
-    final iReset = (reset != null) ? addInput('reset', reset!) : null;
-    final iEnable = (enable != null) ? addInput('enable', enable!) : null;
+    clk = (clk != null) ? addInput('clk', clk!) : null;
+    reset = (reset != null) ? addInput('reset', reset!) : null;
+    enable = (enable != null) ? addInput('enable', enable!) : null;
 
     final product = addOutput('product', width: a.width + b.width);
     final pp = ppGen(a, b, RadixEncoder(radix),
-        selectSigned: internalSelectSigned, signed: signed);
+        selectSigned: selectSigned, signed: signed);
 
     final compressor =
-        ColumnCompressor(clk: iClk, reset: iReset, enable: iEnable, pp)
+        ColumnCompressor(clk: clk, reset: reset, enable: enable, pp)
           ..compress();
     final adder = ParallelPrefixAdder(
         compressor.extractRow(0), compressor.extractRow(1),
@@ -179,23 +179,21 @@ class CompressionTreeMultiplyAccumulate extends MultiplyAccumulate {
               {required bool signed, Logic? selectSigned})
           ppGen = PartialProductGeneratorCompactRectSignExtension.new,
       super.name = 'compression_tree_mac'}) {
-    final internalSelectSigned =
+    selectSigned =
         (selectSigned != null) ? addInput('selectSigned', selectSigned) : null;
-    final iClk = (clk != null) ? addInput('clk', clk!) : null;
-    final iReset = (reset != null) ? addInput('reset', reset!) : null;
-    final iEnable = (enable != null) ? addInput('enable', enable!) : null;
+    clk = (clk != null) ? addInput('clk', clk!) : null;
+    reset = (reset != null) ? addInput('reset', reset!) : null;
+    enable = (enable != null) ? addInput('enable', enable!) : null;
 
     final accumulate = addOutput('accumulate', width: a.width + b.width + 1);
     final pp = ppGen(a, b, RadixEncoder(radix),
-        selectSigned: internalSelectSigned, signed: signed);
+        selectSigned: selectSigned, signed: signed);
 
     final lastLength =
         pp.partialProducts[pp.rows - 1].length + pp.rowShift[pp.rows - 1];
 
     final sign = mux(
-        (internalSelectSigned != null)
-            ? internalSelectSigned
-            : (signed ? Const(1) : Const(0)),
+        (selectSigned != null) ? selectSigned : (signed ? Const(1) : Const(0)),
         c[c.width - 1],
         Const(0));
     final l = [for (var i = 0; i < c.width; i++) c[i]];
@@ -212,7 +210,7 @@ class CompressionTreeMultiplyAccumulate extends MultiplyAccumulate {
     pp.rowShift.insert(0, 0);
 
     final compressor =
-        ColumnCompressor(clk: iClk, reset: iReset, enable: iEnable, pp)
+        ColumnCompressor(clk: clk, reset: reset, enable: enable, pp)
           ..compress();
     final adder = ParallelPrefixAdder(
         compressor.extractRow(0), compressor.extractRow(1),
@@ -236,22 +234,18 @@ class MutiplyOnly extends MultiplyAccumulate {
       : super(
             name: 'Multiply Only: '
                 '${mulGen.call(a, b, selectSigned: selectSigned).name}') {
-    final Logic? internalSelectSigned;
-
     if (selectSigned != null) {
-      internalSelectSigned = addInput('selectSigned', selectSigned);
-    } else {
-      internalSelectSigned = null;
+      selectSigned = addInput('selectSigned', selectSigned);
     }
     final accumulate = addOutput('accumulate', width: a.width + b.width + 1);
 
-    final multiply = mulGen(a, b, selectSigned: internalSelectSigned);
+    final multiply = mulGen(a, b, selectSigned: selectSigned);
     signed = multiply.signed;
 
     accumulate <=
         mux(
-            (internalSelectSigned != null)
-                ? internalSelectSigned
+            (selectSigned != null)
+                ? selectSigned
                 : (signed ? Const(1) : Const(0)),
             [multiply.product[multiply.product.width - 1], multiply.product]
                 .swizzle(),
