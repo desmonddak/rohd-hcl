@@ -9,6 +9,7 @@
 //  Max Korbel <max.korbel@intel.com>
 //  Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com>
 
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
@@ -69,6 +70,15 @@ class FloatingPoint32Value extends FloatingPointValue {
   FloatingPoint32Value.ofInts(super.exponent, super.mantissa, {super.sign})
       : super.ofInts(
             exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+
+  /// Generate a random [FloatingPoint32Value], supplying random seed [rv].
+  factory FloatingPoint32Value.random(Random rv, {bool normal = false}) {
+    final randFloat = FloatingPointValue.random(rv,
+        exponentWidth: exponentWidth,
+        mantissaWidth: mantissaWidth,
+        normal: normal);
+    return FloatingPoint32Value.ofLogicValue(randFloat.value);
+  }
 
   /// Numeric conversion of a [FloatingPoint32Value] from a host double
   factory FloatingPoint32Value.ofDouble(double inDouble) {
