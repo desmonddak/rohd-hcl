@@ -94,6 +94,15 @@ class FloatingPoint32Value extends FloatingPointValue {
         mantissa: accum.slice(mantissaWidth - 1, 0));
   }
 
+  /// Convert a floating point number into a [FloatingPoint32Value]
+  /// representation. This form performs NO ROUNDING.
+  factory FloatingPoint32Value.ofDoubleUnrounded(double inDouble) {
+    final fpv = FloatingPointValue.ofDoubleUnrounded(inDouble,
+        exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+
+    return FloatingPoint32Value.ofLogicValue(fpv.value);
+  }
+
   /// Construct a [FloatingPoint32Value] from a Logic word
   factory FloatingPoint32Value.ofLogicValue(LogicValue val) =>
       FloatingPointValue.buildOfLogicValue(
