@@ -831,15 +831,18 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
   bool withinRounding(FloatingPointValue other) {
     if (this != other) {
       final diff = (abs() - other.abs()).abs();
-      final exp = (other.exponent.toInt() > exponent.toInt())
-          ? other.exponent
-          : exponent;
-      final epsilon = FloatingPoint32Value.ofBinaryStrings(
-          '0', exp.bitString, '${'0' * (mantissa.width - 1)}1');
-      if (diff.compareTo(epsilon) == 1) {
+      if (diff.compareTo(ulp()) == 1) {
         return false;
       }
     }
     return true;
+  }
+
+  /// Compute the unit in the last place for the given [FloatingPointValue]
+  FloatingPointValue ulp() {
+    final nextLarger =
+        toDouble() + abs().toDouble() * pow(2, -(mantissa.width - 1));
+    return FloatingPointValue.ofDouble(nextLarger - toDouble(),
+        exponentWidth: exponent.width, mantissaWidth: mantissa.width);
   }
 }
