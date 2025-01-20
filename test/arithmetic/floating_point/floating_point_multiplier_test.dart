@@ -264,4 +264,34 @@ void main() {
 ''');
     await Simulator.endSimulation();
   });
+  test('FP: simple multiplier fp32: random', () {
+    final fp1 = FloatingPoint32();
+    final fp2 = FloatingPoint32();
+    fp1.put(0);
+    fp2.put(0);
+    final dut = FloatingPointMultiplierSimple(fp1, fp2);
+    final value = Random(513);
+    for (var i = 0; i < 50; i++) {
+      final fv1 = FloatingPoint32Value.random(value);
+      final fv2 = FloatingPoint32Value.random(value);
+      fp1.put(fv1);
+      fp2.put(fv2);
+      final computed = dut.product.floatingPointValue;
+
+      final expectedDouble =
+          fp1.floatingPointValue.toDouble() * fp2.floatingPointValue.toDouble();
+      final expectedNoRound =
+          FloatingPoint32Value.ofDoubleUnrounded(expectedDouble);
+
+      // If the error is due to a rounding error, then ignore
+      if (!computed.withinRounding(expectedNoRound)) {
+        expect(computed, equals(expectedNoRound), reason: '''
+      $fv1 (${fv1.toDouble()})\t*
+      $fv2 (${fv2.toDouble()})\t=
+      $computed (${computed.toDouble()})\tcomputed
+      $expectedNoRound (${expectedNoRound.toDouble()})\texpected
+''');
+      }
+    }
+  });
 }
