@@ -49,7 +49,7 @@ void main() {
           final computed = multiply.product.floatingPointValue;
 
           expect(computed, equals(expected), reason: '''
-      $fv1 (${fv1.toDouble()})\t+
+      $fv1 (${fv1.toDouble()})\t*
       $fv2 (${fv2.toDouble()})\t=
       $computed (${computed.toDouble()})\tcomputed
       $expected (${expected.toDouble()})\texpected
@@ -104,7 +104,7 @@ void main() {
         final computed = multiply.product.floatingPointValue;
 
         expect(computed, equals(expected), reason: '''
-      $fv1 (${fv1.toDouble()})\t+
+      $fv1 (${fv1.toDouble()})\t*
       $fv2 (${fv2.toDouble()})\t=
       $computed (${computed.toDouble()})\tcomputed
       $expected (${expected.toDouble()})\texpected
@@ -148,7 +148,7 @@ void main() {
                 final computed = multiply.product.floatingPointValue;
 
                 expect(computed, equals(expected), reason: '''
-      $fv1 (${fv1.toDouble()})\t+
+      $fv1 (${fv1.toDouble()})\t*
       $fv2 (${fv2.toDouble()})\t=
       $computed (${computed.toDouble()})\tcomputed
       $expected (${expected.toDouble()})\texpected
@@ -189,7 +189,7 @@ void main() {
         final computed = multiplier.product.floatingPointValue;
 
         expect(computed, equals(expected), reason: '''
-      $fv1 (${fv1.toDouble()})\t+
+      $fv1 (${fv1.toDouble()})\t*
       $fv2 (${fv2.toDouble()})\t=
       $computed (${computed.toDouble()})\tcomputed
       $expected (${expected.toDouble()})\texpected
@@ -220,11 +220,98 @@ void main() {
       final computed = multiply.product.floatingPointValue;
 
       expect(computed, equals(expected), reason: '''
-      $fv1 (${fv1.toDouble()})\t+
+      $fv1 (${fv1.toDouble()})\t*
       $fv2 (${fv2.toDouble()})\t=
       $computed (${computed.toDouble()})\tcomputed
       $expected (${expected.toDouble()})\texpected
 ''');
+    });
+    test('FP: simple multiplier specify wide output', () {
+      const exponentWidth = 4;
+      const mantissaWidth = 4;
+      final fp1 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      final fv1 = FloatingPointValue.ofBinaryStrings('0', '0000', '0000');
+
+      final fp2 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      final fv2 = FloatingPointValue.ofBinaryStrings('0', '0000', '0001');
+
+      final doubleProduct = fv1.toDouble() * fv2.toDouble();
+
+      final fpout = FloatingPoint(
+          exponentWidth: exponentWidth * 2, mantissaWidth: mantissaWidth * 2);
+
+      final expected = FloatingPointValue.ofDoubleUnrounded(doubleProduct,
+          exponentWidth: fpout.exponent.width,
+          mantissaWidth: fpout.mantissa.width);
+
+      fp1.put(fv1.value);
+      fp2.put(fv2.value);
+      fpout.put(fv1.value);
+
+      final multiply =
+          FloatingPointMultiplierSimple(fp1, fp2, outProduct: fpout);
+      final computed = multiply.product.floatingPointValue;
+
+      expect(computed, equals(expected), reason: '''
+      $fv1 (${fv1.toDouble()})\t*
+      $fv2 (${fv2.toDouble()})\t=
+      $computed (${computed.toDouble()})\tcomputed
+      $expected (${expected.toDouble()})\texpected
+''');
+    });
+    test('FP: simple multiplier wide output exhaustive', () {
+      const exponentWidth = 3;
+      const mantissaWidth = 4;
+
+      final fp1 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      final fp2 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      final fpout = FloatingPoint(
+          exponentWidth: exponentWidth * 2, mantissaWidth: mantissaWidth * 2);
+
+      fp1.put(0);
+      fp2.put(0);
+      final multiply =
+          FloatingPointMultiplierSimple(fp1, fp2, outProduct: fpout);
+
+      final expLimit = pow(2, exponentWidth) - 1;
+      final mantLimit = pow(2, mantissaWidth);
+      for (final subtract in [0, 1]) {
+        for (var e1 = 0; e1 < expLimit; e1++) {
+          for (var m1 = 0; m1 < mantLimit; m1++) {
+            final fv1 = FloatingPointValue.ofInts(e1, m1,
+                exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+            for (var e2 = 0; e2 < expLimit; e2++) {
+              for (var m2 = 0; m2 < mantLimit; m2++) {
+                final fv2 = FloatingPointValue.ofInts(e2, m2,
+                    exponentWidth: exponentWidth,
+                    mantissaWidth: mantissaWidth,
+                    sign: subtract == 1);
+                final doubleProduct = fv1.toDouble() * fv2.toDouble();
+
+                final expected = FloatingPointValue.ofDoubleUnrounded(
+                    doubleProduct,
+                    exponentWidth: fpout.exponent.width,
+                    mantissaWidth: fpout.mantissa.width);
+
+                fp1.put(fv1.value);
+                fp2.put(fv2.value);
+                final computed = multiply.product.floatingPointValue;
+
+                expect(computed, equals(expected), reason: '''
+      $fv1 (${fv1.toDouble()})\t*
+      $fv2 (${fv2.toDouble()})\t=
+      $computed (${computed.toDouble()})\tcomputed
+      $expected (${expected.toDouble()})\texpected
+''');
+              }
+            }
+          }
+        }
+      }
     });
   });
   test('FP: simple multiplier singleton pipelined', () async {
@@ -257,7 +344,7 @@ void main() {
     final computed = multiply.product.floatingPointValue;
 
     expect(computed, equals(expected), reason: '''
-      $fv1 (${fv1.toDouble()})\t+
+      $fv1 (${fv1.toDouble()})\t*
       $fv2 (${fv2.toDouble()})\t=
       $computed (${computed.toDouble()})\tcomputed
       $expected (${expected.toDouble()})\texpected

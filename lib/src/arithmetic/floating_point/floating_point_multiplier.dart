@@ -14,10 +14,10 @@ import 'package:rohd_hcl/rohd_hcl.dart';
 /// An abstract API for floating-point multipliers.
 abstract class FloatingPointMultiplier extends Module {
   /// Width of the output exponent field.
-  final int exponentWidth;
+  late final int exponentWidth;
 
   /// Width of the output mantissa field.
-  final int mantissaWidth;
+  late final int mantissaWidth;
 
   /// The [clk] : if a non-null clock signal is passed in, a pipestage is added
   ///  to the adder to help optimize frequency.
@@ -43,9 +43,9 @@ abstract class FloatingPointMultiplier extends Module {
   late final FloatingPoint b;
 
   /// The computed [FloatingPoint] product of [a] * [b].
-  late final FloatingPoint product =
-      FloatingPoint(exponentWidth: exponentWidth, mantissaWidth: mantissaWidth)
-        ..gets(output('product'));
+  late final FloatingPoint product;
+  // FloatingPoint(exponentWidth: exponentWidth, mantissaWidth: mantissaWidth)
+  //   ..gets(output('product'));
 
   /// Multiply two floating point numbers [a] and [b], returning result in
   /// [product].
@@ -58,16 +58,29 @@ abstract class FloatingPointMultiplier extends Module {
       {Logic? clk,
       Logic? reset,
       Logic? enable,
+      FloatingPoint? outProduct,
       // ignore: avoid_unused_constructor_parameters
       ParallelPrefix Function(List<Logic>, Logic Function(Logic, Logic)) ppGen =
           KoggeStone.new,
-      super.name = 'floating_point_multiplier'})
-      : exponentWidth = a.exponent.width,
-        mantissaWidth = a.mantissa.width {
-    if (b.exponent.width != exponentWidth ||
-        b.mantissa.width != mantissaWidth) {
+      super.name = 'floating_point_multiplier'}) {
+    if (b.exponent.width != a.exponent.width ||
+        b.mantissa.width != a.mantissa.width) {
       throw RohdHclException('FloatingPoint widths must match');
     }
+    if (outProduct == null) {
+      exponentWidth = a.exponent.width;
+      mantissaWidth = a.mantissa.width;
+      product = FloatingPoint(
+          exponentWidth: exponentWidth,
+          mantissaWidth: mantissaWidth,
+          name: 'product');
+    } else {
+      exponentWidth = outProduct.exponent.width;
+      mantissaWidth = outProduct.mantissa.width;
+      product = outProduct;
+    }
+    addOutput('product', width: exponentWidth + mantissaWidth + 1);
+    output('product') <= product;
 
     this.clk = (clk != null) ? addInput('clk', clk) : clk;
     this.enable = (enable != null) ? addInput('enable', enable) : enable;
@@ -75,7 +88,6 @@ abstract class FloatingPointMultiplier extends Module {
 
     this.a = a.clone()..gets(addInput('a', a, width: a.width));
     this.b = b.clone()..gets(addInput('b', b, width: b.width));
-    addOutput('product', width: a.exponent.width + a.mantissa.width + 1);
   }
 
   /// Pipelining helper that uses the context for signals clk/enable/reset
