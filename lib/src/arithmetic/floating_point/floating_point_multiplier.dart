@@ -50,6 +50,9 @@ abstract class FloatingPointMultiplier extends Module {
   /// Multiply two floating point numbers [a] and [b], returning result in
   /// [product].
   ///
+  /// If you specify the optional  [outProduct], the multiplier
+  /// will output into the specified output allowing for a wider output.
+  ///
   /// - [clk], [reset], [enable] are optional inputs to control a pipestage
   /// (only inserted if [clk] is provided).
   /// - [ppGen] is the type of [ParallelPrefix] used in internal adder

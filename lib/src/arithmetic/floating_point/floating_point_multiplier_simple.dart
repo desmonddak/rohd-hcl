@@ -45,14 +45,15 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
         .named('bMantissa');
 
     final expCalcWidth = exponentWidth + 2;
-    final deltaBias = product.bias.zeroExtend(expCalcWidth) -
-        a.bias.zeroExtend(expCalcWidth) -
-        b.bias.zeroExtend(expCalcWidth).named('rebias');
-
-    final productExp = (a.exponent.zeroExtend(expCalcWidth) +
-            b.exponent.zeroExtend(expCalcWidth) +
-            deltaBias)
-        .named('productExp');
+    final addBias =
+        (a.bias.zeroExtend(expCalcWidth) + b.bias.zeroExtend(expCalcWidth))
+            .named('addBias');
+    final deltaBias =
+        (product.bias.zeroExtend(expCalcWidth) - addBias).named('rebias');
+    final addExp = (a.exponent.zeroExtend(expCalcWidth) +
+            b.exponent.zeroExtend(expCalcWidth))
+        .named('addExp');
+    final productExp = (addExp + deltaBias).named('productExp');
 
     final pp =
         PartialProductGenerator(aMantissa, bMantissa, RadixEncoder(radix));
@@ -91,12 +92,6 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
         Const(product.bias.value.toInt() + 1, width: leadingOnePosPre.width),
         leadingOnePosPre);
 
-    final shifter = SignedShifter(
-        mantissa,
-        mux(productExpLatch[-1] | productExpLatch.lt(leadingOnePos),
-            productExpLatch, leadingOnePos),
-        name: 'mantissa_shifter');
-
     final remainingExp =
         (productExpLatch - leadingOnePos + 1).named('remainingExp');
 
@@ -106,6 +101,30 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
                     Const(1, width: exponentWidth, fill: true)
                         .zeroExtend(exponentWidth + 2))))
         .named('overflow');
+
+    final fullMantissa = (mantissaWidth + 1 > mantissa.width)
+        ? [
+            mantissa,
+            Const(0, width: mantissaWidth + 1 - mantissa.width, fill: true)
+          ].swizzle().named('extendMantissa')
+        // mantissa.reversed.zeroExtend(mantissaWidth + 1).reversed
+        : mantissa.named('fullMantissa');
+
+    final fullShift = SignedShifter(
+            fullMantissa,
+            mux(productExpLatch[-1] | productExpLatch.lt(leadingOnePos),
+                productExpLatch, leadingOnePos),
+            name: 'full_mantissa_shifter')
+        .shifted
+        .named('shiftMantissa');
+
+    // Remove the leading one for implicit representation
+    final finalMantissa = fullShift.reversed
+        .named('revShift')
+        .getRange(1, mantissaWidth + 1)
+        .named('trimMantissa')
+        .reversed
+        .named('finalMantissa');
 
     Combinational([
       If(isNaNLatch, then: [
@@ -120,9 +139,7 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
           ], orElse: [
             product.exponent < remainingExp.getRange(0, exponentWidth),
           ]),
-          // Remove the leading one for implicit representation
-          product.mantissa <
-              shifter.shifted.getRange(-mantissaWidth - 1, mantissa.width - 1)
+          product.mantissa < finalMantissa
         ])
       ])
     ]);
