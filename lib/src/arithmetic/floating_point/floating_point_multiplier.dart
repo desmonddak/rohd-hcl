@@ -43,9 +43,12 @@ abstract class FloatingPointMultiplier extends Module {
   late final FloatingPoint b;
 
   /// The computed [FloatingPoint] product of [a] * [b].
-  late final FloatingPoint product;
-  // FloatingPoint(exponentWidth: exponentWidth, mantissaWidth: mantissaWidth)
-  //   ..gets(output('product'));
+  late final FloatingPoint product =
+      FloatingPoint(exponentWidth: exponentWidth, mantissaWidth: mantissaWidth)
+        ..gets(output('product'));
+
+  /// The internal FloatingPoint logic to set
+  late final FloatingPoint internalProduct;
 
   /// Multiply two floating point numbers [a] and [b], returning result in
   /// [product].
@@ -70,20 +73,21 @@ abstract class FloatingPointMultiplier extends Module {
         b.mantissa.width != a.mantissa.width) {
       throw RohdHclException('FloatingPoint widths must match');
     }
-    if (outProduct == null) {
-      exponentWidth = a.exponent.width;
-      mantissaWidth = a.mantissa.width;
-      product = FloatingPoint(
-          exponentWidth: exponentWidth,
-          mantissaWidth: mantissaWidth,
-          name: 'product');
-    } else {
-      exponentWidth = outProduct.exponent.width;
-      mantissaWidth = outProduct.mantissa.width;
-      product = outProduct;
-    }
+    exponentWidth =
+        (outProduct == null) ? a.exponent.width : outProduct.exponent.width;
+    mantissaWidth =
+        (outProduct == null) ? a.mantissa.width : outProduct.mantissa.width;
+
+    internalProduct = FloatingPoint(
+        exponentWidth: exponentWidth,
+        mantissaWidth: mantissaWidth,
+        name: 'product');
     addOutput('product', width: exponentWidth + mantissaWidth + 1);
-    output('product') <= product;
+    output('product') <= internalProduct;
+
+    if (outProduct != null) {
+      outProduct <= output('product');
+    }
 
     this.clk = (clk != null) ? addInput('clk', clk) : clk;
     this.enable = (enable != null) ? addInput('enable', enable) : enable;

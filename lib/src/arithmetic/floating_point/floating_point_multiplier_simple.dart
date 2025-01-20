@@ -128,18 +128,18 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
 
     Combinational([
       If(isNaNLatch, then: [
-        product < product.nan,
+        internalProduct < product.nan,
       ], orElse: [
         If(overFlow, then: [
-          product < product.inf(sign: aSignLatch ^ bSignLatch),
+          internalProduct < product.inf(sign: aSignLatch ^ bSignLatch),
         ], orElse: [
-          product.sign < aSignLatch ^ bSignLatch,
+          internalProduct.sign < aSignLatch ^ bSignLatch,
           If(remainingExp[-1], then: [
-            product.exponent < Const(0, width: exponentWidth)
+            internalProduct.exponent < Const(0, width: exponentWidth)
           ], orElse: [
-            product.exponent < remainingExp.getRange(0, exponentWidth),
+            internalProduct.exponent < remainingExp.getRange(0, exponentWidth),
           ]),
-          product.mantissa < finalMantissa
+          internalProduct.mantissa < finalMantissa
         ])
       ])
     ]);

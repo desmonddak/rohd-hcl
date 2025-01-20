@@ -226,7 +226,7 @@ void main() {
       $expected (${expected.toDouble()})\texpected
 ''');
     });
-    test('FP: simple multiplier specify wide output', () async {
+    test('FP: simple multiplier specify wider output', () async {
       const exponentWidth = 4;
       const mantissaWidth = 4;
       final fp1 = FloatingPoint(
@@ -262,6 +262,110 @@ void main() {
       $expected (${expected.toDouble()})\texpected
 ''');
     });
+    test('FP: simple multiplier bug wider output', () async {
+      const exponentWidth = 8;
+      const mantissaWidth = 7;
+      final fp1 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      final fv1 =
+          FloatingPointValue.ofBinaryStrings('0', '00000110', '1010111');
+
+      final fp2 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      final fv2 =
+          FloatingPointValue.ofBinaryStrings('1', '01100010', '1111100');
+
+      final doubleProduct = fv1.toDouble() * fv2.toDouble();
+
+      final fpout = FloatingPoint(exponentWidth: 8, mantissaWidth: 23);
+
+      final expected = FloatingPointValue.ofDoubleUnrounded(doubleProduct,
+          exponentWidth: fpout.exponent.width,
+          mantissaWidth: fpout.mantissa.width);
+
+      fp1.put(fv1.value);
+      fp2.put(fv2.value);
+      fpout.put(0);
+
+      final multiply =
+          FloatingPointMultiplierSimple(fp1, fp2, outProduct: fpout);
+      await multiply.build();
+      final computed = multiply.product.floatingPointValue;
+
+      expect(computed, equals(expected), reason: '''
+      $fv1 (${fv1.toDouble()})\t*
+      $fv2 (${fv2.toDouble()})\t=
+      $computed (${computed.toDouble()})\tcomputed
+      $expected (${expected.toDouble()})\texpected
+''');
+    });
+    test('FP: simple multiplier bf16 to fp32', () {
+      final a = FloatingPointBF16();
+      final b = FloatingPointBF16();
+
+      final out = FloatingPoint32();
+      a.put(FloatingPointBF16Value.ofDouble(1.2));
+      b.put(FloatingPointBF16Value.ofDouble(2.1));
+
+      final dut = FloatingPointMultiplierSimple(a, b, outProduct: out);
+
+      final result = dut.product;
+
+      expect(
+          result.floatingPointValue,
+          FloatingPoint32Value.ofDouble(a.floatingPointValue.toDouble() *
+              b.floatingPointValue.toDouble()));
+    });
+
+    test('FP: simple multiplier wide random', () async {
+      const exponentWidth = 8;
+      const mantissaWidth = 7;
+
+      final fp1 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      final fp2 = FloatingPoint(
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      fp1.put(0);
+      fp2.put(0);
+
+      const expOutWidth = 8;
+      const mantOutWidth = 23;
+      {
+        {
+          final fpout = FloatingPoint(
+              exponentWidth: expOutWidth, mantissaWidth: mantOutWidth);
+          // ignore: cascade_invocations
+          fpout.put(0);
+          final multiplier =
+              FloatingPointMultiplierSimple(fp1, fp2, outProduct: fpout);
+
+          final value = Random(51);
+          var cnt = 100;
+          while (cnt > 0) {
+            final fv1 = FloatingPointValue.random(value,
+                exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+            final fv2 = FloatingPointValue.random(value,
+                exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+            fp1.put(fv1);
+            fp2.put(fv2);
+
+            final expected = FloatingPointValue.ofDoubleUnrounded(
+                fv1.toDouble() * fv2.toDouble(),
+                exponentWidth: fpout.exponent.width,
+                mantissaWidth: fpout.mantissa.width);
+            final computed = multiplier.product.floatingPointValue;
+
+            expect(computed, equals(expected), reason: '''
+      $fv1 (${fv1.toDouble()})\t*
+      $fv2 (${fv2.toDouble()})\t=
+      $computed (${computed.toDouble()})\tcomputed
+      $expected (${expected.toDouble()})\texpected
+''');
+            cnt--;
+          }
+        }
+      }
+    });
 
     test('FP: simple multiplier sweep wide random', () async {
       const exponentWidth = 3;
@@ -276,8 +380,8 @@ void main() {
 
       for (var expOutWidth = 3; expOutWidth < 5; expOutWidth++) {
         for (var mantOutWidth = 3; mantOutWidth < 16; mantOutWidth += 4) {
-          final fpout =
-              FloatingPoint(exponentWidth: 4, mantissaWidth: mantissaWidth * 5);
+          final fpout = FloatingPoint(
+              exponentWidth: expOutWidth, mantissaWidth: mantOutWidth);
           // ignore: cascade_invocations
           fpout.put(0);
           final multiplier =
