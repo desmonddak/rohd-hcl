@@ -840,9 +840,14 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
 
   /// Compute the unit in the last place for the given [FloatingPointValue]
   FloatingPointValue ulp() {
-    final nextLarger =
-        toDouble() + abs().toDouble() * pow(2, -(mantissa.width - 1));
-    return FloatingPointValue.ofDouble(nextLarger - toDouble(),
-        exponentWidth: exponent.width, mantissaWidth: mantissa.width);
+    if (exponent.toInt() > mantissa.width) {
+      final newExponent =
+          LogicValue.ofInt(exponent.toInt() - mantissa.width, exponent.width);
+      return FloatingPointValue.ofBinaryStrings(
+          sign.bitString, newExponent.bitString, '0' * (mantissa.width));
+    } else {
+      return FloatingPointValue.ofBinaryStrings(
+          sign.bitString, exponent.bitString, '${'0' * (mantissa.width - 1)}1');
+    }
   }
 }
