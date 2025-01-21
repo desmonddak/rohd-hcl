@@ -107,7 +107,6 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
             mantissa,
             Const(0, width: mantissaWidth + 1 - mantissa.width, fill: true)
           ].swizzle().named('extendMantissa')
-        // mantissa.reversed.zeroExtend(mantissaWidth + 1).reversed
         : mantissa.named('fullMantissa');
 
     final fullShift = SignedShifter(
@@ -117,13 +116,8 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
             name: 'full_mantissa_shifter')
         .shifted
         .named('shiftMantissa');
-
-    // Remove the leading one for implicit representation
-    final finalMantissa = fullShift.reversed
-        .named('revShift')
-        .getRange(1, mantissaWidth + 1)
-        .named('trimMantissa')
-        .reversed
+    final finalMantissa = fullShift
+        .getRange(fullShift.width - mantissaWidth - 1, fullShift.width - 1)
         .named('finalMantissa');
 
     Combinational([

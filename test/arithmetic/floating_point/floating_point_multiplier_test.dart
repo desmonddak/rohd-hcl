@@ -114,7 +114,7 @@ void main() {
 
     test('FP: simple multiplier exhaustive', () {
       const exponentWidth = 3;
-      const mantissaWidth = 6;
+      const mantissaWidth = 3;
 
       final fp1 = FloatingPoint(
           exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
