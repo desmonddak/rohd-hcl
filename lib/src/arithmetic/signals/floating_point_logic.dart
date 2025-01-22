@@ -24,6 +24,8 @@ class FloatingPoint extends LogicStructure {
   /// [sign] bit with '1' representing a negative number
   final Logic sign;
 
+  /// Utility to keep track of the Logic structure name by attaching it
+  /// to the Logic signal name in the output Verilog.
   static String _nameJoin(String? structName, String signalName) {
     if (structName == null) {
       return signalName;
@@ -73,7 +75,6 @@ class FloatingPoint extends LogicStructure {
   /// Return a Logic true if this FloatingPoint is an infinity
   /// by having its exponent field set to the NaN value (typically all
   /// ones) and a zero mantissa.
-
   late final isInfinity =
       (exponent.eq(floatingPointValue.infinity.exponent) & ~mantissa.or())
           .named(_nameJoin('isInfinity', name), naming: Naming.mergeable);
@@ -83,20 +84,20 @@ class FloatingPoint extends LogicStructure {
   /// ones) and a zero mantissa.
   late final isZero =
       (exponent.eq(floatingPointValue.zero.exponent) & ~mantissa.or())
-          .named('isZero', naming: Naming.mergeable);
+          .named(_nameJoin('isZero', name), naming: Naming.mergeable);
 
   /// Return the zero exponent representation for this type of FloatingPoint
   late final zeroExponent = Const(LogicValue.zero, width: exponent.width)
-      .named('zeroExponent', naming: Naming.mergeable);
+      .named(_nameJoin('zeroExponent', name), naming: Naming.mergeable);
 
   /// Return the one exponent representation for this type of FloatingPoint
   late final oneExponent = Const(LogicValue.one, width: exponent.width)
-      .named('oneExponent', naming: Naming.mergeable);
+      .named(_nameJoin('oneExponent', name), naming: Naming.mergeable);
 
   /// Return the exponent Logic value representing the true zero exponent
   /// 2^0 = 1 often termed [bias] or the offset of the stored exponent.
   late final bias = Const((1 << exponent.width - 1) - 1, width: exponent.width)
-      .named('bias', naming: Naming.mergeable);
+      .named(_nameJoin('bias', name), naming: Naming.mergeable);
 
   /// Construct a FloatingPoint that represents infinity for this FP type.
   FloatingPoint inf({Logic? sign, bool negative = false}) => FloatingPoint.inf(
@@ -143,53 +144,66 @@ class FloatingPoint extends LogicStructure {
 /// Single floating point representation
 class FloatingPoint32 extends FloatingPoint {
   /// Construct a 32-bit (single-precision) floating point number
-  FloatingPoint32()
+  FloatingPoint32({super.name})
       : super(
             exponentWidth: FloatingPoint32Value.exponentWidth,
             mantissaWidth: FloatingPoint32Value.mantissaWidth);
+
+  @override
+  FloatingPoint32 clone({String? name}) => FloatingPoint32(name: name);
 }
 
 /// Double floating point representation
 class FloatingPoint64 extends FloatingPoint {
   /// Construct a 64-bit (double-precision) floating point number
-  FloatingPoint64()
+  FloatingPoint64({super.name})
       : super(
             exponentWidth: FloatingPoint64Value.exponentWidth,
             mantissaWidth: FloatingPoint64Value.mantissaWidth);
+  @override
+  FloatingPoint64 clone({String? name}) => FloatingPoint64(name: name);
 }
 
 /// Eight-bit floating point representation for deep learning: E4M3
 class FloatingPoint8E4M3 extends FloatingPoint {
   /// Construct an 8-bit floating point number
-  FloatingPoint8E4M3()
+  FloatingPoint8E4M3({super.name})
       : super(
             mantissaWidth: FloatingPoint8E4M3Value.mantissaWidth,
             exponentWidth: FloatingPoint8E4M3Value.exponentWidth);
+  @override
+  FloatingPoint8E4M3 clone({String? name}) => FloatingPoint8E4M3(name: name);
 }
 
 /// Eight-bit floating point representation for deep learning: E5M2
 class FloatingPoint8E5M2 extends FloatingPoint {
   /// Construct an 8-bit floating point number
-  FloatingPoint8E5M2()
+  FloatingPoint8E5M2({super.name})
       : super(
             mantissaWidth: FloatingPoint8E5M2Value.mantissaWidth,
             exponentWidth: FloatingPoint8E5M2Value.exponentWidth);
+  @override
+  FloatingPoint8E5M2 clone({String? name}) => FloatingPoint8E5M2(name: name);
 }
 
 /// Sixteen-bit BF16 floating point representation
 class FloatingPointBF16 extends FloatingPoint {
   /// Construct a BF16 16-bit floating point number
-  FloatingPointBF16()
+  FloatingPointBF16({super.name})
       : super(
             mantissaWidth: FloatingPointBF16Value.mantissaWidth,
             exponentWidth: FloatingPointBF16Value.exponentWidth);
+  @override
+  FloatingPointBF16 clone({String? name}) => FloatingPointBF16(name: name);
 }
 
 /// Sixteen-bit floating point representation
 class FloatingPoint16 extends FloatingPoint {
   /// Construct a 16-bit floating point number
-  FloatingPoint16()
+  FloatingPoint16({super.name})
       : super(
             mantissaWidth: FloatingPoint16Value.mantissaWidth,
             exponentWidth: FloatingPoint16Value.exponentWidth);
+  @override
+  FloatingPoint16 clone({String? name}) => FloatingPoint16(name: name);
 }
