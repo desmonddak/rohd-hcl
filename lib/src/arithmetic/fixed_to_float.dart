@@ -36,7 +36,7 @@ class FixedToFloat extends Module {
       super.name = 'FixedToFloat'})
       : super(
             definitionName:
-                'Fixed${fixed.width}ToFloatE${exponentWidth}M${mantissaWidth}') {
+                'Fixed${fixed.width}ToFloatE${exponentWidth}M$mantissaWidth') {
     fixed = fixed.clone()..gets(addInput('fixed', fixed, width: fixed.width));
     addOutput('float', width: _float.width) <= _float;
 
@@ -62,19 +62,19 @@ class FixedToFloat extends Module {
 
     final jBit = ParallelPrefixPriorityEncoder(absValue.reversed)
         .out
-        .zeroExtend(iWidth)
+        .zeroExtend(exponentWidth + 1)
         .named('jBit');
 
     // Extract mantissa
     final mantissa = Logic(name: 'mantissa', width: mantissaWidth);
     final guard = Logic(name: 'guardBit');
     final sticky = Logic(name: 'stickBit');
-    final j = Logic(name: 'j', width: iWidth);
+    final j = Logic(name: 'j', width: jBit.width);
     final maxShift = fixed.width - fixed.n + bias - 2;
 
     // Limit to minimum exponent
     if (maxShift > 0) {
-      j <= mux(jBit.gt(maxShift), Const(maxShift, width: iWidth), jBit);
+      j <= mux(jBit.gt(maxShift), Const(maxShift, width: jBit.width), jBit);
     } else {
       j <= jBit;
     }
@@ -101,9 +101,10 @@ class FixedToFloat extends Module {
     // Calculate biased exponent
     final eRaw = mux(
             absValueShifted[-1],
-            (Const(bias + fixed.width - fixed.n - 1, width: iWidth) - j)
+            (Const(bias + fixed.width - fixed.n - 1, width: exponentWidth + 1) -
+                    j)
                 .named('eShift'),
-            Const(0, width: iWidth))
+            Const(0, width: exponentWidth + 1))
         .named('eRaw');
     final eRawRne =
         mux(roundUp & ~mantissaRounded.or(), eRaw + 1, eRaw).named('eRawRNE');

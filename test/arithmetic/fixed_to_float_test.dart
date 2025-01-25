@@ -15,10 +15,10 @@ import 'package:test/test.dart';
 void main() async {
   test('Smoke', () async {
     final fixed = FixedPoint(signed: true, m: 34, n: 33);
-    final dut = FixedToFloat(fixed, exponentWidth: 8, mantissaWidth: 3);
-    await dut.build();
     fixed.put(FixedPointValue.ofDouble(1.25,
         signed: fixed.signed, m: fixed.m, n: fixed.n));
+    final dut = FixedToFloat(fixed, exponentWidth: 8, mantissaWidth: 3);
+    await dut.build();
     final fpv = dut.float.floatingPointValue;
     final fpvExpected = FloatingPointValue.ofDouble(1.25,
         exponentWidth: dut.exponentWidth, mantissaWidth: dut.mantissaWidth);
