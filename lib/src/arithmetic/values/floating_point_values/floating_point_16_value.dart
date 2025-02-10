@@ -9,8 +9,6 @@
 //  Max Korbel <max.korbel@intel.com>
 //  Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com>
 
-import 'package:meta/meta.dart';
-import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
 /// A representation of an FP16 floating-point value.
@@ -21,25 +19,21 @@ class FloatingPoint16Value extends FloatingPointValue {
   /// The mantissa width
   static const int mantissaWidth = 10;
 
-  @override
-  @protected
-  int get constrainedExponentWidth => exponentWidth;
-
-  @override
-  @protected
-  int get constrainedMantissaWidth => mantissaWidth;
-
   /// Constructor for a single precision floating point value
-  FloatingPoint16Value(
-      {required super.sign, required super.exponent, required super.mantissa});
+  FloatingPoint16Value(FillFPV fill)
+      : super(fill, exponentWidth, mantissaWidth);
+
+  /// A fillfull factory
+  factory FloatingPoint16Value.fill(FillFPV filler) =>
+      FloatingPoint16Value(filler);
 
   /// Return the [FloatingPoint16Value] representing the constant specified
   factory FloatingPoint16Value.getFloatingPointConstant(
           FloatingPointConstants constantFloatingPoint) =>
-      FloatingPoint16Value.ofLogicValue(
+      FloatingPoint16Value.fill(FloatingPointValue.logicFill(
           FloatingPointValue.getFloatingPointConstant(
                   constantFloatingPoint, exponentWidth, mantissaWidth)
-              .value);
+              .value));
 
   /// [FloatingPoint16Value] constructor from string representation of
   /// individual bitfields
@@ -70,15 +64,15 @@ class FloatingPoint16Value extends FloatingPointValue {
             exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
 
   /// Numeric conversion of a [FloatingPoint16Value] from a host double
-  factory FloatingPoint16Value.ofDouble(double inDouble) {
-    final fpv = FloatingPointValue.ofDouble(inDouble,
-        exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+  // factory FloatingPoint16Value.ofDouble(double inDouble) {
+  //   final fpv = FloatingPointValue.ofDouble(inDouble,
+  //       exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
 
-    return FloatingPoint16Value.ofLogicValue(fpv.value);
-  }
+  //   return FloatingPoint16Value.ofLogicValue(fpv.value);
+  // }
 
-  /// Construct a [FloatingPoint16Value] from a Logic word
-  factory FloatingPoint16Value.ofLogicValue(LogicValue val) =>
-      FloatingPointValue.buildOfLogicValue(
-          FloatingPoint16Value.new, exponentWidth, mantissaWidth, val);
+  // /// Construct a [FloatingPoint16Value] from a Logic word
+  // factory FloatingPoint16Value.ofLogicValue(LogicValue val) =>
+  //     FloatingPointValue.buildOfLogicValue(
+  //         FloatingPoint16Value.new, exponentWidth, mantissaWidth, val);
 }

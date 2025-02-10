@@ -63,9 +63,12 @@ void main() {
       const mantissaWidth = 4;
 
       final fv = FloatingPointValue(
-          sign: LogicValue.zero,
-          exponent: LogicValue.filled(exponentWidth, LogicValue.one),
-          mantissa: LogicValue.filled(exponentWidth, LogicValue.zero));
+          FloatingPointValue.splitLogicFill(
+              sign: LogicValue.zero,
+              exponent: LogicValue.filled(exponentWidth, LogicValue.one),
+              mantissa: LogicValue.filled(exponentWidth, LogicValue.zero)),
+          exponentWidth,
+          mantissaWidth);
 
       final fp1 = FloatingPoint(
           exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
@@ -347,8 +350,8 @@ void main() {
       final b = FloatingPointBF16();
 
       final out = FloatingPoint32();
-      a.put(FloatingPointBF16Value.ofDouble(1.2));
-      b.put(FloatingPointBF16Value.ofDouble(2.1));
+      a.put(FloatingPointBF16Value.fill(FloatingPointValue.fillDouble(1.2)));
+      b.put(FloatingPointBF16Value.fill(FloatingPointValue.fillDouble(2.1)));
 
       final dut = FloatingPointMultiplierSimple(a, b, outProduct: out);
 
@@ -499,16 +502,18 @@ void main() {
       final dut = FloatingPointMultiplierSimple(fp1, fp2);
       final value = Random(513);
       for (var i = 0; i < 50; i++) {
-        final fv1 = FloatingPoint32Value.random(value);
-        final fv2 = FloatingPoint32Value.random(value);
+        final fv1 =
+            FloatingPoint32Value.fill(FloatingPointValue.fillRandom(value));
+        final fv2 =
+            FloatingPoint32Value.fill(FloatingPointValue.fillRandom(value));
         fp1.put(fv1);
         fp2.put(fv2);
         final computed = dut.product.floatingPointValue;
 
         final expectedDouble = fp1.floatingPointValue.toDouble() *
             fp2.floatingPointValue.toDouble();
-        final expectedNoRound =
-            FloatingPoint32Value.ofDoubleUnrounded(expectedDouble);
+        final expectedNoRound = FloatingPoint32Value.fill(
+            FloatingPointValue.fillDoubleUnrounded(expectedDouble));
 
         // If the error is due to a rounding error, then ignore
         if (!computed.withinRounding(expectedNoRound)) {

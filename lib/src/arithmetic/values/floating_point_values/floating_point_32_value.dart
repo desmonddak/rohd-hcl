@@ -9,9 +9,7 @@
 //  Max Korbel <max.korbel@intel.com>
 //  Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com>
 
-import 'dart:math';
 import 'dart:typed_data';
-import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
@@ -23,25 +21,21 @@ class FloatingPoint32Value extends FloatingPointValue {
   /// The mantissa width
   static const int mantissaWidth = 23;
 
-  @override
-  @protected
-  int get constrainedExponentWidth => exponentWidth;
-
-  @override
-  @protected
-  int get constrainedMantissaWidth => mantissaWidth;
-
   /// Constructor for a single precision floating point value
-  FloatingPoint32Value(
-      {required super.sign, required super.exponent, required super.mantissa});
+  FloatingPoint32Value(FillFPV fill)
+      : super(fill, exponentWidth, mantissaWidth);
+
+  /// A fillfull factory
+  factory FloatingPoint32Value.fill(FillFPV filler) =>
+      FloatingPoint32Value(filler);
 
   /// Return the [FloatingPoint32Value] representing the constant specified
   factory FloatingPoint32Value.getFloatingPointConstant(
           FloatingPointConstants constantFloatingPoint) =>
-      FloatingPoint32Value.ofLogicValue(
+      FloatingPoint32Value.fill(FloatingPointValue.logicFill(
           FloatingPointValue.getFloatingPointConstant(
                   constantFloatingPoint, exponentWidth, mantissaWidth)
-              .value);
+              .value));
 
   /// [FloatingPoint32Value] constructor from string representation of
   /// individual bitfields
@@ -71,14 +65,8 @@ class FloatingPoint32Value extends FloatingPointValue {
       : super.ofInts(
             exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
 
-  /// Generate a random [FloatingPoint32Value], supplying random seed [rv].
-  factory FloatingPoint32Value.random(Random rv, {bool normal = false}) {
-    final randFloat = FloatingPointValue.random(rv,
-        exponentWidth: exponentWidth,
-        mantissaWidth: mantissaWidth,
-        normal: normal);
-    return FloatingPoint32Value.ofLogicValue(randFloat.value);
-  }
+  @override
+  String coolName() => '32FPV';
 
   /// Numeric conversion of a [FloatingPoint32Value] from a host double
   factory FloatingPoint32Value.ofDouble(double inDouble) {
@@ -88,23 +76,9 @@ class FloatingPoint32Value extends FloatingPointValue {
         .map((b) => LogicValue.ofInt(b, 32))
         .reduce((accum, v) => (accum << 8) | v);
 
-    return FloatingPoint32Value(
+    return FloatingPoint32Value(FloatingPointValue.splitLogicFill(
         sign: accum[-1],
         exponent: accum.slice(exponentWidth + mantissaWidth - 1, mantissaWidth),
-        mantissa: accum.slice(mantissaWidth - 1, 0));
+        mantissa: accum.slice(mantissaWidth - 1, 0)));
   }
-
-  /// Convert a floating point number into a [FloatingPoint32Value]
-  /// representation. This form performs NO ROUNDING.
-  factory FloatingPoint32Value.ofDoubleUnrounded(double inDouble) {
-    final fpv = FloatingPointValue.ofDoubleUnrounded(inDouble,
-        exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
-
-    return FloatingPoint32Value.ofLogicValue(fpv.value);
-  }
-
-  /// Construct a [FloatingPoint32Value] from a Logic word
-  factory FloatingPoint32Value.ofLogicValue(LogicValue val) =>
-      FloatingPointValue.buildOfLogicValue(
-          FloatingPoint32Value.new, exponentWidth, mantissaWidth, val);
 }

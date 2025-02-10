@@ -208,8 +208,8 @@ void main() {
     final fp32 = FloatingPoint32();
     final bf16 = FloatingPointBF16();
 
-    final one = FloatingPoint32Value.getFloatingPointConstant(
-        FloatingPointConstants.one);
+    final one = FloatingPoint32Value.fill(
+        FloatingPointValue.fillConstant(FloatingPointConstants.one));
 
     fp32.put(one);
     FloatingPointConverter(fp32, bf16);

@@ -9,8 +9,6 @@
 //  Max Korbel <max.korbel@intel.com>
 //  Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com>
 
-import 'package:meta/meta.dart';
-import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
 /// A representation of a TF32 floating-point value.
@@ -21,25 +19,21 @@ class FloatingPointTF32Value extends FloatingPointValue {
   /// The mantissa width
   static const int mantissaWidth = 10;
 
-  @override
-  @protected
-  int get constrainedExponentWidth => exponentWidth;
-
-  @override
-  @protected
-  int get constrainedMantissaWidth => mantissaWidth;
-
   /// Constructor for a single precision floating point value
-  FloatingPointTF32Value(
-      {required super.sign, required super.exponent, required super.mantissa});
+  FloatingPointTF32Value(FillFPV fill)
+      : super(fill, exponentWidth, mantissaWidth);
+
+  /// A fillfull factory
+  factory FloatingPointTF32Value.fill(FillFPV filler) =>
+      FloatingPointTF32Value(filler);
 
   /// Return the [FloatingPointTF32Value] representing the constant specified
-  factory FloatingPointTF32Value.getFloatingPointConstant(
-          FloatingPointConstants constantFloatingPoint) =>
-      FloatingPointTF32Value.ofLogicValue(
-          FloatingPointValue.getFloatingPointConstant(
-                  constantFloatingPoint, exponentWidth, mantissaWidth)
-              .value);
+  // factory FloatingPointTF32Value.getFloatingPointConstant(
+  //         FloatingPointConstants constantFloatingPoint) =>
+  //     FloatingPointTF32Value.ofLogicValue(
+  //         FloatingPointValue.getFloatingPointConstant(
+  //                 constantFloatingPoint, exponentWidth, mantissaWidth)
+  //             .value);
 
   /// [FloatingPointTF32Value] constructor from string representation of
   /// individual bitfields
@@ -70,14 +64,14 @@ class FloatingPointTF32Value extends FloatingPointValue {
             exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
 
   /// Numeric conversion of a [FloatingPointTF32Value] from a host double
-  factory FloatingPointTF32Value.ofDouble(double inDouble) {
-    final fpv = FloatingPointValue.ofDouble(inDouble,
-        exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
-    return FloatingPointTF32Value.ofLogicValue(fpv.value);
-  }
+  // factory FloatingPointTF32Value.ofDouble(double inDouble) {
+  //   final fpv = FloatingPointValue.ofDouble(inDouble,
+  //       exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+  //   return FloatingPointTF32Value.ofLogicValue(fpv.value);
+  // }
 
   /// Construct a [FloatingPointTF32Value] from a Logic word
-  factory FloatingPointTF32Value.ofLogicValue(LogicValue val) =>
-      FloatingPointValue.buildOfLogicValue(
-          FloatingPointTF32Value.new, exponentWidth, mantissaWidth, val);
+  // factory FloatingPointTF32Value.ofLogicValue(LogicValue val) =>
+  //     FloatingPointValue.buildOfLogicValue(
+  //         FloatingPointTF32Value.new, exponentWidth, mantissaWidth, val);
 }

@@ -10,8 +10,6 @@
 //  Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com>
 
 import 'dart:math';
-import 'package:meta/meta.dart';
-import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
 /// The E4M3 representation of a 8-bit floating point value as defined in
@@ -22,14 +20,6 @@ class FloatingPoint8E4M3Value extends FloatingPointValue {
 
   /// The mantissa width
   static const int mantissaWidth = 3;
-
-  @override
-  @protected
-  int get constrainedExponentWidth => exponentWidth;
-
-  @override
-  @protected
-  int get constrainedMantissaWidth => mantissaWidth;
 
   /// The maximum value representable by the E4M3 format
   static double get maxValue =>
@@ -43,8 +33,12 @@ class FloatingPoint8E4M3Value extends FloatingPointValue {
       .toDouble();
 
   /// Constructor for a double precision floating point value
-  FloatingPoint8E4M3Value(
-      {required super.sign, required super.exponent, required super.mantissa});
+  FloatingPoint8E4M3Value(FillFPV fill)
+      : super(fill, exponentWidth, mantissaWidth);
+
+  /// A fillfull factory
+  factory FloatingPoint8E4M3Value.fill(FillFPV filler) =>
+      FloatingPoint8E4M3Value(filler);
 
   /// [FloatingPoint8E4M3Value] constructor from string representation of
   /// individual bitfields
@@ -99,14 +93,14 @@ class FloatingPoint8E4M3Value extends FloatingPointValue {
     }
     final fpv = FloatingPointValue.ofDouble(inDouble,
         exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
-    return FloatingPoint8E4M3Value(
-        sign: fpv.sign, exponent: fpv.exponent, mantissa: fpv.mantissa);
+    return FloatingPoint8E4M3Value(FloatingPointValue.splitLogicFill(
+        sign: fpv.sign, exponent: fpv.exponent, mantissa: fpv.mantissa));
   }
 
   /// Construct a [FloatingPoint8E4M3Value] from a Logic word
-  factory FloatingPoint8E4M3Value.ofLogicValue(LogicValue val) =>
-      FloatingPointValue.buildOfLogicValue(
-          FloatingPoint8E4M3Value.new, exponentWidth, mantissaWidth, val);
+  // factory FloatingPoint8E4M3Value.ofLogicValue(LogicValue val) =>
+  //     FloatingPointValue.buildOfLogicValue(
+  //         FloatingPoint8E4M3Value.new, exponentWidth, mantissaWidth, val);
 
   /// Return the [FloatingPointValue] representing the constant specified.
   /// Special case for 8E4M3 type.
@@ -140,14 +134,6 @@ class FloatingPoint8E5M2Value extends FloatingPointValue {
   /// The mantissa width
   static const int mantissaWidth = 2;
 
-  @override
-  @protected
-  int get constrainedExponentWidth => exponentWidth;
-
-  @override
-  @protected
-  int get constrainedMantissaWidth => mantissaWidth;
-
   /// The maximum value representable by the E5M2 format
   static double get maxValue => 57344.toDouble();
 
@@ -155,8 +141,12 @@ class FloatingPoint8E5M2Value extends FloatingPointValue {
   static double get minValue => pow(2, -16).toDouble();
 
   /// Constructor for a double precision floating point value
-  FloatingPoint8E5M2Value(
-      {required super.sign, required super.exponent, required super.mantissa});
+  FloatingPoint8E5M2Value(FillFPV fill)
+      : super(fill, exponentWidth, mantissaWidth);
+
+  /// A fillfull factory
+  factory FloatingPoint8E5M2Value.fill(FillFPV filler) =>
+      FloatingPoint8E5M2Value(filler);
 
   /// [FloatingPoint8E5M2Value] constructor from string representation of
   /// individual bitfields
@@ -195,12 +185,12 @@ class FloatingPoint8E5M2Value extends FloatingPointValue {
     }
     final fpv = FloatingPointValue.ofDouble(inDouble,
         exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
-    return FloatingPoint8E5M2Value(
-        sign: fpv.sign, exponent: fpv.exponent, mantissa: fpv.mantissa);
+    return FloatingPoint8E5M2Value(FloatingPointValue.splitLogicFill(
+        sign: fpv.sign, exponent: fpv.exponent, mantissa: fpv.mantissa));
   }
 
   /// Construct a [FloatingPoint8E5M2Value] from a Logic word
-  factory FloatingPoint8E5M2Value.ofLogicValue(LogicValue val) =>
-      FloatingPointValue.buildOfLogicValue(
-          FloatingPoint8E5M2Value.new, exponentWidth, mantissaWidth, val);
+  // factory FloatingPoint8E5M2Value.ofLogicValue(LogicValue val) =>
+  //     FloatingPointValue.buildOfLogicValue(
+  //         FloatingPoint8E5M2Value.new, exponentWidth, mantissaWidth, val);
 }

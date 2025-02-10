@@ -23,16 +23,20 @@ class FloatingPoint64Value extends FloatingPointValue {
   static const int mantissaWidth = 52;
 
   /// Constructor for a double precision floating point value
-  FloatingPoint64Value(
-      {required super.sign, required super.mantissa, required super.exponent});
+  FloatingPoint64Value(FillFPV fill)
+      : super(fill, exponentWidth, mantissaWidth);
+
+  /// A fillfull factory
+  factory FloatingPoint64Value.fill(FillFPV filler) =>
+      FloatingPoint64Value(filler);
 
   /// Return the [FloatingPoint64Value] representing the constant specified
-  factory FloatingPoint64Value.getFloatingPointConstant(
-          FloatingPointConstants constantFloatingPoint) =>
-      FloatingPoint64Value.ofLogicValue(
-          FloatingPointValue.getFloatingPointConstant(
-                  constantFloatingPoint, exponentWidth, mantissaWidth)
-              .value);
+  // factory FloatingPoint64Value.getFloatingPointConstant(
+  //         FloatingPointConstants constantFloatingPoint) =>
+  //     FloatingPoint64Value.ofLogicValue(
+  //         FloatingPointValue.getFloatingPointConstant(
+  //                 constantFloatingPoint, exponentWidth, mantissaWidth)
+  //             .value);
 
   /// [FloatingPoint64Value] constructor from string representation of
   /// individual bitfields
@@ -70,14 +74,14 @@ class FloatingPoint64Value extends FloatingPointValue {
         .map((b) => LogicValue.ofInt(b, 64))
         .reduce((accum, v) => (accum << 8) | v);
 
-    return FloatingPoint64Value(
+    return FloatingPoint64Value(FloatingPointValue.splitLogicFill(
         sign: accum[-1],
         exponent: accum.slice(exponentWidth + mantissaWidth - 1, mantissaWidth),
-        mantissa: accum.slice(mantissaWidth - 1, 0));
+        mantissa: accum.slice(mantissaWidth - 1, 0)));
   }
 
   /// Construct a [FloatingPoint32Value] from a Logic word
-  factory FloatingPoint64Value.ofLogicValue(LogicValue val) =>
-      FloatingPointValue.buildOfLogicValue(
-          FloatingPoint64Value.new, exponentWidth, mantissaWidth, val);
+  // factory FloatingPoint64Value.ofLogicValue(LogicValue val) =>
+  //     FloatingPointValue.buildOfLogicValue(
+  //         FloatingPoint64Value.new, exponentWidth, mantissaWidth, val);
 }

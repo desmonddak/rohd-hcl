@@ -74,6 +74,18 @@ enum FloatingPointRoundingMode {
   roundTowardsNegativeInfinity
 }
 
+/// Filler function
+typedef FillFPV = (LogicValue sign, LogicValue exponent, LogicValue mantissa)
+    Function(FloatingPointValue fpv, int exponentWidth, int mantissaWidth);
+
+/// Filler function
+typedef FillFPVOnly = (
+  LogicValue sign,
+  LogicValue exponent,
+  LogicValue mantissa
+)
+    Function(FloatingPointValue fpv);
+
 /// A flexible representation of floating point values.
 /// A [FloatingPointValue] hasa mantissa in [0,2) with
 /// 0 <= exponent <= maxExponent();  A normal [isNormal] [FloatingPointValue]
@@ -83,17 +95,17 @@ enum FloatingPointRoundingMode {
 @immutable
 class FloatingPointValue implements Comparable<FloatingPointValue> {
   /// The full floating point value bit storage
-  final LogicValue value;
+  late final LogicValue value;
 
   /// The sign of the value:  1 means a negative value
-  final LogicValue sign;
+  late final LogicValue sign;
 
   /// The exponent of the floating point: this is biased about a midpoint for
   /// positive and negative exponents
-  final LogicValue exponent;
+  late final LogicValue exponent;
 
   /// The mantissa of the floating point
-  final LogicValue mantissa;
+  late final LogicValue mantissa;
 
   /// Return the exponent value representing the true zero exponent 2^0 = 1
   ///   often termed [computeBias] or the offset of the exponent
@@ -117,111 +129,146 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
   /// Return the minimum exponent of this [FloatingPointValue].
   int get minExponent => _minExp;
 
-  final int _bias;
-  final int _maxExp;
-  final int _minExp;
+  late final int _bias;
+  late final int _maxExp;
+  late final int _minExp;
 
-  /// A mapping from a `({exponentWidth, mantissaWidth})` record to a
-  /// constructor for a specific FloatingPointValue subtype. This map is used by
-  /// the [FloatingPointValue.withMappedSubtype] constructor to select the
-  /// appropriate constructor for a given set of widths.
-  ///
   /// By default, this is populated with available subtypes from ROHD-HCL, but
   /// it can be overridden or extended based on the user's needs.
-  static Map<
-      ({int exponentWidth, int mantissaWidth}),
-      FloatingPointValue Function(
+  /// Basic filling function
+
+  /// Fill FPV with split LogicValues [sign], [exponent], and [mantissa].
+  static FillFPV splitLogicFill(
           {required LogicValue sign,
           required LogicValue exponent,
-          required LogicValue mantissa})> subtypeConstructorMap = {
-    (
-      exponentWidth: FloatingPoint32Value.exponentWidth,
-      mantissaWidth: FloatingPoint32Value.mantissaWidth
-    ): FloatingPoint32Value.new,
-    (
-      exponentWidth: FloatingPoint64Value.exponentWidth,
-      mantissaWidth: FloatingPoint64Value.mantissaWidth
-    ): FloatingPoint64Value.new,
-    (exponentWidth: 4, mantissaWidth: 3): FloatingPoint8E4M3Value.new,
-    (exponentWidth: 5, mantissaWidth: 2): FloatingPoint8E5M2Value.new,
-    (exponentWidth: 5, mantissaWidth: 10): FloatingPoint16Value.new,
-    (exponentWidth: 8, mantissaWidth: 7): FloatingPointBF16Value.new,
-    (exponentWidth: 8, mantissaWidth: 10): FloatingPointTF32Value.new,
-  };
+          required LogicValue mantissa}) =>
+      (fpv, exponentWidth, mantissaWidth) => (sign, exponent, mantissa);
+
+  /// Fill FPV with split LogicValues [sign], [exponent], and [mantissa].
+  /// This version does not require widths to be passed.
+  static FillFPVOnly splitLogicFillOnly(
+          {required LogicValue sign,
+          required LogicValue exponent,
+          required LogicValue mantissa}) =>
+      (fpv) => (sign, exponent, mantissa);
+
+  /// Fill FPV with a full LogicValue
+  static FillFPV logicFill(LogicValue fullFPLogicValue) =>
+      (fpv, exponentWidth, mantissaWidth) => (
+            fullFPLogicValue[-1],
+            fullFPLogicValue.slice(-2, -exponentWidth - 1),
+            fullFPLogicValue.slice(mantissaWidth - 1, 0)
+          );
+
+  /// Use this for testing that we really are accessing the subclass methods
+  String coolName() => 'baseFPV';
 
   /// Constructor for a [FloatingPointValue] with a sign, exponent, and
   /// mantissa.
   @protected
-  FloatingPointValue(
-      {required this.sign, required this.exponent, required this.mantissa})
-      : value = [sign, exponent, mantissa].swizzle(),
-        _bias = computeBias(exponent.width),
-        _minExp = computeMinExponent(exponent.width),
-        _maxExp = computeMaxExponent(exponent.width) {
+  FloatingPointValue(FillFPV fill, int exponentWidth, int mantissaWidth)
+      : _bias = computeBias(exponentWidth),
+        _minExp = computeMinExponent(exponentWidth),
+        _maxExp = computeMaxExponent(exponentWidth) {
+    final (a, b, c) = fill(this, exponentWidth, mantissaWidth);
+    sign = a;
     if (sign.width != 1) {
       throw RohdHclException('FloatingPointValue: sign width must be 1');
     }
-    if (constrainedMantissaWidth != null &&
-        mantissa.width != constrainedMantissaWidth) {
-      throw RohdHclException('FloatingPointValue: mantissa width must be '
-          '$constrainedMantissaWidth');
-    }
-    if (constrainedExponentWidth != null &&
-        exponent.width != constrainedExponentWidth) {
-      throw RohdHclException('FloatingPointValue: exponent width must be '
-          '$constrainedExponentWidth');
-    }
+    exponent = b;
+    mantissa = c;
+    value = [sign, exponent, mantissa].swizzle();
   }
 
-  /// Constructs a [FloatingPointValue] with a sign, exponent, and mantissa
-  /// using one of the builders provided from [subtypeConstructorMap] if
-  /// available, otherwise using the default constructor.
-  factory FloatingPointValue.withMappedSubtype(
-      {required LogicValue sign,
-      required LogicValue exponent,
-      required LogicValue mantissa}) {
-    final key = (exponentWidth: exponent.width, mantissaWidth: mantissa.width);
+  /// Constructor that uses [fill] only to construct [FloatingPointValue] and
+  /// populate its [sign], [exponent], and [mantissa].
+  FloatingPointValue._fillOnly(FillFPVOnly fill) {
+    final (sign, exponent, mantissa) = fill(this);
+    _bias = computeBias(exponent.width);
+    _minExp = computeMinExponent(exponent.width);
+    _maxExp = computeMaxExponent(exponent.width);
 
-    if (subtypeConstructorMap.containsKey(key)) {
-      return subtypeConstructorMap[key]!(
-          sign: sign, exponent: exponent, mantissa: mantissa);
+    this.sign = sign;
+    if (sign.width != 1) {
+      throw RohdHclException('FloatingPointValue: sign width must be 1');
     }
-
-    return FloatingPointValue(
-        sign: sign, exponent: exponent, mantissa: mantissa);
+    this.exponent = exponent;
+    this.mantissa = mantissa;
+    value = [sign, exponent, mantissa].swizzle();
   }
 
-  /// Converts this [FloatingPointValue] to a [FloatingPointValue] with the same
-  /// sign, exponent, and mantissa using the constructor provided in
-  /// [subtypeConstructorMap] if available, otherwise using the default
-  /// constructor.
-  FloatingPointValue toMappedSubtype() => FloatingPointValue.withMappedSubtype(
-      sign: sign, exponent: exponent, mantissa: mantissa);
+  /// Fill factory that constructs [FloatingPointValue] and calls a given
+  /// [filler] to populate its [sign], [exponent], and [mantissa].
+  factory FloatingPointValue.fill(
+          FillFPV filler, int exponentWidth, int mantissaWidth) =>
+      FloatingPointValue(filler, exponentWidth, mantissaWidth);
 
-  /// [constrainedMantissaWidth] is the hard-coded mantissa width of the
-  /// sub-class of this floating-point value
-  @protected
-  int? get constrainedMantissaWidth => null;
+  /// Fill factory that constructs [FloatingPointValue] and calls a given
+  /// [filler] to populate its [sign], [exponent], and [mantissa].
+  factory FloatingPointValue.fillOnly(FillFPVOnly filler) =>
+      FloatingPointValue._fillOnly(filler);
 
-  /// [constrainedExponentWidth] is the hard-coded exponent width of the
-  /// sub-class of this floating-point value
-  @protected
-  int? get constrainedExponentWidth => null;
+  /// Construct a FloatingPointValue with a LogicValue
+  factory FloatingPointValue.ofLogicValue(
+          int exponentWidth, int mantissaWidth, LogicValue val) =>
+      FloatingPointValue.fill(
+          FloatingPointValue.logicFill(val), exponentWidth, mantissaWidth);
+
+  /// [FloatingPointValue] fill routine from a binary string representation of
+  /// individual bitfields
+  static FillFPV fillBinaryStrings(
+          String sign, String exponent, String mantissa) =>
+      (fpv, exponentWidth, mantissaWidth) => (
+            LogicValue.of(sign),
+            LogicValue.of(exponent),
+            LogicValue.of(mantissa)
+          );
+
+  /// [FloatingPointValue] fill routine from a binary string representation of
+  /// individual bitfields
+  static FillFPVOnly fillOnlyBinaryStrings(
+          String sign, String exponent, String mantissa) =>
+      (fpv) => (
+            LogicValue.of(sign),
+            LogicValue.of(exponent),
+            LogicValue.of(mantissa)
+          );
 
   /// [FloatingPointValue] constructor from a binary string representation of
   /// individual bitfields
   FloatingPointValue.ofBinaryStrings(
       String sign, String exponent, String mantissa)
       : this(
-            sign: LogicValue.of(sign),
-            exponent: LogicValue.of(exponent),
-            mantissa: LogicValue.of(mantissa));
+            splitLogicFill(
+                sign: LogicValue.of(sign),
+                exponent: LogicValue.of(exponent),
+                mantissa: LogicValue.of(mantissa)),
+            exponent.length,
+            mantissa.length);
+
+  /// [FloatingPointValue] fill routine from a single binary string representing
+  /// space-separated bitfields
+  static FillFPV fillSpacedBinaryString(String fp) =>
+      fillBinaryStrings(fp.split(' ')[0], fp.split(' ')[1], fp.split(' ')[2]);
 
   /// [FloatingPointValue] constructor from a single binary string representing
   /// space-separated bitfields
   FloatingPointValue.ofSpacedBinaryString(String fp)
       : this.ofBinaryStrings(
             fp.split(' ')[0], fp.split(' ')[1], fp.split(' ')[2]);
+
+  /// [FloatingPointValue] fill routine from a radix-encoded string
+  /// representation and the size of the exponent and mantissa
+  static FillFPV fillString(String fp, {int radix = 2}) {
+    (LogicValue sign, LogicValue exponent, LogicValue mantissa) myFunction(
+        FloatingPointValue fpv, int exponentWidth, int mantissaWidth) {
+      final (sign: s, exponent: e, mantissa: m) =
+          _extractBinaryStrings(fp, exponentWidth, mantissaWidth, radix);
+      return (LogicValue.of(s), LogicValue.of(e), LogicValue.of(m));
+    }
+
+    return myFunction;
+  }
 
   /// [FloatingPointValue] constructor from a radix-encoded string
   /// representation and the size of the exponent and mantissa
@@ -253,54 +300,80 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
 
   // TODO(desmonddak): toRadixString() would be useful, not limited to binary
 
+  /// [FloatingPointValue] fill routine from a set of [BigInt]s of the binary
+  /// representation and the size of the exponent and mantissa
+  static FillFPV fillBigInts(BigInt exponent, BigInt mantissa,
+          {int exponentWidth = 0, int mantissaWidth = 0, bool sign = false}) =>
+      splitLogicFill(
+          sign: LogicValue.ofBigInt(sign ? BigInt.one : BigInt.zero, 1),
+          exponent: LogicValue.ofBigInt(exponent, exponentWidth),
+          mantissa: LogicValue.ofBigInt(mantissa, mantissaWidth));
+
   /// [FloatingPointValue] constructor from a set of [BigInt]s of the binary
   /// representation and the size of the exponent and mantissa
   FloatingPointValue.ofBigInts(BigInt exponent, BigInt mantissa,
       {int exponentWidth = 0, int mantissaWidth = 0, bool sign = false})
       : this(
-            sign: LogicValue.ofBigInt(sign ? BigInt.one : BigInt.zero, 1),
-            exponent: LogicValue.ofBigInt(exponent, exponentWidth),
-            mantissa: LogicValue.ofBigInt(mantissa, mantissaWidth));
+            splitLogicFill(
+                sign: LogicValue.ofBigInt(sign ? BigInt.one : BigInt.zero, 1),
+                exponent: LogicValue.ofBigInt(exponent, exponentWidth),
+                mantissa: LogicValue.ofBigInt(mantissa, mantissaWidth)),
+            exponentWidth,
+            mantissaWidth);
+
+  /// [FloatingPointValue] fill routine from a set of [int]s of the binary
+  /// representation and the size of the exponent and mantissa
+  static FillFPV fillInts(int exponent, int mantissa,
+          {int exponentWidth = 0, int mantissaWidth = 0, bool sign = false}) =>
+      splitLogicFill(
+          sign: LogicValue.ofBigInt(sign ? BigInt.one : BigInt.zero, 1),
+          exponent: LogicValue.ofBigInt(BigInt.from(exponent), exponentWidth),
+          mantissa: LogicValue.ofBigInt(BigInt.from(mantissa), mantissaWidth));
 
   /// [FloatingPointValue] constructor from a set of [int]s of the binary
   /// representation and the size of the exponent and mantissa
   FloatingPointValue.ofInts(int exponent, int mantissa,
       {int exponentWidth = 0, int mantissaWidth = 0, bool sign = false})
       : this(
-            sign: LogicValue.ofBigInt(sign ? BigInt.one : BigInt.zero, 1),
-            exponent: LogicValue.ofBigInt(BigInt.from(exponent), exponentWidth),
-            mantissa:
-                LogicValue.ofBigInt(BigInt.from(mantissa), mantissaWidth));
+            splitLogicFill(
+                sign: LogicValue.ofBigInt(sign ? BigInt.one : BigInt.zero, 1),
+                exponent:
+                    LogicValue.ofBigInt(BigInt.from(exponent), exponentWidth),
+                mantissa:
+                    LogicValue.ofBigInt(BigInt.from(mantissa), mantissaWidth)),
+            exponentWidth,
+            mantissaWidth);
 
   /// Construct a [FloatingPointValue] from a [LogicValue]
-  factory FloatingPointValue.ofLogicValue(
-          int exponentWidth, int mantissaWidth, LogicValue val) =>
-      buildOfLogicValue(
-          FloatingPointValue.new, exponentWidth, mantissaWidth, val);
+  // factory FloatingPointValue.ofLogicValue(
+  //         int exponentWidth, int mantissaWidth, LogicValue val) =>
+  //     buildOfLogicValue(
+  //         FloatingPointValue.new, exponentWidth, mantissaWidth, val);
 
-  /// A helper function for [FloatingPointValue.ofLogicValue] and base classes
-  /// which performs some width checks and slicing.
-  @protected
-  static T buildOfLogicValue<T extends FloatingPointValue>(
-    T Function(
-            {required LogicValue sign,
-            required LogicValue exponent,
-            required LogicValue mantissa})
-        constructor,
-    int exponentWidth,
-    int mantissaWidth,
-    LogicValue val,
-  ) {
-    final expectedWidth = 1 + exponentWidth + mantissaWidth;
-    if (val.width != expectedWidth) {
-      throw RohdHclException('Width of $val must be $expectedWidth');
-    }
+  // /// A helper function for [FloatingPointValue.ofLogicValue] and base classes
+  // /// which performs some width checks and slicing.
+  // @protected
+  // static T buildOfLogicValue<T extends FloatingPointValue>(
+  //   T Function(FillFullerFPV fn, int exponentWidth, int mantissaWidth)
+  //       constructor,
+  //   int exponentWidth,
+  //   int mantissaWidth,
+  //   LogicValue val,
+  // ) {
+  //   final expectedWidth = 1 + exponentWidth + mantissaWidth;
+  //   if (val.width != expectedWidth) {
+  //     throw RohdHclException('Width of $val must be $expectedWidth');
+  //   }
 
-    return constructor(
-        sign: val[-1],
-        exponent: val.slice(exponentWidth + mantissaWidth - 1, mantissaWidth),
-        mantissa: val.slice(mantissaWidth - 1, 0));
-  }
+  //   return constructor(
+  //       splitLogicFill(
+  //           sign: val[-1],
+  //           exponent:
+  //               val.slice(exponentWidth + mantissaWidth - 1, mantissaWidth),
+  //           mantissa: val.slice(mantissaWidth - 1, 0)),
+  //       exponentWidth,
+  //       mantissaWidth);
+  // }
 
   /// Abbreviation Functions for common constants
 
@@ -327,6 +400,17 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
   /// Return the Negative Infinity value for this FloatingPointValue size.
   FloatingPointValue get zero => FloatingPointValue.getFloatingPointConstant(
       FloatingPointConstants.positiveZero, exponent.width, mantissa.width);
+
+  /// Fill the [FloatingPointValue] with the constant specified.
+  static FillFPV fillConstant(FloatingPointConstants constantFloatingPoint) =>
+      (fpv, exponentWidth, mantissaWidth) => unwrapFPV(
+          FloatingPointValue.getFloatingPointConstant(
+              constantFloatingPoint, exponentWidth, mantissaWidth));
+
+  /// Break a [FloatingPointValue] into [sign], [exponent], [mantissa].
+  static (LogicValue, LogicValue, LogicValue) unwrapFPV(
+          FloatingPointValue fpv) =>
+      (fpv.sign, fpv.exponent, fpv.mantissa);
 
   /// Return the [FloatingPointValue] representing the constant specified
   factory FloatingPointValue.getFloatingPointConstant(
@@ -403,7 +487,13 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
 // with LSB+Guard, but can't fit the round and sticky bits.
 // The algorithm needs to extend with zeros and handle.
 
-  /// Convert from double using its native binary representation
+  /// Fill from double.
+  static FillFPV fillDouble(double inDouble) =>
+      (fpv, exponentWidth, mantissaWidth) => unwrapFPV(
+          FloatingPointValue.ofDouble(inDouble,
+              exponentWidth: exponentWidth, mantissaWidth: mantissaWidth));
+
+  /// Convert from double.
   factory FloatingPointValue.ofDouble(double inDouble,
       {required int exponentWidth,
       required int mantissaWidth,
@@ -493,8 +583,22 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
         LogicValue.ofBigInt(BigInt.from(max(expVal, 0)), exponentWidth);
 
     return FloatingPointValue(
-        sign: fp64.sign, exponent: exponent, mantissa: mantissa);
+        splitLogicFill(sign: fp64.sign, exponent: exponent, mantissa: mantissa),
+        exponent.width,
+        mantissa.width);
   }
+
+  /// Generate random fill value for [FloatingPointValue],
+  /// supplying random seed [rv].
+  /// This generates a valid [FloatingPointValue] anywhere in the range
+  /// it can represent:a general [FloatingPointValue] has
+  /// a mantissa in [0,2) with 0 <= exponent <= maxExponent();
+  /// If [normal] is true, This routine will only generate mantissas in the
+  /// range of [1,2) and minExponent() <= exponent <= maxExponent().
+  static FillFPV fillRandom(Random rv, {bool normal = false}) =>
+      (fpv, exponentWidth, mantissaWidth) => unwrapFPV(
+          FloatingPointValue.random(rv,
+              exponentWidth: exponentWidth, mantissaWidth: mantissaWidth));
 
   /// Generate a random [FloatingPointValue], supplying random seed [rv].
   /// This generates a valid [FloatingPointValue] anywhere in the range
@@ -517,10 +621,20 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
     } while ((e == BigInt.zero) & normal);
     final m = rv.nextLogicValue(width: mantissaWidth).toBigInt();
     return FloatingPointValue(
-        sign: LogicValue.ofInt(s, 1),
-        exponent: LogicValue.ofBigInt(e, exponentWidth),
-        mantissa: LogicValue.ofBigInt(m, mantissaWidth));
+        splitLogicFill(
+            sign: LogicValue.ofInt(s, 1),
+            exponent: LogicValue.ofBigInt(e, exponentWidth),
+            mantissa: LogicValue.ofBigInt(m, mantissaWidth)),
+        exponentWidth,
+        mantissaWidth);
   }
+
+  /// Fill a floating point number into a [FloatingPointValue]
+  /// representation. This form performs NO ROUNDING.
+  static FillFPV fillDoubleUnrounded(double inDouble) =>
+      (fpv, exponentWidth, mantissaWidth) => unwrapFPV(
+          FloatingPointValue.ofDoubleUnrounded(inDouble,
+              exponentWidth: exponentWidth, mantissaWidth: mantissaWidth));
 
   /// Convert a floating point number into a [FloatingPointValue]
   /// representation. This form performs NO ROUNDING.
@@ -621,7 +735,9 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
             .reversed;
 
     return FloatingPointValue(
-        exponent: exponent, mantissa: mantissa, sign: sign);
+        splitLogicFill(exponent: exponent, mantissa: mantissa, sign: sign),
+        exponent.width,
+        mantissa.width);
   }
 
   @override
@@ -849,13 +965,19 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
 
   /// Negate operation for [FloatingPointValue]
   FloatingPointValue negate() => FloatingPointValue(
-      sign: sign.isZero ? LogicValue.one : LogicValue.zero,
-      exponent: exponent,
-      mantissa: mantissa);
+      splitLogicFill(
+          sign: sign.isZero ? LogicValue.one : LogicValue.zero,
+          exponent: exponent,
+          mantissa: mantissa),
+      exponent.width,
+      mantissa.width);
 
   /// Absolute value operation for [FloatingPointValue]
   FloatingPointValue abs() => FloatingPointValue(
-      sign: LogicValue.zero, exponent: exponent, mantissa: mantissa);
+      splitLogicFill(
+          sign: LogicValue.zero, exponent: exponent, mantissa: mantissa),
+      exponent.width,
+      mantissa.width);
 
   /// Return true if the other [FloatingPointValue] is within a rounding
   /// error of this value.

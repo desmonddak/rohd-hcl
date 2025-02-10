@@ -20,9 +20,12 @@ void main() {
     const mantissaWidth = 4;
 
     final fv = FloatingPointValue(
-        sign: LogicValue.zero,
-        exponent: LogicValue.filled(exponentWidth, LogicValue.one),
-        mantissa: LogicValue.filled(exponentWidth, LogicValue.zero));
+        FloatingPointValue.splitLogicFill(
+            sign: LogicValue.zero,
+            exponent: LogicValue.filled(exponentWidth, LogicValue.one),
+            mantissa: LogicValue.filled(exponentWidth, LogicValue.zero)),
+        exponentWidth,
+        mantissaWidth);
 
     final fp1 = FloatingPoint(
         exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);

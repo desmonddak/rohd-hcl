@@ -61,7 +61,10 @@ class FloatingPoint extends LogicStructure {
 
   /// Return the [FloatingPointValue]
   FloatingPointValue get floatingPointValue => FloatingPointValue(
-      sign: sign.value, exponent: exponent.value, mantissa: mantissa.value);
+      FloatingPointValue.splitLogicFill(
+          sign: sign.value, exponent: exponent.value, mantissa: mantissa.value),
+      exponent.width,
+      mantissa.width);
 
   /// Return a Logic true if this FloatingPoint contains a normal number,
   /// defined as having mantissa in the range [1,2)
