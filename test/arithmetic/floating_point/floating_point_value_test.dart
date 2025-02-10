@@ -22,11 +22,17 @@ void main() {
     const sign = LogicValue.one;
     final exponent = LogicValue.zero.zeroExtend(exponentWidth);
     final mantissa = LogicValue.one.zeroExtend(mantissaWidth);
+    // fillFPV fillers may still need the widths passed to the constructor
     final fpv = FloatingPointValue.fill(
         FloatingPointValue.splitLogicFill(
             sign: sign, exponent: exponent, mantissa: mantissa),
         exponentWidth,
         mantissaWidth);
+    // FillOnly fillers are smart enough not to need the widths passed directly
+    //to the constructor
+    final fpv2 = FloatingPointValue.fillOnly(
+        FloatingPointValue.splitLogicFillOnly(
+            sign: sign, exponent: exponent, mantissa: mantissa));
     final exp32 = LogicValue.ofInt(0, 8);
     final mant32 = LogicValue.ofInt(1, 23);
 
@@ -34,6 +40,7 @@ void main() {
         sign: sign, exponent: exp32, mantissa: mant32));
 
     expect(fpv32 as FloatingPointValue, equals(fpv));
+    expect(fpv32 as FloatingPointValue, equals(fpv2));
 
     expect(
         fpv32,

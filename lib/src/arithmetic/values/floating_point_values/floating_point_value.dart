@@ -135,8 +135,8 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
 
   /// By default, this is populated with available subtypes from ROHD-HCL, but
   /// it can be overridden or extended based on the user's needs.
-  /// Basic filling function
 
+  /// Basic filling function
   /// Fill FPV with split LogicValues [sign], [exponent], and [mantissa].
   static FillFPV splitLogicFill(
           {required LogicValue sign,
@@ -204,7 +204,9 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
       FloatingPointValue(filler, exponentWidth, mantissaWidth);
 
   /// Fill factory that constructs [FloatingPointValue] and calls a given
-  /// [filler] to populate its [sign], [exponent], and [mantissa].
+  /// [filler] to populate its [sign], [exponent], and [mantissa].  This
+  /// type of filler has widths encoded somehow so the constructor
+  /// does not need the widths passed directly.
   factory FloatingPointValue.fillOnly(FillFPVOnly filler) =>
       FloatingPointValue._fillOnly(filler);
 
