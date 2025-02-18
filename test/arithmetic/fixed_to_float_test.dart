@@ -7,6 +7,7 @@
 // 2024 October 24
 // Author: Soner Yaldiz <soner.yaldiz@intel.com>
 
+import 'dart:io';
 import 'dart:math';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
@@ -15,11 +16,12 @@ import 'package:test/test.dart';
 void main() async {
   test('Smoke', () async {
     final fixed = FixedPoint(signed: true, m: 34, n: 33);
-    final dut = FixedToFloat(fixed, exponentWidth: 8, mantissaWidth: 3);
-    await dut.build();
     fixed.put(FixedPointValue.ofDouble(1.25,
         signed: fixed.signed, m: fixed.m, n: fixed.n));
+    final dut = FixedToFloat(fixed, exponentWidth: 10, mantissaWidth: 3);
+    await dut.build();
     final fpv = dut.float.floatingPointValue;
+    File('fixed.sv').writeAsStringSync(dut.generateSynth());
     final fpvExpected = FloatingPointValue.ofDouble(1.25,
         exponentWidth: dut.exponentWidth, mantissaWidth: dut.mantissaWidth);
     expect(fpv.sign, fpvExpected.sign);
@@ -27,6 +29,31 @@ void main() async {
         reason: 'exponent mismatch');
     expect(fpv.mantissa.bitString, fpvExpected.mantissa.bitString,
         reason: 'mantissa mismatch');
+  });
+  test('Smoke otherway', () {
+    final fixed = FixedPoint(signed: true, m: 8, n: 8);
+    const val = 512;
+    final fixedValue = FixedPointValue(
+        value: LogicValue.ofInt(val, fixed.width),
+        signed: true,
+        m: fixed.m,
+        n: fixed.n);
+    fixed.put(fixedValue);
+    final dut = FixedToFloat(fixed, exponentWidth: 8, mantissaWidth: 16);
+    final fpv = dut.float.floatingPointValue;
+    final fpvExpected = FloatingPointValue.ofDouble(fixedValue.toDouble(),
+        exponentWidth: dut.exponentWidth, mantissaWidth: dut.mantissaWidth);
+    final newFixed = FixedPointValue.ofDouble(fpv.toDouble(),
+        signed: true, m: fixed.m, n: fixed.n);
+    expect(newFixed, equals(fixedValue), reason: '''
+          fpvdbl=${fpv.toDouble()} $fpv
+          ${newFixed.toDouble()} $newFixed
+          ${fixedValue.toDouble()} $fixedValue
+          ${fixed.fixedPointValue.toDouble()}  ${fixed.fixedPointValue}
+''');
+    expect(fpv.sign, fpvExpected.sign);
+    expect(fpv.exponent, fpvExpected.exponent, reason: 'exponent');
+    expect(fpv.mantissa, fpvExpected.mantissa, reason: 'mantissa');
   });
 
   test('FixedToFloat: exhaustive', () async {

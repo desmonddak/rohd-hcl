@@ -42,13 +42,18 @@ class FixedToFloat extends Module {
 
     final bias = FloatingPointValue.computeBias(exponentWidth);
     final eMax = pow(2, exponentWidth) - 2;
-    final iWidth =
-        (2 + max(fixed.n, max(log2Ceil(fixed.width), exponentWidth))).toInt();
 
     // Special handling needed for E4M3 as it does not support inf
     if ((exponentWidth == 4) && (mantissaWidth == 3)) {
       UnimplementedError('E4M3 is not supported.');
     }
+    // final iWidth =
+    //     (2 + max(fixed.n, max(log2Ceil(fixed.width), exponentWidth)))
+    // .toInt();
+    // +1 for encoding leading1, 1 past the width, +1 for exponent math
+    final shiftEncodeWidth =
+        (1 + max(log2Ceil(fixed.width + 1), exponentWidth)).toInt();
+    // final shiftEncodeWidth = iWidth;
 
     // Extract sign bit
     if (fixed.signed) {
@@ -60,9 +65,9 @@ class FixedToFloat extends Module {
     final absValue = Logic(name: 'absValue', width: fixed.width)
       ..gets(mux(_float.sign, ~(fixed - 1), fixed));
 
-    final jBit = ParallelPrefixPriorityEncoder(absValue.reversed)
+    final jBit = RecursivePriorityEncoder(absValue.reversed)
         .out
-        .zeroExtend(iWidth)
+        .zeroExtend(shiftEncodeWidth)
         .named('jBit');
 
     // TODO(desmonddak): refactor to use the roundRNE component
@@ -71,12 +76,14 @@ class FixedToFloat extends Module {
     final mantissa = Logic(name: 'mantissa', width: mantissaWidth);
     final guard = Logic(name: 'guardBit');
     final sticky = Logic(name: 'stickBit');
-    final j = Logic(name: 'j', width: iWidth);
+    final j = Logic(name: 'j', width: shiftEncodeWidth);
     final maxShift = fixed.width - fixed.n + bias - 2;
 
     // Limit to minimum exponent
     if (maxShift > 0) {
-      j <= mux(jBit.gt(maxShift), Const(maxShift, width: iWidth), jBit);
+      j <=
+          mux(jBit.gt(maxShift), Const(maxShift, width: shiftEncodeWidth),
+              jBit);
     } else {
       j <= jBit;
     }
@@ -103,9 +110,10 @@ class FixedToFloat extends Module {
     // Calculate biased exponent
     final eRaw = mux(
             absValueShifted[-1],
-            (Const(bias + fixed.width - fixed.n - 1, width: iWidth) - j)
+            (Const(bias + fixed.width - fixed.n - 1, width: shiftEncodeWidth) -
+                    j)
                 .named('eShift'),
-            Const(0, width: iWidth))
+            Const(0, width: shiftEncodeWidth))
         .named('eRaw');
     final eRawRne =
         mux(roundUp & ~mantissaRounded.or(), eRaw + 1, eRaw).named('eRawRNE');

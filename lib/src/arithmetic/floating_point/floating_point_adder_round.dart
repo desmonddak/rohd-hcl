@@ -109,22 +109,31 @@ class FloatingPointAdderRound extends FloatingPointAdder {
     final isNaNFlopped = localFlop(isNaN);
 
     final carryRPath = Logic(name: 'carryRpath');
-    final significandAdderRPath = OnesComplementAdder(
+
+    final carryP1RPath = Logic(name: 'carryP1Rpath');
+
+    final significandAdderRPathN = CarrySelectOnesComplementCompoundAdder(
         largeOperandFlopped, smallerOperandRPathFlopped,
         subtractIn: effectiveSubtractionFlopped,
-        carryOut: carryRPath,
         adderGen: adderGen,
-        name: 'rpath_significand_adder');
+        carryOut: carryRPath,
+        carryOutP1: carryP1RPath,
+        widthGen: CarrySelectCompoundAdder.splitSelectAdderAlgorithmNBit(4),
+        name: 'rpath_signficand_compound_adder');
+
+    final sumRPath = significandAdderRPathN.sum
+        .slice(mantissaWidth + 1, 0)
+        .named('sumRpath');
+    final sumP1RPath = significandAdderRPathN.sumP1
+        .named('sumPlusOneRpath')
+        .slice(mantissaWidth + 1, 0);
 
     final lowBitsRPath = smallerAlignRPathFlopped
         .slice(extendWidthRPath - 1, 0)
         .named('lowbitsRpath');
 
-    final lowAdderRPathSum = OnesComplementAdder(
-            carryRPath.zeroExtend(extendWidthRPath),
-            mux(effectiveSubtractionFlopped, ~lowBitsRPath, lowBitsRPath),
-            adderGen: adderGen,
-            name: 'rpath_lowadder')
+    final lowAdderRPathSum = adderGen(carryRPath.zeroExtend(extendWidthRPath),
+            mux(effectiveSubtractionFlopped, ~lowBitsRPath, lowBitsRPath))
         .sum
         .named('lowAdderSumRpath');
 
@@ -141,13 +150,6 @@ class FloatingPointAdderRound extends FloatingPointAdder {
       preStickyRPath
     ].swizzle().named('earlyGRSRpath');
 
-    final sumRPath =
-        significandAdderRPath.sum.slice(mantissaWidth + 1, 0).named('sumRpath');
-    // TODO(desmonddak): we should use a compound adder here
-    final sumP1RPath = (significandAdderRPath.sum + 1)
-        .named('sumPlusOneRpath')
-        .slice(mantissaWidth + 1, 0);
-
     final sumLeadZeroRPath =
         (~sumRPath[-1] & (aIsNormalFlopped | bIsNormalFlopped))
             .named('sumlead0Rpath');
@@ -158,6 +160,7 @@ class FloatingPointAdderRound extends FloatingPointAdder {
     final selectRPath = lowAdderRPathSum[-1].named('selectRpath');
     final shiftGRSRPath =
         [earlyGRSRPath[2], stickyBitRPath].swizzle().named('shiftGRSRpath');
+
     final mergedSumRPath = mux(
             sumLeadZeroRPath,
             [sumRPath, earlyGRSRPath]
@@ -166,6 +169,9 @@ class FloatingPointAdderRound extends FloatingPointAdder {
                 .slice(sumRPath.width + 1, 0),
             [sumRPath, shiftGRSRPath].swizzle())
         .named('mergedSumRpath');
+
+    // TODO(desmonddak): build a muxedLSB and prepend to the lower bits
+    // Then compute round on this muxLSB + shifted lower bits
 
     final mergedSumP1RPath = mux(
             sumP1LeadZeroRPath,
@@ -242,9 +248,8 @@ class FloatingPointAdderRound extends FloatingPointAdder {
         .named('significandNpath');
 
     final validLeadOneNPath = Logic(name: 'validLead1Npath');
-    final leadOneNPathPre = ParallelPrefixPriorityEncoder(
-            significandNPath.reversed,
-            ppGen: ppTree,
+    final leadOneNPathPre = RecursivePriorityEncoder(significandNPath.reversed,
+            // ppGen: ppTree,
             valid: validLeadOneNPath,
             name: 'npath_leadingOne')
         .out;

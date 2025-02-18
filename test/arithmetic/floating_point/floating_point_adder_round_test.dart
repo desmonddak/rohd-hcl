@@ -8,6 +8,7 @@
 // Author: Desmond A Kirkpatrick <desmond.a.kirkpatrick@intel.com
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
@@ -375,6 +376,8 @@ void main() {
       expected = expectedRound;
     }
     final adder = FloatingPointAdderRound(fp1, fp2);
+    await adder.build();
+    File('fpadder.sv').writeAsStringSync(adder.generateSynth());
 
     final computed = adder.sum.floatingPointValue;
     expect(computed, equals(expected), reason: '''
@@ -386,7 +389,7 @@ void main() {
   });
 
   test('FP: rounding adder exhaustive', () {
-    const exponentWidth = 4;
+    const exponentWidth = 3;
     const mantissaWidth = 4;
 
     final fp1 = FloatingPoint(

@@ -12,7 +12,7 @@ import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
 /// An adder (and subtractor) [OnesComplementAdder] that operates on
-/// ones-complement values.
+/// ones-complement values, producing a magnitude and sign.
 class OnesComplementAdder extends Adder {
   /// The sign of the result
   Logic get sign => output('sign');
@@ -25,6 +25,10 @@ class OnesComplementAdder extends Adder {
   @protected
   Logic _sign = Logic();
 
+  /// Subtraction is happening
+  @protected
+  late final Logic? subtractIn;
+
   /// [OnesComplementAdder] constructor with an adder functor [adderGen].
   /// - Either an optional Logic [subtractIn] or a boolean [subtract] can enable
   /// subtraction, but providing both non-null will result in an exception.
@@ -36,27 +40,41 @@ class OnesComplementAdder extends Adder {
           ParallelPrefixAdder.new,
       Logic? subtractIn,
       Logic? carryOut,
-      Logic? carryIn,
-      bool? subtract,
+      super.carryIn,
+      bool subtract = false,
+      bool chainable = false,
+      String? definitionName,
       super.name = 'ones_complement_adder'})
-      : super(definitionName: 'OnesComplementAdder_W${a.width}') {
-    if (subtractIn != null) {
-      subtractIn = addInput('subtractIn', subtractIn);
-    }
-    _sign = addOutput('sign');
+      : super(
+            definitionName:
+                definitionName ?? 'OnesComplementAdder_W${a.width}') {
     if (carryOut != null) {
       addOutput('carryOut');
       carryOut <= this.carryOut!;
     }
-    if ((subtractIn != null) & (subtract != null)) {
+    if ((subtractIn != null) & subtract) {
       throw RohdHclException(
           "either provide a Logic signal 'subtractIn' for runtime "
           " configuration, or a boolean parameter 'subtract' for "
           'generation time configuration, but not both.');
     }
+    this.subtractIn =
+        (subtractIn != null) ? addInput('subtractIn', subtractIn) : null;
+    // print('allocating OnesComplement with sub=${subtract} ');
+    // if (subtractIn != null) {
+    //   print('subIn=${subtractIn!.value.toBool()}');
+    // } else {
+    //   print('subin is null');
+    // }
+    // print('\tones: a=${a.value.toInt()} ${a.value.toRadixString()}');
+    // print('\tones b=${b.value.toInt()} ${b.value.toRadixString()}');
+    // print('\tones sub=$subtract');
+    // print(
+    //     '\tones: c=${carryIn != null ? carryIn!.value.toRadixString(radix: 10) : '-'}');
+    _sign = addOutput('sign');
 
     final doSubtract =
-        (subtractIn ?? (subtract != null ? Const(subtract) : Const(0)))
+        (this.subtractIn ?? (subtract ? Const(subtract) : Const(0)))
             .named('dosubtract', naming: Naming.mergeable);
 
     final adderSum =
@@ -69,20 +87,30 @@ class OnesComplementAdder extends Adder {
     }
     final endAround = adderSum[-1].named('endaround');
     final magnitude = adderSum.slice(a.width - 1, 0).named('magnitude');
+    final Logic magnitudep1;
+    if (this.carryOut == null) {
+      final incrementer = ParallelPrefixIncr(magnitude);
+      magnitudep1 = incrementer.out.named('magnitude_plus1');
+    } else {
+      magnitudep1 = Const(0);
+    }
 
-    final incrementer = ParallelPrefixIncr(magnitude);
-    final magnitudep1 = incrementer.out.named('magnitude_plus1');
-
+    // print('\tones: co=$carryOut sub=${doSubtract.value.toBool()}');
+    // print('\tones: chainable=$chainable');
+    // print('\tones: endAround=${endAround.value.toBool()}');
     sum <=
         mux(
             doSubtract,
-            mux(
-                    endAround,
-                    [if (this.carryOut != null) magnitude else magnitudep1]
-                        .first,
-                    ~magnitude)
-                .zeroExtend(sum.width),
+            [
+              if (chainable) endAround else Const(0),
+              mux(
+                  [if (chainable) Const(0) else endAround].first,
+                  [if (this.carryOut != null) magnitude else magnitudep1].first,
+                  ~magnitude)
+              // .zeroExtend(sum.width)
+            ].swizzle(),
             adderSum);
     _sign <= mux(doSubtract, ~endAround, Const(0));
+    // print('\tones: s=${sum.value.bitString}');
   }
 }

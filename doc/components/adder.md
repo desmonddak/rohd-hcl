@@ -143,6 +143,12 @@ final adder4BitBlock = CarrySelectCompoundAdder(a, b,
         widthGen: CarrySelectCompoundAdder.splitSelectAdderAlgorithm4Bit);
 ```
 
+## Compound Ones Complement Adder
+
+The `CarrySelectOnesComplementCompoundAdder` wraps a chain of [OnesComplementAdder]s  in a carry-select chain to produce sum and sum plus one.  Because it is based on ones-complement, it produces two optional carry outputs for each of the sums.  Also, because it is based on ones-complement, the output is in the form of sign and magnitude.
+
+ . Like a carry-select adder it consists of a multiple blocks of two parallel adders <https://en.wikipedia.org/wiki/Carry-select_adder>. The first block has two adders and two separate carry-propagate chains are used to select sum and sum+1 output bits. The sum selecting chain starts from the carry input 0 driven block and sum+1 selecting chain starts from the carry input 1 driven block.
+
 ## Native Adder
 
 As logic synthesis can replace a '+' in RTL with a wide variety of adder architectures on its own, we have a `NativeAdder` wrapper class that allows you to use the native '+' with any component that exposes an `Adder` functor as a parameter:

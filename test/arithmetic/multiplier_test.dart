@@ -273,6 +273,7 @@ void main() {
             ' $signage R$radix E${genName(a, b)}');
   }
 
+// TODO(desmonddak): this doesn't seem to use the logic signed selection
   test('Native multiplier sweep with signage test', () async {
     const width = 5;
     final a = Logic(width: width);

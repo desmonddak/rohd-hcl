@@ -75,8 +75,11 @@ class FloatingPointAdderSimple extends FloatingPointAdder {
         .getRange(0, min(intSum.width, intSum.width))
         .named('mantissa');
     final leadOneValid = Logic(name: 'leadOneValid');
-    final leadOnePre = ParallelPrefixPriorityEncoder(mantissa,
-            ppGen: ppTree, valid: leadOneValid)
+    // final leadOnePre = ParallelPrefixPriorityEncoder(mantissa,
+    //         ppGen: ppTree, valid: leadOneValid)
+    //     .out
+    //     .named('leadOnePre');
+    final leadOnePre = RecursivePriorityEncoder(mantissa, valid: leadOneValid)
         .out
         .named('leadOnePre');
     // Limit leadOne to exponent range and match widths

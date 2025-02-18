@@ -89,7 +89,7 @@ class FloatToFixed extends Module {
 
     if (checkOverflow & ((this.m < noLossM) | (this.n < noLossN))) {
       final overflow = Logic(name: 'overflow');
-      final leadDetect = ParallelPrefixPriorityEncoder(fullMantissa.reversed,
+      final leadDetect = RecursivePriorityEncoder(fullMantissa.reversed,
           name: 'leadone_detector');
 
       final sWidth = max(eWidth, leadDetect.out.width);

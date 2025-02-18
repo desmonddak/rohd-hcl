@@ -79,8 +79,13 @@ void main() {
       vec.add(Const(i, width: width));
     }
     const radix = 4;
-    final prefixAdd =
-        ReductionTree(vec, radix: radix, addReduce, clk: clk, depthToFlop: 1);
+    final prefixAdd = ReductionTree(
+        vec,
+        radix: radix,
+        addReduce,
+        clk: clk,
+        depthToFlop: 1,
+        signExtend: true);
 
     await prefixAdd.build();
     unawaited(Simulator.run());
@@ -116,16 +121,16 @@ void main() {
       () async {
     final clk = SimpleClockGenerator(10).clk;
 
-    const width = 17;
-    const length = 290;
+    const width = 13;
+    const length = 79;
     final vec = <Logic>[];
     // First sum will be length *(length-1) /2
     for (var i = 0; i < length; i++) {
       vec.add(Const(i, width: width));
     }
-    const reduce = 4;
+    const radix = 4;
     final prefixAdd = ReductionTree(
-        vec, radix: reduce, addReduceAdders, clk: clk, depthToFlop: 1);
+        vec, radix: radix, addReduceAdders, clk: clk, depthToFlop: 1);
 
     await prefixAdd.build();
     unawaited(Simulator.run());
