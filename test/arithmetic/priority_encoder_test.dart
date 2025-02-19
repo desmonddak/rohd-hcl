@@ -7,12 +7,13 @@
 // 2025 February 13
 // Author: Desmond Kirkpatrick <desmond.a.kirkpatrick@intel.com>
 
+import 'dart:io';
+
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 import 'package:test/test.dart';
 
-void testPriorityEncoder(
-    int n, ParallelPrefixPriorityEncoder Function(Logic a) fn) {
+void testPriorityEncoder(int n, PriorityEncoder Function(Logic a) fn) {
   final inp = Logic(name: 'inp', width: n);
   final mod = fn(inp);
   test('priority_encoder_${n}_${mod.name}', () async {
@@ -26,8 +27,6 @@ void testPriorityEncoder(
       }
       return 0;
     }
-
-    // put/expect testing
 
     for (var j = 1; j < (1 << n); ++j) {
       final golden = computePriorityEncoding(j);
@@ -45,15 +44,24 @@ void main() {
   });
 
   final generators = [Ripple.new, Sklansky.new, KoggeStone.new, BrentKung.new];
-  test('new or scan', () {
+  test('RecursivePriorityEncoder quick test', () {
     final inp = Logic(width: 4)..put(8);
     final valid = Logic();
     final dut = RecursivePriorityEncoder(inp, valid: valid);
     expect(dut.out.value.toInt(), equals(3));
     expect(valid.value.toBool(), equals(true));
   });
+  test('RecursivePriorityModuleEncoder quick test', () async {
+    final inp = Logic(width: 87)..put(8);
+    final valid = Logic();
+    final dut = RecursiveModulePriorityEncoder(inp, valid: valid);
+    await dut.build();
+    File('recur.sv').writeAsStringSync(dut.generateSynth());
+    expect(dut.out.value.toInt(), equals(3));
+    expect(valid.value.toBool(), equals(true));
+  });
 
-  group('priority_encoder', () {
+  group('Prefix Priority Encoder tests', () {
     for (final n in [7, 8, 9]) {
       for (final ppGen in generators) {
         testPriorityEncoder(
@@ -61,7 +69,13 @@ void main() {
       }
     }
   });
-  test('simple priority encoder test', () {
+  group('Prefix Priority Encoder tests', () {
+    for (final n in [7, 8, 9]) {
+      testPriorityEncoder(n, RecursivePriorityEncoder.new);
+      testPriorityEncoder(n, RecursiveModulePriorityEncoder.new);
+    }
+  });
+  test('PrefixPriorityEncoder simple test', () {
     final val = Logic(width: 5);
     // ignore: cascade_invocations
     val.put(3);
@@ -73,7 +87,7 @@ void main() {
     ParallelPrefixPriorityEncoder(val, valid: valid);
     expect(valid.value.toBool(), equals(true));
   });
-  test('priority encoder return beyond width if zero', () {
+  test('PrefixPriorityEncoder return beyond width if zero', () {
     final val = Logic(width: 5);
     // ignore: cascade_invocations
     val.put(0);

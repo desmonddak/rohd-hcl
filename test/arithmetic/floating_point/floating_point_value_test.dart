@@ -48,10 +48,28 @@ void main() {
         final mantStr = (mantissa << i).bitString;
         final fp = FloatingPointValue.ofBinaryStrings(signStr, expStr, mantStr);
         expect(fp.toString(), '$signStr $expStr $mantStr');
+        print(fp.toDouble());
         final fp2 = FloatingPointValue.ofDouble(fp.toDouble(),
             exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
         expect(fp2, equals(fp));
       }
+    }
+  });
+  test('FPV: direct subnormal conversion2', () {
+    const signStr = '0';
+    for (final (exponentWidth, mantissaWidth) in [(11, 52)]) {
+      final expStr = '0' * exponentWidth;
+      final mantissa = LogicValue.one.zeroExtend(mantissaWidth);
+      const i = 0;
+      print('i=$i');
+      final mantStr = (mantissa << i).bitString;
+      final fp = FloatingPointValue.ofBinaryStrings(signStr, expStr, mantStr);
+      expect(fp.toString(), '$signStr $expStr $mantStr');
+      print(fp.toDouble());
+      final fp2 = FloatingPointValue.ofDouble(fp.toDouble(),
+          exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
+      print(fp2);
+      expect(fp2, equals(fp));
     }
   });
 

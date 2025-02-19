@@ -30,7 +30,7 @@ class FloatingPointMultiplierSimpleConfigurator extends Configurator {
   static Map<Type,
           PriorityEncoder Function(Logic bits, {Logic? valid, String name})>
       priorityEncoderMap = {
-    RecursivePriorityEncoder: RecursivePriorityEncoder.new,
+    RecursivePriorityEncoder: RecursiveModulePriorityEncoder.new,
   };
 
   /// Map from Type to Function for Mantissa Multiplier
@@ -58,7 +58,7 @@ class FloatingPointMultiplierSimpleConfigurator extends Configurator {
 
   /// Controls the type of [PriorityEncoder] used in the internal functions.
   final priorityEncoderKnob = ChoiceConfigKnob(priorityEncoderMap.keys.toList(),
-      value: RecursivePriorityEncoder);
+      value: RecursiveModulePriorityEncoder);
 
   /// Controls the width of the exponent.
   final IntConfigKnob exponentWidthKnob = IntConfigKnob(value: 4);

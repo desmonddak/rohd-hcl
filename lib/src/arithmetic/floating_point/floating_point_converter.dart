@@ -52,7 +52,7 @@ class FloatingPointConverter extends Module {
       {Adder Function(Logic a, Logic b, {Logic? carryIn}) adderGen =
           NativeAdder.new,
       PriorityEncoder Function(Logic bits, {Logic? valid, String name})
-          priorityGen = RecursivePriorityEncoder.new,
+          priorityGen = RecursiveModulePriorityEncoder.new,
       super.name})
       : sourceExponentWidth = source.exponent.width,
         sourceMantissaWidth = source.mantissa.width,

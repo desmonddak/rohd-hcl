@@ -409,12 +409,12 @@ class FloatingPointValue implements Comparable<FloatingPointValue> {
       required int mantissaWidth,
       FloatingPointRoundingMode roundingMode =
           FloatingPointRoundingMode.roundNearestEven}) {
-    if ((exponentWidth == 8) && (mantissaWidth == 23)) {
-      // TODO(desmonddak): handle rounding mode for 32 bit?
-      return FloatingPoint32Value.ofDouble(inDouble);
-    } else if ((exponentWidth == 11) && (mantissaWidth == 52)) {
-      return FloatingPoint64Value.ofDouble(inDouble);
-    }
+    // if ((exponentWidth == 8) && (mantissaWidth == 23)) {
+    //   // TODO(desmonddak): handle rounding mode for 32 bit?
+    //   return FloatingPoint32Value.ofDouble(inDouble);
+    // } else if ((exponentWidth == 11) && (mantissaWidth == 52)) {
+    //   return FloatingPoint64Value.ofDouble(inDouble);
+    // }
 
     if (inDouble.isNaN) {
       return FloatingPointValue.getFloatingPointConstant(

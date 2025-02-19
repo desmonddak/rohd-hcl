@@ -16,17 +16,12 @@ class FloatingPointAdderSimple extends FloatingPointAdder {
   /// Add two floating point numbers [a] and [b], returning result in [sum].
   /// - [adderGen] is an adder generator to be used in the primary adder
   /// functions.
-  /// - [ppTree] is an parallel prefix tree generator to be used in internal
-  /// functions.
   FloatingPointAdderSimple(super.a, super.b,
       {super.clk,
       super.reset,
       super.enable,
       Adder Function(Logic a, Logic b, {Logic? carryIn}) adderGen =
           NativeAdder.new,
-      ParallelPrefix Function(
-              List<Logic> inps, Logic Function(Logic term1, Logic term2) op)
-          ppTree = KoggeStone.new,
       super.name = 'floatingpoint_adder_simple'})
       : super(
             definitionName: 'FloatingPointAdderSimple_'

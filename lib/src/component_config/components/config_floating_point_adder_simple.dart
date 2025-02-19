@@ -26,25 +26,9 @@ class FloatingPointAdderSimpleConfigurator extends Configurator {
     NativeAdder: (a, b, {carryIn}) => NativeAdder(a, b, carryIn: carryIn)
   };
 
-  /// Map from Type to Function for Parallel Prefix generator
-  static Map<
-          Type,
-          ParallelPrefix Function(
-              List<Logic> inps, Logic Function(Logic term1, Logic term2) op)>
-      treeGeneratorMap = {
-    Ripple: Ripple.new,
-    Sklansky: Sklansky.new,
-    KoggeStone: KoggeStone.new,
-    BrentKung: BrentKung.new
-  };
-
   /// Controls the type of [Adder] used for internal adders.
   final adderTypeKnob =
       ChoiceConfigKnob(adderGeneratorMap.keys.toList(), value: NativeAdder);
-
-  /// Controls the type of [ParallelPrefix] tree used in the other functions.
-  final prefixTreeKnob =
-      ChoiceConfigKnob(treeGeneratorMap.keys.toList(), value: KoggeStone);
 
   /// Controls the width of the exponent.
   final IntConfigKnob exponentWidthKnob = IntConfigKnob(value: 4);
@@ -65,12 +49,10 @@ class FloatingPointAdderSimpleConfigurator extends Configurator {
       FloatingPoint(
           exponentWidth: exponentWidthKnob.value,
           mantissaWidth: mantissaWidthKnob.value),
-      adderGen: adderGeneratorMap[adderTypeKnob.value]!,
-      ppTree: treeGeneratorMap[prefixTreeKnob.value]!);
+      adderGen: adderGeneratorMap[adderTypeKnob.value]!);
 
   @override
   late final Map<String, ConfigKnob<dynamic>> knobs = UnmodifiableMapView({
-    'Prefix tree type': prefixTreeKnob,
     'Adder tree type': adderTypeKnob,
     'Exponent width': exponentWidthKnob,
     'Mantissa width': mantissaWidthKnob,

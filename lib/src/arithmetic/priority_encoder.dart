@@ -56,7 +56,7 @@ class RecursivePriorityEncoder extends PriorityEncoder {
     output('out') <= ((lo.width < sz) ? lo.zeroExtend(sz) : lo.getRange(0, sz));
   }
 
-  /// Recursively find the leading 1
+  /// Recursively find the trailing 1
   Logic recurseFinder(List<Logic> seq, [int depth = 0]) {
     if (seq.length == 1) {
       return ~seq[0];
@@ -115,6 +115,103 @@ class RecursivePriorityEncoder extends PriorityEncoder {
       ]);
       return ret;
     }
+  }
+}
+
+/// Recursive Tree Node for Priority Encoding.
+class RecursiveModulePriorityEncoderNode extends Module {
+  /// Output is the binary encoding of the trailing 1 position
+  /// at this node.
+  Logic get ret => output('ret');
+
+  /// Construct the Node for a Recursive Priority Tree
+  RecursiveModulePriorityEncoderNode(List<Logic> seq,
+      {super.name, int depth = 0})
+      : super(definitionName: 'PriorityEncodeNode_W${seq.length}') {
+    seq = [
+      for (var i = 0; i < seq.length; i++)
+        addInput('seq$i', seq[i], width: seq[i].width)
+    ];
+    if (seq.length == 1) {
+      addOutput('ret') <= ~seq[0];
+    } else if (seq.length == 2) {
+      final l = seq[0].named('leftLeafLead_d$depth');
+      final r = seq[1].named('rightLeafLead_d$depth');
+      addOutput('ret', width: 2);
+      Combinational([
+        If.block([
+          Iff(l, [
+            ret < Const(0, width: 2),
+          ]),
+          ElseIf(r, [
+            ret < [Const(0), Const(1)].swizzle(),
+          ]),
+          Else([
+            ret < [Const(1), Const(0)].swizzle(),
+          ]),
+        ]),
+      ]);
+    } else {
+      final divisor = (log(seq.length - 1) / log(2)).floor();
+      final split = pow(2.0, divisor).toInt();
+
+      final left = RecursiveModulePriorityEncoderNode(
+              seq.getRange(0, split).toList(),
+              name: 'left_d$depth',
+              depth: depth + 1)
+          .ret;
+      var right = RecursiveModulePriorityEncoderNode(
+              seq.getRange(split, seq.length).toList(),
+              name: 'right_d$depth',
+              depth: depth + 1)
+          .ret;
+      if (right.width < left.width) {
+        right = right.zeroExtend(left.width);
+      }
+      final l = left[-1].named('leftLead_d$depth');
+      final r = right[-1].named('rightLead_d$depth');
+      addOutput('ret', width: right.width + 1);
+      final rhs = ((right.width > 1)
+              ? [Const(0), Const(1), right.slice(-2, 0)]
+                  .swizzle()
+                  .named('zo_right_d$depth')
+              : [Const(0), Const(1)].swizzle().named('zo_d$depth'))
+          .named('right_d$depth');
+      Combinational([
+        If.block([
+          Iff(l & r, [
+            ret <
+                [Const(1), Const(0, width: right.width)]
+                    .swizzle()
+                    .named('lr_d$depth'),
+          ]),
+          ElseIf(~l, [
+            ret < [Const(0), left.slice(-1, 0)].swizzle().named('zl_d$depth'),
+          ]),
+          ElseIf(l, [
+            ret < rhs,
+          ]),
+        ]),
+      ]);
+    }
+  }
+}
+
+/// Priority finder based on or() operations, using a tree of modules.
+class RecursiveModulePriorityEncoder extends PriorityEncoder {
+  /// [RecursiveModulePriorityEncoder] constructor builds a tree
+  /// of [RecursiveModulePriorityEncoderNode]s to compute the position
+  /// of the trailing 1 from the LSB of [inp].
+  RecursiveModulePriorityEncoder(super.inp,
+      {super.valid, super.name = 'fast_priority_encoder'})
+      : super(definitionName: 'FastPriorityEncoder_W${inp.width}') {
+    final topNode = RecursiveModulePriorityEncoderNode(inp.elements);
+    final lo = topNode.ret;
+    if (valid != null) {
+      valid! <= topNode.ret.lt(inp.width);
+    }
+    final sz = output('out').width;
+    output('out') <= ((lo.width < sz) ? lo.zeroExtend(sz) : lo.getRange(0, sz));
   }
 }
 

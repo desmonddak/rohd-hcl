@@ -30,7 +30,7 @@ class FloatingPointMultiplierSimple extends FloatingPointMultiplier {
               {Logic? clk, Logic? reset, Logic? enable, String name})
           multGen = NativeMultiplier.new,
       PriorityEncoder Function(Logic bits, {Logic? valid, String name})
-          priorityGen = RecursivePriorityEncoder.new,
+          priorityGen = RecursiveModulePriorityEncoder.new,
       super.name})
       : super(
             definitionName: 'FloatingPointMultiplierSimple_'
