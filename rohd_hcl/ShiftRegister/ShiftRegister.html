@@ -59,22 +59,22 @@
       
       <span class="name ">ShiftRegister</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="-param-dataIn"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.3/rohd/Logic-class.html">Logic</a></span> <span class="parameter-name">dataIn</span>, {</span></li>
 <li><span class="parameter" id="-param-clk"><span>required</span> <span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.3/rohd/Logic-class.html">Logic</a></span> <span class="parameter-name">clk</span>, </span></li>
-<li><span class="parameter" id="-param-depth"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.7.0/dart-core/int-class.html">int</a></span> <span class="parameter-name">depth</span>, </span></li>
+<li><span class="parameter" id="-param-depth"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.7.1/dart-core/int-class.html">int</a></span> <span class="parameter-name">depth</span>, </span></li>
 <li><span class="parameter" id="-param-enable"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.3/rohd/Logic-class.html">Logic</a>?</span> <span class="parameter-name">enable</span>, </span></li>
 <li><span class="parameter" id="-param-reset"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.3/rohd/Logic-class.html">Logic</a>?</span> <span class="parameter-name">reset</span>, </span></li>
-<li><span class="parameter" id="-param-asyncReset"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.7.0/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">asyncReset</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="-param-asyncReset"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.7.1/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">asyncReset</span> = <span class="default-value">false</span>, </span></li>
 <li><span class="parameter" id="-param-resetValue"><span class="type-annotation">dynamic</span> <span class="parameter-name">resetValue</span>, </span></li>
-<li><span class="parameter" id="-param-dataName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.7.0/dart-core/String-class.html">String</a></span> <span class="parameter-name">dataName</span> = <span class="default-value">&#39;data&#39;</span>, </span></li>
+<li><span class="parameter" id="-param-dataName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.7.1/dart-core/String-class.html">String</a></span> <span class="parameter-name">dataName</span> = <span class="default-value">&#39;data&#39;</span>, </span></li>
 </ol>})
     </section>
     
 <section class="desc markdown">
   <p>Creates a new shift register with specified <code>depth</code> which is only active
-when <code>enable</code>d. If <code>reset</code> is provided, it will reset synchronously with
-<code>clk</code> or aynchronously if <code>asyncReset</code> is true. The <code>reset</code> will reset all
-stages to a default of <code>0</code> or to the provided <code>resetValue</code>.
-If <code>resetValue</code> is a <a href="https://api.dart.dev/stable/3.7.0/dart-core/List-class.html">List</a> the stages will reset to the corresponding
-value in the list.</p>
+when <code>enable</code>d.</p>
+<p>If <code>reset</code> is provided, it will reset synchronously with <code>clk</code> or
+aynchronously if <code>asyncReset</code> is true. The <code>reset</code> will reset all  stages
+to a default of <code>0</code> or to the provided <code>resetValue</code>. If <code>resetValue</code> is
+a <a href="https://api.dart.dev/stable/3.7.1/dart-core/List-class.html">List</a> the stages will reset to the corresponding value in the list.</p>
 </section>
 
 
@@ -118,6 +118,8 @@ value in the list.</p>
               &#39;ResetValue list length must equal shift register depth.&#39;);
         }
 
+        resetValue = List.of(resetValue);
+
         for (var i = 0; i &lt; resetValue.length; i++) {
           final element = resetValue[i];
           if (element is Logic) {
@@ -149,9 +151,10 @@ value in the list.</p>
   }
 
   Sequential.multi(
-    [clk, if (asyncReset &amp;&amp; reset != null) reset],
+    [clk],
     reset: reset,
     resetValues: resetValues,
+    asyncReset: asyncReset,
     conds,
   );
 
