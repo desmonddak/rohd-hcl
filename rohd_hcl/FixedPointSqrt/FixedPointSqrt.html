@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the FixedPointSqrt constructor from Class FixedPointSqrt from the rohd_hcl library, for the Dart programming language.">
-  <title>FixedPointSqrt constructor - FixedPointSqrt - rohd_hcl library - Dart API</title>
+  <meta name="description" content="API docs for the FixedPointSqrt.new constructor from Class FixedPointSqrt from the rohd_hcl library, for the Dart programming language.">
+  <title>FixedPointSqrt.new constructor - FixedPointSqrt - rohd_hcl library - Dart API</title>
 
 
   
@@ -25,25 +25,22 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rohd_hcl</a></li>
-    <li><a href="../../rohd_hcl">rohd_hcl.dart</a></li>
+    <li><a href="../../rohd_hcl/">rohd_hcl.dart</a></li>
     <li><a href="../../rohd_hcl/FixedPointSqrt-class.html">FixedPointSqrt</a></li>
-    <li class="self-crumb">FixedPointSqrt constructor</li>
+    <li class="self-crumb">FixedPointSqrt.new constructor</li>
   </ol>
-  <div class="self-name">FixedPointSqrt</div>
+  <div class="self-name">FixedPointSqrt.new</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
   <div
@@ -83,10 +80,10 @@
   Logic aLoc =
       FixedPoint(signed: a.signed, name: &#39;aLoc&#39;, m: a.m + 1, n: a.n + 1);
 
-  solution = Const(0, width: aLoc.width);
-  remainder = Const(0, width: aLoc.width);
-  subtractionValue = Const(0, width: aLoc.width);
-  aLoc = [Const(0), a, Const(0)].swizzle();
+  solution = Const(0, width: aLoc.width).named(&#39;solution&#39;);
+  remainder = Const(0, width: aLoc.width).named(&#39;remainder&#39;);
+  subtractionValue = Const(0, width: aLoc.width).named(&#39;subtraction&#39;);
+  aLoc = [Const(0), a, Const(0)].swizzle().named(&#39;a_loc&#39;);
 
   final outputSqrt = a.clone(name: &#39;sqrt&#39;);
   output(&#39;sqrt&#39;) &lt;= outputSqrt;
@@ -97,32 +94,37 @@
     remainder = [
       remainder.slice(width + 2 - 3, 0),
       aLoc.slice(aLoc.width - 1 - (i * 2), aLoc.width - 2 - (i * 2))
-    ].swizzle();
-    subtractionValue =
-        [solution.slice(width + 2 - 3, 0), Const(1, width: 2)].swizzle();
+    ].swizzle().named(&#39;remainder_iter$i&#39;);
+    subtractionValue = [solution.slice(width + 2 - 3, 0), Const(1, width: 2)]
+        .swizzle()
+        .named(&#39;subtraction_value_iter$i&#39;);
     solution = [
       solution.slice(width + 2 - 2, 0),
       subtractionValue.lte(remainder)
-    ].swizzle();
+    ].swizzle().named(&#39;solution_iter$i&#39;);
     remainder = mux(subtractionValue.lte(remainder),
-        remainder - subtractionValue, remainder);
+            remainder - subtractionValue, remainder)
+        .named(&#39;remainder_mux_iter$i&#39;);
   }
 
   &#47;&#47; loop again to finish remainder
   for (var i = 0; i &lt; ((width + 2) &gt;&gt; 1) - 1; i++) {
     &#47;&#47; don&#39;t try to append bits from a, they are done
-    remainder =
-        [remainder.slice(width + 2 - 3, 0), Const(0, width: 2)].swizzle();
-    subtractionValue =
-        [solution.slice(width + 2 - 3, 0), Const(1, width: 2)].swizzle();
+    remainder = [remainder.slice(width + 2 - 3, 0), Const(0, width: 2)]
+        .swizzle()
+        .named(&#39;remainder_final_iter$i&#39;);
+    subtractionValue = [solution.slice(width + 2 - 3, 0), Const(1, width: 2)]
+        .swizzle()
+        .named(&#39;subtraction_value_final_iter$i&#39;);
     solution = [
       solution.slice(width + 2 - 2, 0),
       subtractionValue.lte(remainder)
-    ].swizzle();
+    ].swizzle().named(&#39;solution_final_iter$i&#39;);
     remainder = mux(subtractionValue.lte(remainder),
-        remainder - subtractionValue, remainder);
+            remainder - subtractionValue, remainder)
+        .named(&#39;remainder_finalmux_iter$i&#39;);
   }
-  solution = solution + 1;
+  solution = (solution + 1).named(&#39;solution&#39;);
   outputSqrt &lt;= solution.slice(aLoc.width - 1, aLoc.width - a.width);
 }</code></pre>
 </section>
@@ -138,9 +140,9 @@
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rohd_hcl</a></li>
-    <li><a href="../../rohd_hcl">rohd_hcl</a></li>
+    <li><a href="../../rohd_hcl/">rohd_hcl</a></li>
     <li><a href="../../rohd_hcl/FixedPointSqrt-class.html">FixedPointSqrt</a></li>
-    <li class="self-crumb">FixedPointSqrt constructor</li>
+    <li class="self-crumb">FixedPointSqrt.new constructor</li>
 </ol>
 
     <h5>FixedPointSqrt class</h5>
