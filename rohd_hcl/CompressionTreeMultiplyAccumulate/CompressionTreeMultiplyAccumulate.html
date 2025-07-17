@@ -57,7 +57,7 @@
       <span class="name ">CompressionTreeMultiplyAccumulate</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="-param-a"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.5/rohd/Logic-class.html">Logic</a></span> <span class="parameter-name">a</span>, </span></li>
 <li><span class="parameter" id="-param-b"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.5/rohd/Logic-class.html">Logic</a></span> <span class="parameter-name">b</span>, </span></li>
 <li><span class="parameter" id="-param-c"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.5/rohd/Logic-class.html">Logic</a></span> <span class="parameter-name">c</span>, {</span></li>
-<li><span class="parameter" id="-param-radix"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.8.1/dart-core/int-class.html">int</a></span> <span class="parameter-name">radix</span> = <span class="default-value">4</span>, </span></li>
+<li><span class="parameter" id="-param-radix"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.8.2/dart-core/int-class.html">int</a></span> <span class="parameter-name">radix</span> = <span class="default-value">4</span>, </span></li>
 <li><span class="parameter" id="-param-clk"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.5/rohd/Logic-class.html">Logic</a>?</span> <span class="parameter-name">clk</span>, </span></li>
 <li><span class="parameter" id="-param-reset"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.5/rohd/Logic-class.html">Logic</a>?</span> <span class="parameter-name">reset</span>, </span></li>
 <li><span class="parameter" id="-param-enable"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.5/rohd/Logic-class.html">Logic</a>?</span> <span class="parameter-name">enable</span>, </span></li>
@@ -69,9 +69,9 @@
 <li><span class="parameter" id="param-carryIn"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.5/rohd/Logic-class.html">Logic</a>?</span> <span class="parameter-name">carryIn</span>, </span></li>
 </ol>}) = <span class="default-value">NativeAdder.new</span>, </span></li>
 <li><span class="parameter" id="-param-seGen"><span class="type-annotation"><a href="../../rohd_hcl/PartialProductSignExtension-class.html">PartialProductSignExtension</a></span> <span class="parameter-name">seGen</span>(<ol class="parameter-list"> <li><span class="parameter" id="param-pp"><span class="type-annotation"><a href="../../rohd_hcl/PartialProductGeneratorBase-class.html">PartialProductGeneratorBase</a></span> <span class="parameter-name">pp</span>, {</span></li>
-<li><span class="parameter" id="param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.8.1/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span></li>
+<li><span class="parameter" id="param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.8.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span></li>
 </ol>}) = <span class="default-value">CompactRectSignExtension.new</span>, </span></li>
-<li><span class="parameter" id="-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.8.1/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span> = <span class="default-value">&#39;compression_tree_mac&#39;</span>, </span></li>
+<li><span class="parameter" id="-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.8.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span> = <span class="default-value">&#39;compression_tree_mac&#39;</span>, </span></li>
 </ol>})
     </section>
     
@@ -106,7 +106,7 @@ the Column Compressor is built as a combinational tree of compressors.</p>
             {String name})
         seGen = CompactRectSignExtension.new,
     super.name = &#39;compression_tree_mac&#39;}) {
-  final pp = PartialProduct(
+  final ppg = PartialProductGenerator(
     a,
     b,
     RadixEncoder(radix),
@@ -116,13 +116,13 @@ the Column Compressor is built as a combinational tree of compressors.</p>
     signedMultiplier: signedMultiplier,
   );
 
-  seGen(pp.array).signExtend();
+  seGen(ppg).signExtend();
 
   final lastRowLen =
-      pp.array.partialProducts[pp.array.partialProducts.length - 1].length +
-          pp.rowShift[pp.array.partialProducts.length - 1];
+      ppg.partialProducts[ppg.partialProducts.length - 1].length +
+          ppg.rowShift[ppg.partialProducts.length - 1];
 
-  final additinoalRowSign = mux(
+  final additionalRowSign = mux(
       (selectSignedAddend != null)
           ? selectSignedAddend!
           : (signedAddend ? Const(1) : Const(0)),
@@ -131,20 +131,23 @@ the Column Compressor is built as a combinational tree of compressors.</p>
 
   final additionalRow = [for (var i = 0; i &lt; c.width; i++) c[i]];
   while (additionalRow.length &lt; lastRowLen) {
-    additionalRow.add(additinoalRowSign);
+    additionalRow.add(additionalRowSign);
   }
   additionalRow
-    ..add(~additinoalRowSign)
+    ..add(~additionalRowSign)
     ..add(Const(1));
 
   &#47;&#47; For online evaluate in _ColumnCompressor to work, we need to
   &#47;&#47; insert the row rather than append it.
-  pp.array.partialProducts.insert(0, additionalRow);
-  pp.rowShift.insert(0, 0);
+  ppg.partialProducts.insert(0, additionalRow);
+  ppg.rowShift.insert(0, 0);
 
-  pp.generateOutputs();
+  final ppgRows = [
+    for (var row = 0; row &lt; ppg.partialProducts.length; row++)
+      ppg.partialProducts[row].rswizzle()
+  ];
 
-  final compressor = ColumnCompressor(pp.rows, pp.rowShift,
+  final compressor = ColumnCompressor(ppgRows, ppg.rowShift,
       clk: clk, reset: reset, enable: enable);
   final adder = adderGen(compressor.add0, compressor.add1);
   accumulate &lt;= adder.sum.slice(a.width + b.width - 1 + 1, 0);
