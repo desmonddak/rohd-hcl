@@ -31,7 +31,7 @@ List<Configurator> get componentRegistry => [
       MultiplierConfigurator(),
       ExtremaConfigurator(),
       CompoundAdderConfigurator(),
-      // FixedToFloatConfigurator(),
+      FixedToFloatConfigurator(),
       FloatToFixedConfigurator(),
       LeadingDigitAnticipateConfigurator(),
       SerializationConfigurator(),
