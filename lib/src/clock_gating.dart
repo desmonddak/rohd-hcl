@@ -7,6 +7,7 @@
 // 2024 September 18
 // Author: Max Korbel <max.korbel@intel.com>
 
+import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
 // ignore: implementation_imports
 import 'package:rohd/src/utilities/uniquifier.dart';
@@ -26,6 +27,11 @@ class ClockGateControlInterface extends PairInterface {
   /// then no clock gating will occur and no clock gating logic will be
   /// generated.
   final bool isPresent;
+
+  /// Capture additional ports in a list, which can be useful for the [clone]
+  /// operation.
+  @protected
+  List<Logic>? additionalPorts;
 
   /// A default implementation for clock gating, effectively just an AND of the
   /// clock and the enable signal, with an optional [enableOverride].
@@ -66,7 +72,7 @@ class ClockGateControlInterface extends PairInterface {
   ClockGateControlInterface({
     this.isPresent = true,
     this.hasEnableOverride = false,
-    List<Logic>? additionalPorts,
+    this.additionalPorts,
     this.gatedClockGenerator = defaultGenerateGatedClock,
   }) : super(portsFromProvider: [
           if (hasEnableOverride) Logic.port('en_override'),
@@ -77,10 +83,12 @@ class ClockGateControlInterface extends PairInterface {
   /// configuration.
   @override
   ClockGateControlInterface clone() => ClockGateControlInterface(
-        isPresent: isPresent,
-        gatedClockGenerator: gatedClockGenerator,
-        hasEnableOverride: hasEnableOverride,
-      );
+          isPresent: isPresent,
+          gatedClockGenerator: gatedClockGenerator,
+          hasEnableOverride: hasEnableOverride,
+          additionalPorts: [
+            for (final Logic port in additionalPorts ?? []) port.clone()
+          ]);
 }
 
 /// A generic and configurable clock gating block.
