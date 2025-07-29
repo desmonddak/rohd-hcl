@@ -29,11 +29,11 @@ class FloatingPointSqrtSimple<FpType extends FloatingPoint>
             definitionName: definitionName ??
                 'FloatingPointSquareRootSimple_'
                     'E${a.exponent.width}M${a.mantissa.width}') {
-    final outputSqrt = FloatingPoint(
-        exponentWidth: exponentWidth,
-        mantissaWidth: mantissaWidth,
-        name: 'sqrt');
-    output('sqrt') <= outputSqrt;
+    // final outputSqrt = FloatingPoint(
+    //     exponentWidth: exponentWidth,
+    //     mantissaWidth: mantissaWidth,
+    //     name: 'sqrt');
+    // output('sqrt') <= outputSqrt;
     late final error = output('error');
 
     // check to see if we do sqrt at all or just return a

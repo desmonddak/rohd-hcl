@@ -8,7 +8,6 @@
 // Author: Soner Yaldiz <soner.yaldiz@intel.com>
 
 import 'dart:math';
-import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
@@ -18,11 +17,9 @@ import 'package:rohd_hcl/rohd_hcl.dart';
 /// support infinity.
 class FixedToFloat extends Module {
   /// Output port [float]
-  late final FloatingPoint float = outFloat.clone()..gets(output('float'));
+  // late final FloatingPoint float = outFloat.clone()..gets(output('float'));
 
-  /// Internal representation of the output port.
-  @protected
-  late final FloatingPoint outFloat;
+  FloatingPoint get float => _convertedFloat;
 
   /// The internal [FloatingPoint] logic to set
   late final FloatingPoint _convertedFloat;
@@ -36,7 +33,7 @@ class FixedToFloat extends Module {
   /// the input fixed-point number. A [LeadingDigitAnticipate] module can be
   /// used to provide this value from two inputs to an adder producing the
   /// fixed-point value input to this converter.
-  FixedToFloat(FixedPoint fixed, this.outFloat,
+  FixedToFloat(FixedPoint fixed, FloatingPoint outFloat,
       {bool signed = true,
       Logic? leadingDigitPredict,
       super.name = 'FixedToFloat',
@@ -47,13 +44,11 @@ class FixedToFloat extends Module {
             definitionName: definitionName ??
                 'Fixed${fixed.width}ToFloatE${outFloat.exponent.width}'
                     'M${outFloat.mantissa.width}') {
-    fixed = fixed.clone()..gets(addInput('fixed', fixed, width: fixed.width));
+    fixed = addTypedInput('fixed', fixed);
     final exponentWidth = outFloat.exponent.width;
     final mantissaWidth = outFloat.mantissa.width;
-    _convertedFloat = FloatingPoint(
-        exponentWidth: exponentWidth, mantissaWidth: mantissaWidth);
-    addOutput('float', width: outFloat.width) <= _convertedFloat;
-    outFloat <= output('float');
+
+    _convertedFloat = addTypedOutput('float', outFloat.clone);
 
     leadingDigitPredict = (leadingDigitPredict != null)
         ? addInput('leadingDigitPredict', leadingDigitPredict,

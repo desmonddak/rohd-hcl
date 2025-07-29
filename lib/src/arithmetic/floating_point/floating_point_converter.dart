@@ -9,7 +9,6 @@
 
 import 'dart:math';
 
-import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
@@ -29,12 +28,7 @@ class FloatingPointConverter<FpTypeIn extends FloatingPoint,
   late final int destMantissaWidth;
 
   /// Output [FloatingPoint] computed
-  final FpTypeOut destination;
-
-  /// The result of [FloatingPoint] conversion
-  @protected
-  late final FpTypeOut _destination =
-      destination.clone(name: 'destination') as FpTypeOut;
+  FpTypeOut get destination => output('destination') as FpTypeOut;
 
   /// Convert a [FloatingPoint] logic structure from one format to another.
   /// - [source] is the source format [FloatingPoint] logic structure.
@@ -43,7 +37,7 @@ class FloatingPointConverter<FpTypeIn extends FloatingPoint,
   /// - [priorityGen] is a [PriorityEncoder] generator to be used in the
   /// leading one detection (default [RecursiveModulePriorityEncoder]).
   /// - [adderGen] can specify the [Adder] to use for exponent calculations.
-  FloatingPointConverter(FpTypeIn source, this.destination,
+  FloatingPointConverter(FpTypeIn source, FpTypeOut destination,
       {PriorityEncoder Function(Logic bitVector,
               {bool generateValid, String name})
           priorityGen = RecursiveModulePriorityEncoder.new,
@@ -69,10 +63,8 @@ class FloatingPointConverter<FpTypeIn extends FloatingPoint,
     }
     destExponentWidth = destination.exponent.width;
     destMantissaWidth = destination.mantissa.width;
-    source = (source.clone(name: 'source') as FpTypeIn)
-      ..gets(addInput('source', source, width: source.width));
-    addOutput('destination', width: _destination.width) <= _destination;
-    destination <= output('destination');
+    source = addTypedInput('source', source);
+    addTypedOutput('destination', destination.clone) <= destination;
 
     // maxExpWidth: mantissa +2:
     //     1 for the hidden jbit and 1 for going past with leadingOneDetect
@@ -275,23 +267,23 @@ class FloatingPointConverter<FpTypeIn extends FloatingPoint,
     Combinational([
       If.block([
         Iff(nan, [
-          _destination <
+          destination <
               FloatingPoint(
                       exponentWidth: destExponentWidth,
                       mantissaWidth: destMantissaWidth)
                   .nan,
         ]),
         ElseIf(infinity, [
-          _destination <
+          destination <
               FloatingPoint(
                       exponentWidth: destExponentWidth,
                       mantissaWidth: destMantissaWidth)
                   .inf(sign: source.sign),
         ]),
         Else([
-          _destination.sign < source.sign,
-          _destination.exponent < destExponent,
-          _destination.mantissa < destMantissa,
+          destination.sign < source.sign,
+          destination.exponent < destExponent,
+          destination.mantissa < destMantissa,
         ]),
       ]),
     ]);

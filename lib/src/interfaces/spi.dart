@@ -36,8 +36,12 @@ class SpiInterface extends PairInterface {
           Logic.port('SCLK')
         ]);
 
+  // /// Clones this [SpiInterface].
+  // SpiInterface.clone(SpiInterface super.otherInterface)
+  //     : dataLength = otherInterface.dataLength,
+  //       super.clone();
+
   /// Clones this [SpiInterface].
-  SpiInterface.clone(SpiInterface super.otherInterface)
-      : dataLength = otherInterface.dataLength,
-        super.clone();
+  @override
+  SpiInterface clone() => SpiInterface(dataLength: dataLength);
 }

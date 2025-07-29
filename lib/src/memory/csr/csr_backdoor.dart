@@ -70,6 +70,8 @@ class CsrBackdoorInterface extends Interface<CsrBackdoorPortGroup> {
     }
   }
 
+  @override
+
   /// Makes a copy of this [Interface] with matching configuration.
   CsrBackdoorInterface clone() => CsrBackdoorInterface(config: config);
 }

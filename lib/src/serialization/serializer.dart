@@ -51,9 +51,7 @@ class Serializer extends Module {
     if (enable != null) {
       enable = addInput('enable', enable);
     }
-    deserialized = addInputArray('deserialized', deserialized,
-        dimensions: deserialized.dimensions,
-        elementWidth: deserialized.elementWidth);
+    deserialized = addTypedInput('deserialized', deserialized);
 
     addOutput('count', width: log2Ceil(deserialized.dimensions[0]));
     addOutput('done');

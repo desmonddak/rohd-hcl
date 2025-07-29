@@ -257,6 +257,16 @@ class ApbInterface extends Interface<ApbDirection> {
           includeSlvErr: other.includeSlvErr,
         );
 
+  /// Constructs a new [ApbInterface] with identical parameters.
+  @override
+  ApbInterface clone() => ApbInterface(
+        addrWidth: addrWidth,
+        dataWidth: dataWidth,
+        userReqWidth: userReqWidth,
+        userRespWidth: userRespWidth,
+        includeSlvErr: includeSlvErr,
+      );
+
   /// Checks that the values set for parameters follow the specification's
   /// restrictions.
   void _validateParameters() {

@@ -82,6 +82,15 @@ class SumInterface extends PairInterface {
           hasEnable: other.hasEnable,
         );
 
+  /// Creates a clone of this [SumInterface] for things like [pairConnectIO].
+  @override
+  SumInterface clone() => SumInterface(
+        fixedAmount: fixedAmount,
+        increments: increments,
+        width: width,
+        hasEnable: hasEnable,
+      );
+
   @override
   String toString() => [
         'SumInterface[$width]',

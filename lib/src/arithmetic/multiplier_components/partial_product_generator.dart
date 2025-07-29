@@ -23,6 +23,9 @@ class SignBit extends Logic {
       : super(name: '${inl.name}_signbit', naming: Naming.mergeable) {
     this <= inl;
   }
+
+  @override
+  Logic clone({String? name}) => SignBit(this, inverted: inverted);
 }
 
 /// A [PartialProductArray] is a class that holds a set of partial products

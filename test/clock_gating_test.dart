@@ -61,6 +61,13 @@ class CustomClockGateControlInterface extends ClockGateControlInterface {
                   override: intf.enableOverride!,
                   anotherOverride: intf.port('anotherOverride'),
                 ).gatedClk);
+
+  /// Clone the current [CustomClockGateControlInterface] with the same
+  /// configuration.
+  @override
+  CustomClockGateControlInterface clone() => CustomClockGateControlInterface(
+        isPresent: isPresent,
+      );
 }
 
 class CounterWithSimpleClockGate extends Module {
@@ -73,8 +80,7 @@ class CounterWithSimpleClockGate extends Module {
       {bool withDelay = true, ClockGateControlInterface? cgIntf})
       : super(name: 'clk_gated_counter') {
     if (cgIntf != null) {
-      cgIntf = ClockGateControlInterface.clone(cgIntf)
-        ..pairConnectIO(this, cgIntf, PairRole.consumer);
+      cgIntf = cgIntf.clone()..pairConnectIO(this, cgIntf, PairRole.consumer);
     }
 
     clk = addInput('clk', clk);

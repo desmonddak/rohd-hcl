@@ -44,8 +44,11 @@ abstract class FloatingPointSqrt<FpType extends FloatingPoint> extends Module {
   late final FpType a;
 
   /// getter for the computed [FloatingPoint] output.
-  late final FloatingPoint sqrt = (a.clone(name: 'sqrt') as FpType)
-    ..gets(output('sqrt'));
+  FpType get sqrt => output('sqrt') as FpType;
+
+  /// Computed square root of the input floating point number [a].
+  @protected
+  late final FpType outputSqrt;
 
   /// getter for the [error] output.
   late final Logic error = Logic(name: 'error')..gets(output('error'));
@@ -70,10 +73,8 @@ abstract class FloatingPointSqrt<FpType extends FloatingPoint> extends Module {
     this.clk = (clk != null) ? addInput('clk', clk) : null;
     this.reset = (reset != null) ? addInput('reset', reset) : null;
     this.enable = (enable != null) ? addInput('enable', enable) : null;
-    this.a = (a.clone(name: 'a') as FpType)
-      ..gets(addInput('a', a, width: a.width));
-
-    addOutput('sqrt', width: exponentWidth + mantissaWidth + 1);
+    this.a = addTypedInput('a', a);
+    outputSqrt = addTypedOutput('sqrt', a.clone) as FpType;
     addOutput('error');
   }
 

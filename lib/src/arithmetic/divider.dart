@@ -94,6 +94,10 @@ class MultiCycleDividerInterface extends PairInterface {
   /// A match constructor for the divider interface.
   MultiCycleDividerInterface.match(MultiCycleDividerInterface other)
       : this(dataWidth: other.dataWidth);
+
+  @override
+  MultiCycleDividerInterface clone() =>
+      MultiCycleDividerInterface(dataWidth: dataWidth);
 }
 
 /// The Divider module definition.

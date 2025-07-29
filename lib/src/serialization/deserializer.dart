@@ -48,11 +48,7 @@ class Deserializer extends Module {
     if (enable != null) {
       enable = addInput('enable', enable);
     }
-    serialized = (serialized is LogicArray)
-        ? addInputArray('serialized', serialized,
-            dimensions: serialized.dimensions,
-            elementWidth: serialized.elementWidth)
-        : addInput('serialized', serialized, width: serialized.width);
+    serialized = addTypedInput('serialized', serialized);
     final cnt = Counter.simple(
         clk: clk, reset: reset, enable: enable, maxValue: length - 1);
     addOutput('count', width: cnt.width) <= cnt.count;
