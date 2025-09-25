@@ -95,7 +95,9 @@ Q notation (Qm.n format) as introduced by
           <span class="name"><a href="../rohd_hcl/FixedPointValue/FixedPointValue.html">FixedPointValue.new</a></span><span class="signature">({<span class="parameter" id="-param-integer"><span>required</span> <span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span> <span class="parameter-name">integer</span>, </span><span class="parameter" id="-param-fraction"><span>required</span> <span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span> <span class="parameter-name">fraction</span>, </span><span class="parameter" id="-param-signed"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">signed</span> = <span class="default-value">false</span></span>})</span>
         </dt>
         <dd>
-          Constructs <a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a> from sign, integer and fraction values.
+          Constructs <a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a> from <code>integer</code> and <code>fraction</code> values with a
+<code>signed</code> option to interpret MSB of <code>integer</code> as sign bit with the
+<code>integer</code> represented in twos-complement.
             <div class="constructor-modifier features">factory</div>
         </dd>
         <dt id="FixedPointValue.uninitialized" class="callable">
@@ -248,7 +250,7 @@ and zero if <code>this</code> and <code>other</code> are equal.
 </dd>
 
         <dt id="eq" class="callable">
-  <span class="name"><a href="../rohd_hcl/FixedPointValue/eq.html">eq</a></span><span class="signature">(<wbr><span class="parameter" id="eq-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+  <span class="name deprecated"><a class="deprecated" href="../rohd_hcl/FixedPointValue/eq.html">eq</a></span><span class="signature">(<wbr><span class="parameter" id="eq-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span>
   </span>
   
@@ -256,6 +258,32 @@ and zero if <code>this</code> and <code>other</code> are equal.
 </dt>
 <dd>
   Equal-to operation that returns a <a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a>.
+  
+
+</dd>
+
+        <dt id="gtBool" class="callable">
+  <span class="name"><a href="../rohd_hcl/FixedPointValue/gtBool.html">gtBool</a></span><span class="signature">(<wbr><span class="parameter" id="gtBool-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Greater-than operation that returns a <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a>.
+  
+
+</dd>
+
+        <dt id="gteBool" class="callable">
+  <span class="name"><a href="../rohd_hcl/FixedPointValue/gteBool.html">gteBool</a></span><span class="signature">(<wbr><span class="parameter" id="gteBool-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Greater-than-or-equal operation that returns a <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a>.
   
 
 </dd>
@@ -273,8 +301,47 @@ and zero if <code>this</code> and <code>other</code> are equal.
 
 </dd>
 
+        <dt id="ltBool" class="callable">
+  <span class="name"><a href="../rohd_hcl/FixedPointValue/ltBool.html">ltBool</a></span><span class="signature">(<wbr><span class="parameter" id="ltBool-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Less-than operation that returns a <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a>.
+  
+
+</dd>
+
+        <dt id="lteBool" class="callable">
+  <span class="name"><a href="../rohd_hcl/FixedPointValue/lteBool.html">lteBool</a></span><span class="signature">(<wbr><span class="parameter" id="lteBool-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Less-than-or-equal operation that returns a <a href="https://api.dart.dev/stable/3.9.3/dart-core/bool-class.html">bool</a>.
+  
+
+</dd>
+
+        <dt id="negate" class="callable">
+  <span class="name"><a href="../rohd_hcl/FixedPointValue/negate.html">negate</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Negate operation for <a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a>.
+  
+
+</dd>
+
         <dt id="neq" class="callable">
-  <span class="name"><a href="../rohd_hcl/FixedPointValue/neq.html">neq</a></span><span class="signature">(<wbr><span class="parameter" id="neq-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+  <span class="name deprecated"><a class="deprecated" href="../rohd_hcl/FixedPointValue/neq.html">neq</a></span><span class="signature">(<wbr><span class="parameter" id="neq-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span>
   </span>
   
@@ -399,7 +466,7 @@ width and divisor integer width.
 </dd>
 
         <dt id="operator &lt;" class="callable">
-  <span class="name"><a href="../rohd_hcl/FixedPointValue/operator_less.html">operator <</a></span><span class="signature">(<wbr><span class="parameter" id="<-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+  <span class="name deprecated"><a class="deprecated" href="../rohd_hcl/FixedPointValue/operator_less.html">operator <</a></span><span class="signature">(<wbr><span class="parameter" id="<-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span>
   </span>
   
@@ -412,7 +479,7 @@ width and divisor integer width.
 </dd>
 
         <dt id="operator &lt;=" class="callable">
-  <span class="name"><a href="../rohd_hcl/FixedPointValue/operator_less_equal.html">operator <=</a></span><span class="signature">(<wbr><span class="parameter" id="<=-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+  <span class="name deprecated"><a class="deprecated" href="../rohd_hcl/FixedPointValue/operator_less_equal.html">operator <=</a></span><span class="signature">(<wbr><span class="parameter" id="<=-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span>
   </span>
   
@@ -438,7 +505,7 @@ width and divisor integer width.
 </dd>
 
         <dt id="operator &gt;" class="callable">
-  <span class="name"><a href="../rohd_hcl/FixedPointValue/operator_greater.html">operator ></a></span><span class="signature">(<wbr><span class="parameter" id=">-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+  <span class="name deprecated"><a class="deprecated" href="../rohd_hcl/FixedPointValue/operator_greater.html">operator ></a></span><span class="signature">(<wbr><span class="parameter" id=">-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span>
   </span>
   
@@ -451,7 +518,7 @@ width and divisor integer width.
 </dd>
 
         <dt id="operator &gt;=" class="callable">
-  <span class="name"><a href="../rohd_hcl/FixedPointValue/operator_greater_equal.html">operator >=</a></span><span class="signature">(<wbr><span class="parameter" id=">=-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
+  <span class="name deprecated"><a class="deprecated" href="../rohd_hcl/FixedPointValue/operator_greater_equal.html">operator >=</a></span><span class="signature">(<wbr><span class="parameter" id=">=-param-other"><span class="type-annotation"><a href="../rohd_hcl/FixedPointValue-class.html">FixedPointValue</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.6/rohd/LogicValue-class.html">LogicValue</a></span>
   </span>
   

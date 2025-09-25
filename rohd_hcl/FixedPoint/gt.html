@@ -78,11 +78,7 @@
   <pre class="language-dart"><code class="language-dart">@override
 Logic gt(dynamic other) {
   _verifyCompatible(other);
-  if (signed) {
-    return mux(this[-1], super.lt(other), super.gt(other));
-  } else {
-    return super.gt(other);
-  }
+  return mux(Const(signed) &amp; this[-1], super.lt(other), super.gt(other));
 }</code></pre>
 </section>
 

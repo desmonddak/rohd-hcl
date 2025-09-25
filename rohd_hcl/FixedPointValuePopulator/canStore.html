@@ -82,8 +82,8 @@ with <code>integerWidth</code> and <code>fractionWidth</code> lengths without ov
       ? 1 + integerWidth + fractionWidth
       : integerWidth + fractionWidth;
   if (val.isFinite) {
-    final bigIntegerValue = BigInt.from(val * pow(2, fractionWidth));
-    final negBigIntegerValue = BigInt.from(-val * pow(2, fractionWidth));
+    final bigIntegerValue = BigInt.from(val * pow(2.0, fractionWidth));
+    final negBigIntegerValue = BigInt.from(-val * pow(2.0, fractionWidth));
     final l = (val &lt; 0.0)
         ? max(bigIntegerValue.bitLength, negBigIntegerValue.bitLength)
         : bigIntegerValue.bitLength;
