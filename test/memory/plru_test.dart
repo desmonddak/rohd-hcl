@@ -33,7 +33,8 @@ void main() {
   test('LogicValue LRU write invalidate', () async {
     var bv = [for (final e in bi) e == 1 ? LogicValue.one : LogicValue.zero];
     for (final a in [5, 1, 6, 2, 4, 0, 7]) {
-      bv = hitPLRULogicValue(bv, LogicValue.of(a, width: 3), invalidate: true);
+      bv = hitPLRULogicValue(bv, LogicValue.of(a, width: 3),
+          invalidate: LogicValue.one);
       expect(a, allocPLRULogicValue(bv).toInt());
     }
   });

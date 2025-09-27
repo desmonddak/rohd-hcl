@@ -76,22 +76,23 @@ LogicValue allocPLRULogicValue(List<LogicValue> v, {int base = 0, int sz = 0}) {
 /// Access a given way and mark the LRU path in the tree with 0s using a
 /// LogicValue representation of the tree.
 List<LogicValue> hitPLRULogicValue(List<LogicValue> v, LogicValue way,
-    {int base = 0, bool invalidate = false}) {
+    {int base = 0, LogicValue invalidate = LogicValue.zero}) {
   LogicValue convertInt(int i) => LogicValue.ofInt(i, way.width);
   if (v.length == 1) {
     return [
       if (way == convertInt(base))
-        LogicValue.of(invalidate)
+        invalidate
       else if (way == convertInt(base + 1))
-        LogicValue.of(!invalidate)
+        ~invalidate
       else
         v[0]
     ];
   } else {
     final mid = v.length ~/ 2;
-    final lower = hitPLRULogicValue(v.sublist(0, mid), way,
-        base: base, invalidate: invalidate);
-    final upper = hitPLRULogicValue(v.sublist(mid + 1, v.length), way,
+    var lower = v.sublist(0, mid);
+    var upper = v.sublist(mid + 1, v.length);
+    lower = hitPLRULogicValue(lower, way, base: base, invalidate: invalidate);
+    upper = hitPLRULogicValue(upper, way,
         base: mid + base + 1, invalidate: invalidate);
     final midVal = [
       if ((way < convertInt(base) == LogicValue.one) ||
@@ -99,9 +100,9 @@ List<LogicValue> hitPLRULogicValue(List<LogicValue> v, LogicValue way,
         // out of range
         v[mid]
       else if (way <= convertInt(mid + base) == LogicValue.one)
-        LogicValue.of(invalidate)
+        invalidate
       else
-        LogicValue.of(!invalidate)
+        ~invalidate
     ];
     return [...lower, ...midVal, ...upper];
   }
@@ -136,10 +137,11 @@ List<Logic> hitPLRULogic(List<Logic> v, Logic way,
     ];
   } else {
     final mid = v.length ~/ 2;
-    final lower = hitPLRULogic(v.sublist(0, mid), way,
-        base: base, invalidate: invalidate);
-    final upper = hitPLRULogic(v.sublist(mid + 1, v.length), way,
-        base: mid + base + 1, invalidate: invalidate);
+    var lower = v.sublist(0, mid);
+    var upper = v.sublist(mid + 1, v.length);
+    lower = hitPLRULogic(lower, way, base: base, invalidate: invalidate);
+    upper =
+        hitPLRULogic(upper, way, base: mid + base + 1, invalidate: invalidate);
     final midVal = [
       mux(way.lt(convertInt(base)) | way.gt(convertInt(base + v.length)),
           v[mid], mux(way.lte(convertInt(mid + base)), invalidate, ~invalidate))
@@ -176,9 +178,10 @@ Logic hitPLRULogicVector(Logic v, Logic way,
         mux(way.eq(convertInt(base + 1)), ~invalidate, v[0]));
   } else {
     final mid = v.width ~/ 2;
-    final lower = hitPLRULogicVector(v.slice(mid - 1, 0), way,
-        base: base, invalidate: invalidate);
-    final upper = hitPLRULogicVector(v.getRange(mid + 1), way,
+    var lower = v.slice(mid - 1, 0);
+    var upper = v.getRange(mid + 1);
+    lower = hitPLRULogicVector(lower, way, base: base, invalidate: invalidate);
+    upper = hitPLRULogicVector(upper, way,
         base: mid + base + 1, invalidate: invalidate);
     final midVal = mux(
         way.lt(convertInt(base)) | way.gt(convertInt(base + v.width)),
