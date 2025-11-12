@@ -12,6 +12,12 @@ import 'package:rohd_hcl/rohd_hcl.dart';
 
 /// A set-associative cache supporting multiple read and fill ports.
 class SetAssociativeCache extends Cache {
+  // Protected width fields derived from constructor parameters and ports.
+  // These are initialized at the start of buildLogic().
+  late int _lineAddrWidth;
+  late int _tagWidth;
+  late int _dataWidth;
+
   /// Constructs a [Cache] supporting multiple read and fill ports.
   ///
   /// Defines a set-associativity of [ways] and a depth or number of [lines].
@@ -27,17 +33,19 @@ class SetAssociativeCache extends Cache {
   void buildLogic() {
     final numReads = reads.length;
     final numFills = fills.length;
-    final lineAddrWidth = log2Ceil(lines);
-    final tagWidth = reads[0].addrWidth - lineAddrWidth;
+    // Initialize derived widths and mirror into protected instance fields
+    _lineAddrWidth = log2Ceil(lines);
+    _tagWidth = reads[0].addrWidth - _lineAddrWidth;
+    _dataWidth = dataWidth;
 
     // Create tag RF interfaces (without valid bit)
     final tagRFMatchFl = _genTagRFInterfaces(
-        [for (final f in fills) f.fill], tagWidth, lineAddrWidth,
+        [for (final f in fills) f.fill], _tagWidth, _lineAddrWidth,
         prefix: 'match_fl');
-    final tagRFMatchRd =
-        _genTagRFInterfaces(reads, tagWidth, lineAddrWidth, prefix: 'match_rd');
+    final tagRFMatchRd = _genTagRFInterfaces(reads, _tagWidth, _lineAddrWidth,
+        prefix: 'match_rd');
     final tagRFAlloc = _genTagRFInterfaces(
-        [for (final f in fills) f.fill], tagWidth, lineAddrWidth,
+        [for (final f in fills) f.fill], _tagWidth, _lineAddrWidth,
         prefix: 'alloc');
 
     // Create eviction tag read ports if needed (one per fill port per way)
@@ -47,7 +55,7 @@ class SetAssociativeCache extends Cache {
             ways,
             (way) => List.generate(
                 numFills,
-                (i) => DataPortInterface(tagWidth, lineAddrWidth)
+                (i) => DataPortInterface(_tagWidth, _lineAddrWidth)
                   ..en.named('evictTagRd_way${way}_port${i}_en')
                   ..addr.named('evictTagRd_way${way}_port${i}_addr')
                   ..data.named('evictTagRd_way${way}_port${i}_data')))
@@ -71,7 +79,7 @@ class SetAssociativeCache extends Cache {
         ways,
         (way) => List.generate(
             numFills + numReads, // Fills + potential read invalidates
-            (i) => DataPortInterface(1, lineAddrWidth)
+            (i) => DataPortInterface(1, _lineAddrWidth)
               ..en.named('validBitWr_way${way}_port${i}_en')
               ..addr.named('validBitWr_way${way}_port${i}_addr')
               ..data.named('validBitWr_way${way}_port${i}_data')));
@@ -80,7 +88,7 @@ class SetAssociativeCache extends Cache {
         ways,
         (way) => List.generate(
             numFills + numReads, // For fill and read checks
-            (i) => DataPortInterface(1, lineAddrWidth)
+            (i) => DataPortInterface(1, _lineAddrWidth)
               ..en.named('validBitRd_way${way}_port${i}_en')
               ..addr.named('validBitRd_way${way}_port${i}_addr')
               ..data.named('validBitRd_way${way}_port${i}_data')));
@@ -205,7 +213,7 @@ class SetAssociativeCache extends Cache {
         policyRdHitPorts[line][rdPortIdx].access <=
             rdPort.en &
                 ~readValidPortMiss[rdPortIdx] &
-                getLine(rdPort.addr).eq(Const(line, width: lineAddrWidth));
+                getLine(rdPort.addr).eq(Const(line, width: _lineAddrWidth));
         policyRdHitPorts[line][rdPortIdx].way <= readValidPortWay[rdPortIdx];
       }
     }
@@ -219,7 +227,7 @@ class SetAssociativeCache extends Cache {
           policyFlHitPorts[line][flPortIdx].access < Const(0),
         If(flPort.en, then: [
           for (var line = 0; line < lines; line++)
-            If(getLine(flPort.addr).eq(Const(line, width: lineAddrWidth)),
+            If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
                 then: [
                   If.block([
                     Iff(flPort.valid & ~fillValidPortMiss[flPortIdx], [
@@ -248,7 +256,7 @@ class SetAssociativeCache extends Cache {
             flPort.en &
                 flPort.valid &
                 fillValidPortMiss[flPortIdx] &
-                getLine(flPort.addr).eq(Const(line, width: lineAddrWidth));
+                getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth));
       }
 
       // Process allocates (misses) and invalidates with separate tag RF
@@ -257,12 +265,12 @@ class SetAssociativeCache extends Cache {
         for (var way = 0; way < ways; way++)
           tagRFAlloc[way][flPortIdx].en < Const(0),
         for (var way = 0; way < ways; way++)
-          tagRFAlloc[way][flPortIdx].addr < Const(0, width: lineAddrWidth),
+          tagRFAlloc[way][flPortIdx].addr < Const(0, width: _lineAddrWidth),
         for (var way = 0; way < ways; way++)
-          tagRFAlloc[way][flPortIdx].data < Const(0, width: tagWidth),
+          tagRFAlloc[way][flPortIdx].data < Const(0, width: _tagWidth),
         If(flPort.en, then: [
           for (var line = 0; line < lines; line++)
-            If(getLine(flPort.addr).eq(Const(line, width: lineAddrWidth)),
+            If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
                 then: [
                   for (var way = 0; way < ways; way++)
                     If.block([
@@ -275,7 +283,7 @@ class SetAssociativeCache extends Cache {
                           [
                             tagRFAlloc[way][flPortIdx].en < flPort.en,
                             tagRFAlloc[way][flPortIdx].addr <
-                                Const(line, width: lineAddrWidth),
+                                Const(line, width: _lineAddrWidth),
                             tagRFAlloc[way][flPortIdx].data <
                                 getTag(flPort.addr),
                           ]),
@@ -287,7 +295,7 @@ class SetAssociativeCache extends Cache {
                           [
                             tagRFAlloc[way][flPortIdx].en < flPort.en,
                             tagRFAlloc[way][flPortIdx].addr <
-                                Const(line, width: lineAddrWidth),
+                                Const(line, width: _lineAddrWidth),
                             tagRFAlloc[way][flPortIdx].data <
                                 getTag(flPort.addr),
                           ]),
@@ -304,7 +312,7 @@ class SetAssociativeCache extends Cache {
         // Need to check which line's policy allocator provides the way
         final allocWayMatches = [
           for (var line = 0; line < lines; line++)
-            getLine(flPort.addr).eq(Const(line, width: lineAddrWidth)) &
+            getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)) &
                 policyAllocPorts[line][flPortIdx].way.eq(matchWay)
         ];
         final allocWayMatch = allocWayMatches.isEmpty
@@ -313,7 +321,7 @@ class SetAssociativeCache extends Cache {
 
         Combinational([
           validBitWrPort.en < Const(0),
-          validBitWrPort.addr < Const(0, width: lineAddrWidth),
+          validBitWrPort.addr < Const(0, width: _lineAddrWidth),
           validBitWrPort.data < Const(0, width: 1),
           If(flPort.en, then: [
             If.block([
@@ -352,17 +360,17 @@ class SetAssociativeCache extends Cache {
             ways,
             (way) => List.generate(
                 numFills,
-                (i) => DataPortInterface(dataWidth, lineAddrWidth)
+                (i) => DataPortInterface(_dataWidth, _lineAddrWidth)
                   ..en.named('evictDataRd_way${way}_port${i}_en')
                   ..addr.named('evictDataRd_way${way}_port${i}_addr')
                   ..data.named('evictDataRd_way${way}_port${i}_data')))
         : <List<DataPortInterface>>[];
 
     final fillDataPorts = _genDataInterfaces(
-        [for (final f in fills) f.fill], dataWidth, lineAddrWidth,
+        [for (final f in fills) f.fill], _dataWidth, _lineAddrWidth,
         prefix: 'data_fl');
-    final readDataPorts =
-        _genDataInterfaces(reads, dataWidth, lineAddrWidth, prefix: 'data_rd');
+    final readDataPorts = _genDataInterfaces(reads, _dataWidth, _lineAddrWidth,
+        prefix: 'data_rd');
 
     for (var way = 0; way < ways; way++) {
       final allDataReadPorts = hasEvictions
@@ -379,8 +387,8 @@ class SetAssociativeCache extends Cache {
         final fillRFPort = fillDataPorts[way][flPortIdx];
         Combinational([
           fillRFPort.en < Const(0),
-          fillRFPort.addr < Const(0, width: lineAddrWidth),
-          fillRFPort.data < Const(0, width: dataWidth),
+          fillRFPort.addr < Const(0, width: _lineAddrWidth),
+          fillRFPort.data < Const(0, width: _dataWidth),
           If(flPort.en & flPort.valid, then: [
             for (var line = 0; line < lines; line++)
               If(
@@ -461,7 +469,7 @@ class SetAssociativeCache extends Cache {
           final validBitWrPort =
               validBitRFWritePorts[way][numFills + rdPortIdx];
           validBitWrPort.en <= Const(0);
-          validBitWrPort.addr <= Const(0, width: lineAddrWidth);
+          validBitWrPort.addr <= Const(0, width: _lineAddrWidth);
           validBitWrPort.data <= Const(0, width: 1);
         }
       }
@@ -505,9 +513,9 @@ class SetAssociativeCache extends Cache {
           final allocCases = <CaseItem>[];
           final hitCases = <CaseItem>[];
           for (var line = 0; line < lines; line++) {
-            allocCases.add(CaseItem(Const(line, width: lineAddrWidth),
+            allocCases.add(CaseItem(Const(line, width: _lineAddrWidth),
                 [allocWay < policyAllocPorts[line][evictIdx].way]));
-            hitCases.add(CaseItem(Const(line, width: lineAddrWidth),
+            hitCases.add(CaseItem(Const(line, width: _lineAddrWidth),
                 [hitWay < fillPortValidWay[evictIdx]]));
           }
           Combinational([Case(getLine(fillPort.addr), allocCases)]);
@@ -520,8 +528,9 @@ class SetAssociativeCache extends Cache {
         ]);
 
         // Select tag and data from the evict way
-        final evictTag = Logic(name: 'evict${evictIdx}Tag', width: tagWidth);
-        final evictData = Logic(name: 'evict${evictIdx}Data', width: dataWidth);
+        final evictTag = Logic(name: 'evict${evictIdx}Tag', width: _tagWidth);
+        final evictData =
+            Logic(name: 'evict${evictIdx}Data', width: _dataWidth);
 
         // Multiplex tag and data based on way
         if (ways == 1) {
@@ -538,11 +547,11 @@ class SetAssociativeCache extends Cache {
                 then: [evictData < evictDataRfReadPorts[way][evictIdx].data]));
           }
           Combinational([
-            evictTag < Const(0, width: tagWidth),
+            evictTag < Const(0, width: _tagWidth),
             ...tagSelections,
           ]);
           Combinational([
-            evictData < Const(0, width: dataWidth),
+            evictData < Const(0, width: _dataWidth),
             ...dataSelections,
           ]);
         }
