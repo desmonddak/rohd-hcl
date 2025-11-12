@@ -76,6 +76,29 @@ Cache ports are all `ValidDataPortInterface`s, where a `valid` signal is used on
 
  The eviction ports provide address and data for evicted cache elements, where eviction happens on a fill that needs to find space in the cache. Note that means the number of eviction ports, if supplied, must match the number of fill ports.
 
+### Fill + Eviction composite interface
+
+Recent versions group a fill port together with an optional eviction sub-interface using the `FillEvictInterface` type. This simplifies the API so each fill entry may optionally carry the corresponding eviction port. The rules are:
+
+- A cache now accepts fills as a `List<FillEvictInterface>` where each entry has a `.fill` (the fill `ValidDataPortInterface`) and an optional `.eviction` (the eviction `ValidDataPortInterface`).
+- If any `FillEvictInterface` provides an `.eviction`, then all entries must provide an eviction (all-or-none). This matches previous semantics where eviction ports were parallel to fill ports.
+- Tests and higher-level factories that previously passed separate parallel lists can instead construct `FillEvictInterface(fillPort, evictionPort)` for each fill, or use the `CachePorts` test helper described below.
+
+Example (manual construction):
+
+```dart
+final f1 = ValidDataPortInterface(dataWidth: 32, addrWidth: 8);
+final e1 = ValidDataPortInterface(dataWidth: 32, addrWidth: 8);
+
+final fills = [FillEvictInterface(f1, e1)];
+
+final cache = FullyAssociativeCache(clk, reset, fills, [readPort], ways: 8);
+```
+
+For convenience, unit tests use a `CachePorts` test helper which can optionally attach eviction ports to each fill entry. Use `CachePorts.fresh(..., attachEvictionsToFills: true)` when the test needs eviction outputs. When `attachEvictionsToFills` is false (the default) the fill entries will not carry eviction sub-interfaces.
+
+This change is backward-compatible in intent: code that does not need evictions can continue to pass fills without evictions, and code that needs evictions should explicitly opt into providing them so the cache can produce eviction outputs on fills that replace entries.
+
 ### Read-with-Invalidate Feature
 
 The `Cache` supports an advanced read-with-invalidate operation that allows atomic read and invalidation of cache entries. This feature is particularly useful for implementing request/response tracking systems where you need to read data and immediately mark the entry as invalid.

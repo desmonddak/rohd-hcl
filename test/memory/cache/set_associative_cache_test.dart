@@ -38,7 +38,7 @@ void main() {
     test('instantiate cache', () async {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
-      final cp = CachePorts.fresh(8, 16);
+      final cp = CachePorts.fresh(8, 16, attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, setAssociativeFactory(lines: 8));
       await cache.build();
     });
@@ -250,7 +250,13 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
       final cp = CachePorts.fresh(dataWidth, addrWidth);
-      final cache = SetAssociativeCache(clk, reset, cp.fillPorts, cp.readPorts);
+      final cache = SetAssociativeCache(
+        clk,
+        reset,
+        // Wrap fill ports into composite FillEvictInterface expected by API.
+        [for (final p in cp.fillPorts) FillEvictInterface(p)],
+        cp.readPorts,
+      );
       await cache.build();
 
       final fillPort = cp.fillPorts[0];
@@ -312,7 +318,7 @@ void main() {
     test('eviction on way conflict', () async {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
-      final cp = CachePorts.fresh(8, 8);
+      final cp = CachePorts.fresh(8, 8, attachEvictionsToFills: true);
       final cache =
           cp.createCache(clk, reset, setAssociativeFactory(ways: 2, lines: 4));
 
@@ -398,7 +404,7 @@ void main() {
     test('simultaneous evictions on multiple fill ports', () async {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
-      final cp = CachePorts.fresh(8, 8);
+      final cp = CachePorts.fresh(8, 8, attachEvictionsToFills: true);
       final evictionPort0 = cp.evictionPorts[0];
       final evictionPort1 = cp.evictionPorts[1];
 

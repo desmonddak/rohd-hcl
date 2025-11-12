@@ -46,8 +46,7 @@ class FullyAssociativeCache extends Cache {
   /// data or a miss. The [fills] ports are for writing data into the cache,
   /// either as a hit and overwriting existing data, or a miss in which case
   /// overwriting a new way in the cache.  This could result in an eviction of
-  /// valid data, which would show up on a parallel [evictions] port (if
-  /// provided). The [replacement] policy determines which way to evict on a
+  /// valid data. The [replacement] policy determines which way to evict on a
   /// miss and defaults to [PseudoLRUReplacement].
   ///
   /// Note: In a fully associative cache, [lines] is effectively 1 since there's
@@ -58,7 +57,6 @@ class FullyAssociativeCache extends Cache {
     super.reset,
     super.fills,
     super.reads, {
-    super.evictions,
     super.ways = 4,
     super.replacement = PseudoLRUReplacement.new,
     this.generateOccupancy = false,
@@ -66,7 +64,8 @@ class FullyAssociativeCache extends Cache {
     super.reserveName,
     super.reserveDefinitionName,
     String? definitionName,
-  })  : tagWidth = reads.isNotEmpty ? reads[0].addrWidth : fills[0].addrWidth,
+  })  : tagWidth =
+            reads.isNotEmpty ? reads[0].addrWidth : fills[0].fill.addrWidth,
         super(
           lines: 1, // Fully associative has no line indexing
           definitionName: definitionName ??
@@ -84,6 +83,8 @@ class FullyAssociativeCache extends Cache {
     final numReads = reads.length;
     final numFills = fills.length;
     final wayAddrWidth = log2Ceil(ways > 0 ? ways : 1);
+
+    final hasEvictions = fills.isNotEmpty && fills[0].eviction != null;
 
     // Create register file for tags (without valid bit).
     final tagRfWritePorts = List.generate(
@@ -224,12 +225,12 @@ class FullyAssociativeCache extends Cache {
       for (var fillIdx = 0; fillIdx < numFills; fillIdx++) {
         final tagRdPort =
             tagRfReadPorts[numReads * ways + fillIdx * ways + way];
-        tagRdPort.en <= fills[fillIdx].en;
+        tagRdPort.en <= fills[fillIdx].fill.en;
         tagRdPort.addr <= Const(way, width: wayAddrWidth);
 
         // Check if tag matches and entry is valid using separate valid bit.
         final storedTag = tagRdPort.data;
-        final requestTag = fills[fillIdx].addr;
+        final requestTag = fills[fillIdx].fill.addr;
 
         fillTagMatches[fillIdx][way] <=
             validBits[way] & storedTag.eq(requestTag);
@@ -305,7 +306,7 @@ class FullyAssociativeCache extends Cache {
 
     // Generate hit detection and way selection for fills
     for (var fillIdx = 0; fillIdx < numFills; fillIdx++) {
-      final fillPort = fills[fillIdx];
+      final fillPort = fills[fillIdx].fill;
       final tagWritePort = tagRfWritePorts[fillIdx];
       final dataWritePort = dataRfWritePorts[fillIdx];
       final evictDataReadPort = evictDataRfReadPorts[fillIdx];
@@ -421,10 +422,10 @@ class FullyAssociativeCache extends Cache {
     }
 
     // Handle evictions if eviction ports are provided.
-    if (evictions.isNotEmpty) {
-      for (var evictIdx = 0; evictIdx < evictions.length; evictIdx++) {
-        final evictPort = evictions[evictIdx];
-        final fillPort = fills[evictIdx]; // Corresponding fill port.
+    if (hasEvictions) {
+      for (var evictIdx = 0; evictIdx < numFills; evictIdx++) {
+        final evictPort = fills[evictIdx].eviction!;
+        final fillPort = fills[evictIdx].fill; // Corresponding fill port.
         final evictDataReadPort = evictDataRfReadPorts[evictIdx];
 
         final evictTagReadBase = numReads * ways + numFills * ways;

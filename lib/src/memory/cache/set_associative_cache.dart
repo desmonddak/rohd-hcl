@@ -21,7 +21,7 @@ class SetAssociativeCache extends Cache {
   /// This cache is a read-cache. It does not track dirty data to implement
   /// write-back. The write policy it would support is a write-around policy.
   SetAssociativeCache(super.clk, super.reset, super.fills, super.reads,
-      {super.evictions, super.ways, super.lines, super.replacement});
+      {super.ways, super.lines, super.replacement});
 
   @override
   void buildLogic() {
@@ -31,15 +31,18 @@ class SetAssociativeCache extends Cache {
     final tagWidth = reads[0].addrWidth - lineAddrWidth;
 
     // Create tag RF interfaces (without valid bit)
-    final tagRFMatchFl =
-        _genTagRFInterfaces(fills, tagWidth, lineAddrWidth, prefix: 'match_fl');
+    final tagRFMatchFl = _genTagRFInterfaces(
+        [for (final f in fills) f.fill], tagWidth, lineAddrWidth,
+        prefix: 'match_fl');
     final tagRFMatchRd =
         _genTagRFInterfaces(reads, tagWidth, lineAddrWidth, prefix: 'match_rd');
-    final tagRFAlloc =
-        _genTagRFInterfaces(fills, tagWidth, lineAddrWidth, prefix: 'alloc');
+    final tagRFAlloc = _genTagRFInterfaces(
+        [for (final f in fills) f.fill], tagWidth, lineAddrWidth,
+        prefix: 'alloc');
 
     // Create eviction tag read ports if needed (one per fill port per way)
-    final evictTagRfReadPorts = evictions.isNotEmpty
+    final hasEvictions = fills.isNotEmpty && fills[0].eviction != null;
+    final evictTagRfReadPorts = hasEvictions
         ? List.generate(
             ways,
             (way) => List.generate(
@@ -54,7 +57,7 @@ class SetAssociativeCache extends Cache {
     for (var way = 0; way < ways; way++) {
       // Combine the read and fill match ports for this way.
       final tagRFMatch = [...tagRFMatchFl[way], ...tagRFMatchRd[way]];
-      final allTagReadPorts = evictions.isNotEmpty
+      final allTagReadPorts = hasEvictions
           ? [...tagRFMatch, ...evictTagRfReadPorts[way]]
           : tagRFMatch;
       RegisterFile(clk, reset, tagRFAlloc[way], allTagReadPorts,
@@ -91,7 +94,7 @@ class SetAssociativeCache extends Cache {
 
     // Setup the tag match fill interfaces and valid bit reads for fills.
     for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++) {
-      final flPort = fills[flPortIdx];
+      final flPort = fills[flPortIdx].fill;
       for (var way = 0; way < ways; way++) {
         tagRFMatchFl[way][flPortIdx].addr <= getLine(flPort.addr);
         tagRFMatchFl[way][flPortIdx].en <= flPort.en;
@@ -109,7 +112,7 @@ class SetAssociativeCache extends Cache {
             (validBitRFReadPorts[way][flPortIdx].data[0] &
                     tagRFMatchFl[way][flPortIdx]
                         .data
-                        .eq(getTag(fills[flPortIdx].addr)))
+                        .eq(getTag(fills[flPortIdx].fill.addr)))
                 .named('match_fl${flPortIdx}_way$way')
         ]
     ];
@@ -173,10 +176,16 @@ class SetAssociativeCache extends Cache {
     // Generate the replacment policy logic. Fills and reads both create
     // hits. A fill miss causes an allocation followed by a hit.
 
-    final policyFlHitPorts = _genReplacementAccesses(fills, prefix: 'rp_fl');
+    final policyFlHitPorts = _genReplacementAccesses(
+        [for (final f in fills) f.fill],
+        prefix: 'rp_fl');
     final policyRdHitPorts = _genReplacementAccesses(reads, prefix: 'rp_rd');
-    final policyAllocPorts = _genReplacementAccesses(fills, prefix: 'rp_alloc');
-    final policyInvalPorts = _genReplacementAccesses(fills, prefix: 'rp_inval');
+    final policyAllocPorts = _genReplacementAccesses(
+        [for (final f in fills) f.fill],
+        prefix: 'rp_alloc');
+    final policyInvalPorts = _genReplacementAccesses(
+        [for (final f in fills) f.fill],
+        prefix: 'rp_inval');
 
     for (var line = 0; line < lines; line++) {
       replacement(
@@ -202,7 +211,7 @@ class SetAssociativeCache extends Cache {
     }
     // Policy: Process fill hits or invalidates.
     for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++) {
-      final flPort = fills[flPortIdx];
+      final flPort = fills[flPortIdx].fill;
       Combinational([
         for (var line = 0; line < lines; line++)
           policyInvalPorts[line][flPortIdx].access < Const(0),
@@ -338,7 +347,7 @@ class SetAssociativeCache extends Cache {
     // Each way has its own RF, indexed by line address.
 
     // Create eviction data read ports if needed (one per fill port per way)
-    final evictDataRfReadPorts = evictions.isNotEmpty
+    final evictDataRfReadPorts = hasEvictions
         ? List.generate(
             ways,
             (way) => List.generate(
@@ -349,13 +358,14 @@ class SetAssociativeCache extends Cache {
                   ..data.named('evictDataRd_way${way}_port${i}_data')))
         : <List<DataPortInterface>>[];
 
-    final fillDataPorts =
-        _genDataInterfaces(fills, dataWidth, lineAddrWidth, prefix: 'data_fl');
+    final fillDataPorts = _genDataInterfaces(
+        [for (final f in fills) f.fill], dataWidth, lineAddrWidth,
+        prefix: 'data_fl');
     final readDataPorts =
         _genDataInterfaces(reads, dataWidth, lineAddrWidth, prefix: 'data_rd');
 
     for (var way = 0; way < ways; way++) {
-      final allDataReadPorts = evictions.isNotEmpty
+      final allDataReadPorts = hasEvictions
           ? [...readDataPorts[way], ...evictDataRfReadPorts[way]]
           : readDataPorts[way];
       RegisterFile(clk, reset, fillDataPorts[way], allDataReadPorts,
@@ -363,7 +373,7 @@ class SetAssociativeCache extends Cache {
     }
 
     for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++) {
-      final flPort = fills[flPortIdx];
+      final flPort = fills[flPortIdx].fill;
       for (var way = 0; way < ways; way++) {
         final matchWay = Const(way, width: log2Ceil(ways));
         final fillRFPort = fillDataPorts[way][flPortIdx];
@@ -458,10 +468,10 @@ class SetAssociativeCache extends Cache {
     }
 
     // Handle evictions if eviction ports are provided.
-    if (evictions.isNotEmpty) {
-      for (var evictIdx = 0; evictIdx < evictions.length; evictIdx++) {
-        final evictPort = evictions[evictIdx];
-        final fillPort = fills[evictIdx]; // Corresponding fill port.
+    if (hasEvictions) {
+      for (var evictIdx = 0; evictIdx < numFills; evictIdx++) {
+        final evictPort = fills[evictIdx].eviction!;
+        final fillPort = fills[evictIdx].fill; // Corresponding fill port.
 
         // For each way, read the tag and data at the line being filled
         for (var way = 0; way < ways; way++) {

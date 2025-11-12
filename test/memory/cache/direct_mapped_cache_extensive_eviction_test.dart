@@ -28,7 +28,7 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp = CachePorts.fresh(8, 8);
+      final cp = CachePorts.fresh(8, 8, attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory(lines: 8));
       await cache.build();
       unawaited(Simulator.run());
@@ -90,8 +90,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numReads: 1, numFills: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numReads: 1,
+          numFills: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());
@@ -153,8 +156,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numReads: 1, numFills: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numReads: 1,
+          numFills: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());
@@ -265,8 +271,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numReads: 1, numFills: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numReads: 1,
+          numFills: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());
@@ -329,8 +338,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numReads: 1, numFills: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numReads: 1,
+          numFills: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());
@@ -395,7 +407,8 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp = CachePorts.fresh(8, 8, numReads: 1);
+      final cp =
+          CachePorts.fresh(8, 8, numReads: 1, attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());
@@ -471,8 +484,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numReads: 1, numFills: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numReads: 1,
+          numFills: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());
@@ -535,8 +551,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numReads: 1, numFills: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numReads: 1,
+          numFills: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());
@@ -598,8 +617,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numReads: 1, numFills: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numReads: 1,
+          numFills: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
       await cache.build();
       unawaited(Simulator.run());

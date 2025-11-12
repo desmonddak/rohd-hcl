@@ -21,15 +21,11 @@ class DirectMappedCache extends Cache {
   ///
   /// Defines a direct-mapped cache with [lines] entries. Each address maps
   /// to exactly one cache line based on the line index portion of the address.
-  ///
-  /// The [evictions] ports return the address and data being evicted when
-  /// a fill overwrites valid data or when an entry is invalidated.
   DirectMappedCache(
     super.clk,
     super.reset,
     super.fills,
     super.reads, {
-    super.evictions,
     super.lines = 16,
   }) : super(ways: 1);
 
@@ -41,7 +37,8 @@ class DirectMappedCache extends Cache {
     final tagWidth = reads[0].addrWidth - lineAddrWidth;
 
     // Create eviction tag read ports if needed (one per fill port)
-    final evictTagRfReadPorts = evictions.isNotEmpty
+    final hasEvictions = fills.isNotEmpty && fills[0].eviction != null;
+    final evictTagRfReadPorts = hasEvictions
         ? List.generate(
             numFills,
             (i) => DataPortInterface(tagWidth, lineAddrWidth)
@@ -89,7 +86,7 @@ class DirectMappedCache extends Cache {
         numEntries: lines, name: 'valid_bit_rf');
 
     // Data register file (including eviction read ports if needed)
-    final evictDataRfReadPorts = evictions.isNotEmpty
+    final evictDataRfReadPorts = hasEvictions
         ? List.generate(
             numFills,
             (i) => DataPortInterface(dataWidth, lineAddrWidth)
@@ -118,7 +115,7 @@ class DirectMappedCache extends Cache {
 
     // Handle fill operations
     for (var fillIdx = 0; fillIdx < numFills; fillIdx++) {
-      final fillPort = fills[fillIdx];
+      final fillPort = fills[fillIdx].fill;
       final tagWrPort = tagRfWritePorts[fillIdx];
       final dataWrPort = dataRfWritePorts[fillIdx];
 
@@ -228,10 +225,10 @@ class DirectMappedCache extends Cache {
     }
 
     // Handle evictions if eviction ports are provided.
-    if (evictions.isNotEmpty) {
-      for (var evictIdx = 0; evictIdx < evictions.length; evictIdx++) {
-        final evictPort = evictions[evictIdx];
-        final fillPort = fills[evictIdx]; // Corresponding fill port.
+    if (hasEvictions) {
+      for (var evictIdx = 0; evictIdx < numFills; evictIdx++) {
+        final evictPort = fills[evictIdx].eviction!;
+        final fillPort = fills[evictIdx].fill; // Corresponding fill port.
         final evictDataReadPort = evictDataRfReadPorts[evictIdx];
         final evictTagReadPort = evictTagRfReadPorts[evictIdx];
 

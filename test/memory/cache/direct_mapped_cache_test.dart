@@ -177,8 +177,11 @@ void main() {
     test('eviction on overwrite same line', () async {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
-      final cp =
-          CachePorts.fresh(8, 8, numFills: 1, numReads: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numFills: 1,
+          numReads: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
 
       await cache.build();
@@ -270,8 +273,11 @@ void main() {
       final clk = SimpleClockGenerator(10).clk;
       final reset = Logic();
 
-      final cp =
-          CachePorts.fresh(8, 8, numFills: 1, numReads: 1, numEvictions: 1);
+      final cp = CachePorts.fresh(8, 8,
+          numFills: 1,
+          numReads: 1,
+          numEvictions: 1,
+          attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, directMappedFactory());
 
       await cache.build();
