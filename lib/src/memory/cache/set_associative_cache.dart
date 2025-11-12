@@ -326,6 +326,65 @@ class SetAssociativeCache extends Cache {
       ]);
     }
 
+    // Private helper: top-level fill handling for a single fill port. Operates
+    // on per-port slices passed in from buildLogic() so it doesn't reference
+    // buildLogic() locals directly.
+    void _handleFillPort(
+        ValidDataPortInterface flPort,
+        Logic fillMiss,
+        Logic fillPortValidWay,
+        List<DataPortInterface> perWayFillDataPorts,
+        List<AccessInterface> perLinePolicyAllocPorts,
+        List<AccessInterface> perLinePolicyFlHitPorts,
+        [List<DataPortInterface>? perWayEvictTagReadPorts,
+        List<DataPortInterface>? perWayEvictDataReadPorts,
+        List<DataPortInterface>? perWayValidBitRdPorts,
+        ValidDataPortInterface? evictPort,
+        String? nameSuffix]) {
+      // Data RF writes (per-way)
+      for (var way = 0; way < ways; way++) {
+        final matchWay = Const(way, width: log2Ceil(ways));
+        final fillRFPort = perWayFillDataPorts[way];
+        Combinational([
+          fillRFPort.en < Const(0),
+          fillRFPort.addr < Const(0, width: _lineAddrWidth),
+          fillRFPort.data < Const(0, width: _dataWidth),
+          If(flPort.en & flPort.valid, then: [
+            for (var line = 0; line < lines; line++)
+              If(
+                  fillMiss &
+                          perLinePolicyAllocPorts[line].access &
+                          perLinePolicyAllocPorts[line].way.eq(matchWay) |
+                      ~fillMiss &
+                          perLinePolicyFlHitPorts[line].access &
+                          fillPortValidWay.eq(matchWay),
+                  then: [
+                    fillRFPort.addr < getLine(flPort.addr),
+                    fillRFPort.data < flPort.data,
+                    fillRFPort.en < flPort.en,
+                  ])
+          ])
+        ]);
+      }
+      // Optionally perform eviction handling if eviction ports were provided
+      // (passed in by buildLogic()).
+      if (evictPort != null &&
+          perWayEvictTagReadPorts != null &&
+          perWayEvictDataReadPorts != null &&
+          perWayValidBitRdPorts != null) {
+        handleEvictPort(
+            evictPort,
+            flPort,
+            fillMiss,
+            fillPortValidWay,
+            perWayEvictTagReadPorts,
+            perWayEvictDataReadPorts,
+            perLinePolicyAllocPorts,
+            perWayValidBitRdPorts,
+            nameSuffix ?? '');
+      }
+    }
+
     // Policy: Process read hits.
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
       final rdPort = reads[rdPortIdx];
@@ -501,30 +560,51 @@ class SetAssociativeCache extends Cache {
     }
 
     for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++) {
+      // Build per-port slices so the class-level helper can operate on a
+      // single-port view without indexing into the 2D arrays.
       final flPort = fills[flPortIdx].fill;
-      for (var way = 0; way < ways; way++) {
-        final matchWay = Const(way, width: log2Ceil(ways));
-        final fillRFPort = fillDataPorts[way][flPortIdx];
-        Combinational([
-          fillRFPort.en < Const(0),
-          fillRFPort.addr < Const(0, width: _lineAddrWidth),
-          fillRFPort.data < Const(0, width: _dataWidth),
-          If(flPort.en & flPort.valid, then: [
-            for (var line = 0; line < lines; line++)
-              If(
-                  fillValidPortMiss[flPortIdx] &
-                          policyAllocPorts[line][flPortIdx].access &
-                          policyAllocPorts[line][flPortIdx].way.eq(matchWay) |
-                      ~fillValidPortMiss[flPortIdx] &
-                          policyFlHitPorts[line][flPortIdx].access &
-                          fillPortValidWay[flPortIdx].eq(matchWay),
-                  then: [
-                    fillRFPort.addr < getLine(flPort.addr),
-                    fillRFPort.data < flPort.data,
-                    fillRFPort.en < flPort.en,
-                  ])
-          ])
-        ]);
+      final perWayFillDataPorts = [
+        for (var way = 0; way < ways; way++) fillDataPorts[way][flPortIdx]
+      ];
+      final perLinePolicyAllocPorts = [
+        for (var line = 0; line < lines; line++)
+          policyAllocPorts[line][flPortIdx]
+      ];
+      final perLinePolicyFlHitPorts = [
+        for (var line = 0; line < lines; line++)
+          policyFlHitPorts[line][flPortIdx]
+      ];
+
+      if (hasEvictions) {
+        _handleFillPort(
+            flPort,
+            fillValidPortMiss[flPortIdx],
+            fillPortValidWay[flPortIdx],
+            perWayFillDataPorts,
+            perLinePolicyAllocPorts,
+            perLinePolicyFlHitPorts,
+            [
+              for (var way = 0; way < ways; way++)
+                evictTagRfReadPorts[way][flPortIdx]
+            ],
+            [
+              for (var way = 0; way < ways; way++)
+                evictDataRfReadPorts[way][flPortIdx]
+            ],
+            [
+              for (var way = 0; way < ways; way++)
+                validBitRFReadPorts[way][flPortIdx]
+            ],
+            fills[flPortIdx].eviction,
+            flPortIdx.toString());
+      } else {
+        _handleFillPort(
+            flPort,
+            fillValidPortMiss[flPortIdx],
+            fillPortValidWay[flPortIdx],
+            perWayFillDataPorts,
+            perLinePolicyAllocPorts,
+            perLinePolicyFlHitPorts);
       }
     }
 
@@ -595,37 +675,10 @@ class SetAssociativeCache extends Cache {
       }
     }
 
-    // Handle evictions if eviction ports are provided by delegating to the
-    // per-port helper so the logic is centralized and reusable.
-    if (hasEvictions) {
-      for (var evictIdx = 0; evictIdx < numFills; evictIdx++) {
-        final evictPort = fills[evictIdx].eviction!;
-        final fillPort = fills[evictIdx].fill; // Corresponding fill port.
-
-        handleEvictPort(
-            evictPort,
-            fillPort,
-            fillValidPortMiss[evictIdx],
-            fillPortValidWay[evictIdx],
-            [
-              for (var way = 0; way < ways; way++)
-                evictTagRfReadPorts[way][evictIdx]
-            ],
-            [
-              for (var way = 0; way < ways; way++)
-                evictDataRfReadPorts[way][evictIdx]
-            ],
-            [
-              for (var line = 0; line < lines; line++)
-                policyAllocPorts[line][evictIdx]
-            ],
-            [
-              for (var way = 0; way < ways; way++)
-                validBitRFReadPorts[way][evictIdx]
-            ],
-            evictIdx.toString());
-      }
-    }
+    // Eviction handling is now invoked from within _handleFillPort when
+    // eviction ports are present. The per-port invocation occurs at the
+    // time fills are processed above, so there's no separate top-level
+    // eviction loop needed here.
   }
 
   /// Generates a 2D list of [DataPortInterface]s for the tag RF (without valid
