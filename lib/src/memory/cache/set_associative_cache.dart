@@ -369,65 +369,25 @@ class SetAssociativeCache extends Cache {
     //   - We read the RF data below after it is written
     // Fix is to put the RF enable clear in the Else of the If below.
 
+    // Replace per-read inline logic with a per-port helper that receives
+    // per-way slices so the helper can operate on a single port view.
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
       final rdPort = reads[rdPortIdx];
-      final hasHit = ~readValidPortMiss[rdPortIdx];
-      Combinational([
-        rdPort.valid < Const(0),
-        rdPort.data < Const(0, width: rdPort.dataWidth),
-        // for (var way = 0; way < ways; way++)
-        //   readDataPorts[way][rdPortIdx].en < Const(0),
-        If(rdPort.en & hasHit, then: [
-          for (var way = 0; way < ways; way++)
-            If(
-                readValidPortWay[rdPortIdx]
-                    .eq(Const(way, width: log2Ceil(ways))),
-                then: [
-                  readDataPorts[way][rdPortIdx].en < rdPort.en,
-                  readDataPorts[way][rdPortIdx].addr < getLine(rdPort.addr),
-                  rdPort.data < readDataPorts[way][rdPortIdx].data,
-                  rdPort.valid < Const(1),
-                ],
-                orElse: [
-                  readDataPorts[way][rdPortIdx].en < Const(0)
-                ])
-        ])
-      ]);
 
-      // Handle readWithInvalidate functionality - write to valid bit RF
-      // on next cycle.
-      if (rdPort.hasReadWithInvalidate) {
-        for (var way = 0; way < ways; way++) {
-          final matchWay = Const(way, width: log2Ceil(ways));
-          final validBitWrPort =
-              validBitRFWritePorts[way][numFills + rdPortIdx];
+      final perWayReadDataPorts = [
+        for (var way = 0; way < ways; way++) readDataPorts[way][rdPortIdx]
+      ];
+      final perWayValidBitWrPorts = [
+        for (var way = 0; way < ways; way++)
+          validBitRFWritePorts[way][numFills + rdPortIdx]
+      ];
 
-          // Register the signals for next cycle write
-          final shouldInvalidate = flop(
-              clk,
-              rdPort.readWithInvalidate &
-                  hasHit &
-                  rdPort.en &
-                  readValidPortWay[rdPortIdx].eq(matchWay),
-              reset: reset);
-          final invalidateAddr = flop(clk, getLine(rdPort.addr), reset: reset);
-
-          Combinational([
-            validBitWrPort.en < shouldInvalidate,
-            validBitWrPort.addr < invalidateAddr,
-            validBitWrPort.data < Const(0, width: 1), // Invalidate = set to 0
-          ]);
-        }
-      } else {
-        // No readWithInvalidate, so no valid bit writes from this read port.
-        for (var way = 0; way < ways; way++) {
-          final validBitWrPort =
-              validBitRFWritePorts[way][numFills + rdPortIdx];
-          validBitWrPort.en <= Const(0);
-          validBitWrPort.addr <= Const(0, width: _lineAddrWidth);
-          validBitWrPort.data <= Const(0, width: 1);
-        }
-      }
+      _handleReadPort(
+          rdPort,
+          readValidPortMiss[rdPortIdx],
+          readValidPortWay[rdPortIdx],
+          perWayReadDataPorts,
+          perWayValidBitWrPorts);
     }
 
     // Eviction handling is now invoked from within _handleFillPort when
@@ -705,6 +665,66 @@ class SetAssociativeCache extends Cache {
           ])
         ])
       ]);
+    }
+  }
+
+  // Class-level helper: process a single read port. Operates on per-way
+  // slices for data read ports and valid-bit write ports so it doesn't
+  // index into buildLogic() locals.
+  void _handleReadPort(
+    ValidDataPortInterface rdPort,
+      Logic readMiss,
+      Logic readPortValidWay,
+      List<DataPortInterface> perWayReadDataPorts,
+      List<DataPortInterface> perWayValidBitWrPorts) {
+    final hasHit = ~readMiss;
+
+    Combinational([
+      rdPort.valid < Const(0),
+      rdPort.data < Const(0, width: rdPort.dataWidth),
+      If(rdPort.en & hasHit, then: [
+        for (var way = 0; way < ways; way++)
+          If(
+              readPortValidWay.eq(Const(way, width: log2Ceil(ways))),
+              then: [
+                perWayReadDataPorts[way].en < rdPort.en,
+                perWayReadDataPorts[way].addr < getLine(rdPort.addr),
+                rdPort.data < perWayReadDataPorts[way].data,
+                rdPort.valid < Const(1),
+              ],
+              orElse: [perWayReadDataPorts[way].en < Const(0)])
+      ])
+    ]);
+
+    // Handle readWithInvalidate functionality - write to valid bit RF
+    // on next cycle.
+  if (rdPort.hasReadWithInvalidate) {
+      for (var way = 0; way < ways; way++) {
+        final matchWay = Const(way, width: log2Ceil(ways));
+        final validBitWrPort = perWayValidBitWrPorts[way];
+
+        // Register the signals for next cycle write
+        final shouldInvalidate = flop(
+            clk,
+            rdPort.readWithInvalidate & hasHit & rdPort.en &
+                readPortValidWay.eq(matchWay),
+            reset: reset);
+        final invalidateAddr = flop(clk, getLine(rdPort.addr), reset: reset);
+
+        Combinational([
+          validBitWrPort.en < shouldInvalidate,
+          validBitWrPort.addr < invalidateAddr,
+          validBitWrPort.data < Const(0, width: 1),
+        ]);
+      }
+    } else {
+      // No readWithInvalidate, so no valid bit writes from this read port.
+      for (var way = 0; way < ways; way++) {
+        final validBitWrPort = perWayValidBitWrPorts[way];
+        validBitWrPort.en <= Const(0);
+        validBitWrPort.addr <= Const(0, width: _lineAddrWidth);
+        validBitWrPort.data <= Const(0, width: 1);
+      }
     }
   }
 
