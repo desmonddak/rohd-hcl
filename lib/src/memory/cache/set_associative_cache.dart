@@ -206,6 +206,126 @@ class SetAssociativeCache extends Cache {
           ways: ways);
     }
 
+    // Per-eviction helper: perform eviction read/select and drive the
+    // eviction output for a single fill/eviction port. This mirrors the
+    // previous top-level eviction block but operates on per-port slices so
+    // it can be invoked from the fill handling loop.
+    void handleEvictPort(
+        ValidDataPortInterface evictPort,
+        ValidDataPortInterface fillPort,
+        Logic fillMiss,
+        Logic fillPortValidWay,
+        List<DataPortInterface> perWayEvictTagReadPorts,
+        List<DataPortInterface> perWayEvictDataReadPorts,
+        List<AccessInterface> perLinePolicyAllocPorts,
+        List<DataPortInterface> perWayValidBitRdPorts,
+        String nameSuffix) {
+      // For each way, read the tag and data at the line being filled
+      for (var way = 0; way < ways; way++) {
+        final evictTagReadPort = perWayEvictTagReadPorts[way];
+        final evictDataReadPort = perWayEvictDataReadPorts[way];
+
+        evictTagReadPort.en <= fillPort.en;
+        evictTagReadPort.addr <= getLine(fillPort.addr);
+
+        evictDataReadPort.en <= fillPort.en;
+        evictDataReadPort.addr <= getLine(fillPort.addr);
+      }
+
+      final evictWay =
+          Logic(name: 'evict${nameSuffix}Way', width: log2Ceil(ways));
+      final fillHasHit = ~fillMiss;
+
+      final allocWay =
+          Logic(name: 'evict${nameSuffix}AllocWay', width: log2Ceil(ways));
+      final hitWay =
+          Logic(name: 'evict${nameSuffix}HitWay', width: log2Ceil(ways));
+
+      if (lines == 1) {
+        allocWay <= perLinePolicyAllocPorts[0].way;
+        hitWay <= fillPortValidWay;
+      } else {
+        final allocCases = <CaseItem>[];
+        final hitCases = <CaseItem>[];
+        for (var line = 0; line < lines; line++) {
+          allocCases.add(CaseItem(Const(line, width: _lineAddrWidth),
+              [allocWay < perLinePolicyAllocPorts[line].way]));
+          hitCases.add(CaseItem(
+              Const(line, width: _lineAddrWidth), [hitWay < fillPortValidWay]));
+        }
+        Combinational([Case(getLine(fillPort.addr), allocCases)]);
+        Combinational([Case(getLine(fillPort.addr), hitCases)]);
+      }
+
+      Combinational([
+        If(fillHasHit, then: [evictWay < hitWay], orElse: [evictWay < allocWay])
+      ]);
+
+      final evictTag = Logic(name: 'evict${nameSuffix}Tag', width: _tagWidth);
+      final evictData =
+          Logic(name: 'evict${nameSuffix}Data', width: _dataWidth);
+
+      if (ways == 1) {
+        evictTag <= perWayEvictTagReadPorts[0].data;
+        evictData <= perWayEvictDataReadPorts[0].data;
+      } else {
+        final tagSelections = <Conditional>[];
+        final dataSelections = <Conditional>[];
+        for (var way = 0; way < ways; way++) {
+          final isThisWay = evictWay.eq(Const(way, width: log2Ceil(ways)));
+          tagSelections.add(If(isThisWay,
+              then: [evictTag < perWayEvictTagReadPorts[way].data]));
+          dataSelections.add(If(isThisWay,
+              then: [evictData < perWayEvictDataReadPorts[way].data]));
+        }
+        Combinational([
+          evictTag < Const(0, width: _tagWidth),
+          ...tagSelections,
+        ]);
+        Combinational([
+          evictData < Const(0, width: _dataWidth),
+          ...dataSelections,
+        ]);
+      }
+
+      final allocWayValid = Logic(name: 'allocWayValid${nameSuffix}');
+      if (ways == 1) {
+        allocWayValid <= perWayValidBitRdPorts[0].data[0];
+      } else {
+        final validSelections = <Logic>[];
+        for (var way = 0; way < ways; way++) {
+          validSelections.add(evictWay.eq(Const(way, width: log2Ceil(ways))) &
+              perWayValidBitRdPorts[way].data[0]);
+        }
+        allocWayValid <=
+            validSelections
+                .reduce((a, b) => a | b)
+                .named('allocWayValidReduction${nameSuffix}');
+      }
+
+      final allocEvictCond = (fillPort.valid & ~fillHasHit & allocWayValid)
+          .named('allocEvictCond${nameSuffix}');
+      final invalEvictCond =
+          (~fillPort.valid & fillHasHit).named('invalEvictCond${nameSuffix}');
+
+      final evictAddrComb =
+          Logic(name: 'evictAddrComb${nameSuffix}', width: fillPort.addrWidth);
+      Combinational([
+        If(invalEvictCond, then: [
+          evictAddrComb < fillPort.addr
+        ], orElse: [
+          evictAddrComb < [evictTag, getLine(fillPort.addr)].swizzle()
+        ])
+      ]);
+
+      Combinational([
+        evictPort.en < (fillPort.en & (invalEvictCond | allocEvictCond)),
+        evictPort.valid < (fillPort.en & (invalEvictCond | allocEvictCond)),
+        evictPort.addr < evictAddrComb,
+        evictPort.data < evictData,
+      ]);
+    }
+
     // Policy: Process read hits.
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
       final rdPort = reads[rdPortIdx];
@@ -475,132 +595,35 @@ class SetAssociativeCache extends Cache {
       }
     }
 
-    // Handle evictions if eviction ports are provided.
+    // Handle evictions if eviction ports are provided by delegating to the
+    // per-port helper so the logic is centralized and reusable.
     if (hasEvictions) {
       for (var evictIdx = 0; evictIdx < numFills; evictIdx++) {
         final evictPort = fills[evictIdx].eviction!;
         final fillPort = fills[evictIdx].fill; // Corresponding fill port.
 
-        // For each way, read the tag and data at the line being filled
-        for (var way = 0; way < ways; way++) {
-          final evictTagReadPort = evictTagRfReadPorts[way][evictIdx];
-          final evictDataReadPort = evictDataRfReadPorts[way][evictIdx];
-
-          evictTagReadPort.en <= fillPort.en;
-          evictTagReadPort.addr <= getLine(fillPort.addr);
-
-          evictDataReadPort.en <= fillPort.en;
-          evictDataReadPort.addr <= getLine(fillPort.addr);
-        }
-
-        // Determine which way to evict from (use the policy allocator for the
-        // line).
-        final evictWay =
-            Logic(name: 'evict${evictIdx}Way', width: log2Ceil(ways));
-        final fillHasHit = ~fillValidPortMiss[evictIdx];
-
-        // Build a multiplexer to select the way based on line
-        // Multiplex way selection based on which line is being accessed
-        final allocWay =
-            Logic(name: 'evict${evictIdx}AllocWay', width: log2Ceil(ways));
-        final hitWay =
-            Logic(name: 'evict${evictIdx}HitWay', width: log2Ceil(ways));
-
-        if (lines == 1) {
-          allocWay <= policyAllocPorts[0][evictIdx].way;
-          hitWay <= fillPortValidWay[evictIdx];
-        } else {
-          final allocCases = <CaseItem>[];
-          final hitCases = <CaseItem>[];
-          for (var line = 0; line < lines; line++) {
-            allocCases.add(CaseItem(Const(line, width: _lineAddrWidth),
-                [allocWay < policyAllocPorts[line][evictIdx].way]));
-            hitCases.add(CaseItem(Const(line, width: _lineAddrWidth),
-                [hitWay < fillPortValidWay[evictIdx]]));
-          }
-          Combinational([Case(getLine(fillPort.addr), allocCases)]);
-          Combinational([Case(getLine(fillPort.addr), hitCases)]);
-        }
-
-        Combinational([
-          If(fillHasHit,
-              then: [evictWay < hitWay], orElse: [evictWay < allocWay])
-        ]);
-
-        // Select tag and data from the evict way
-        final evictTag = Logic(name: 'evict${evictIdx}Tag', width: _tagWidth);
-        final evictData =
-            Logic(name: 'evict${evictIdx}Data', width: _dataWidth);
-
-        // Multiplex tag and data based on way
-        if (ways == 1) {
-          evictTag <= evictTagRfReadPorts[0][evictIdx].data;
-          evictData <= evictDataRfReadPorts[0][evictIdx].data;
-        } else {
-          final tagSelections = <Conditional>[];
-          final dataSelections = <Conditional>[];
-          for (var way = 0; way < ways; way++) {
-            final isThisWay = evictWay.eq(Const(way, width: log2Ceil(ways)));
-            tagSelections.add(If(isThisWay,
-                then: [evictTag < evictTagRfReadPorts[way][evictIdx].data]));
-            dataSelections.add(If(isThisWay,
-                then: [evictData < evictDataRfReadPorts[way][evictIdx].data]));
-          }
-          Combinational([
-            evictTag < Const(0, width: _tagWidth),
-            ...tagSelections,
-          ]);
-          Combinational([
-            evictData < Const(0, width: _dataWidth),
-            ...dataSelections,
-          ]);
-        }
-
-        // Check if the way being allocated/hit has a valid entry
-        final allocWayValid = Logic(name: 'allocWayValid$evictIdx');
-        if (ways == 1) {
-          // For single way, read valid bit from way 0
-          allocWayValid <= validBitRFReadPorts[0][evictIdx].data[0];
-        } else {
-          final validSelections = <Logic>[];
-          for (var way = 0; way < ways; way++) {
-            validSelections.add(evictWay.eq(Const(way, width: log2Ceil(ways))) &
-                validBitRFReadPorts[way][evictIdx].data[0]);
-          }
-          allocWayValid <=
-              validSelections
-                  .reduce((a, b) => a | b)
-                  .named('allocWayValidReduction$evictIdx');
-        }
-
-        // Two eviction conditions:
-        // 1. Allocation eviction: valid fill to a way with valid data (miss)
-        // 2. Invalidation eviction: invalid fill that hits
-        final allocEvictCond = (fillPort.valid & ~fillHasHit & allocWayValid)
-            .named('allocEvictCond$evictIdx');
-        final invalEvictCond =
-            (~fillPort.valid & fillHasHit).named('invalEvictCond$evictIdx');
-
-        // Construct the eviction address
-        final evictAddrComb =
-            Logic(name: 'evictAddrComb$evictIdx', width: fillPort.addrWidth);
-        Combinational([
-          If(invalEvictCond, then: [
-            // For invalidation, use the fill address (which matched)
-            evictAddrComb < fillPort.addr
-          ], orElse: [
-            // For allocation, reconstruct from stored tag and line address
-            evictAddrComb < [evictTag, getLine(fillPort.addr)].swizzle()
-          ])
-        ]);
-
-        // Drive eviction outputs
-        Combinational([
-          evictPort.en < (fillPort.en & (invalEvictCond | allocEvictCond)),
-          evictPort.valid < (fillPort.en & (invalEvictCond | allocEvictCond)),
-          evictPort.addr < evictAddrComb,
-          evictPort.data < evictData,
-        ]);
+        handleEvictPort(
+            evictPort,
+            fillPort,
+            fillValidPortMiss[evictIdx],
+            fillPortValidWay[evictIdx],
+            [
+              for (var way = 0; way < ways; way++)
+                evictTagRfReadPorts[way][evictIdx]
+            ],
+            [
+              for (var way = 0; way < ways; way++)
+                evictDataRfReadPorts[way][evictIdx]
+            ],
+            [
+              for (var line = 0; line < lines; line++)
+                policyAllocPorts[line][evictIdx]
+            ],
+            [
+              for (var way = 0; way < ways; way++)
+                validBitRFReadPorts[way][evictIdx]
+            ],
+            evictIdx.toString());
       }
     }
   }
