@@ -183,6 +183,80 @@ void main() {
 
       await Simulator.endSimulation();
     });
+
+    test('fill allocation sets valid bit', () async {
+      final clk = SimpleClockGenerator(10).clk;
+      final reset = Logic();
+      final cp = CachePorts.fresh(8, 16);
+      final cache = cp.createCache(clk, reset, setAssociativeFactory(lines: 8));
+      final fillPort = cp.fillPorts[0];
+      final rdPort = cp.readPorts[0];
+
+      await cache.build();
+      unawaited(Simulator.run());
+      await cp.resetCache(clk, reset);
+
+      // Fill (miss) should allocate and set valid bit
+      fillPort.en.inject(1);
+      fillPort.addr.inject(0x7); // some addr
+      fillPort.data.inject(0x55);
+      fillPort.valid.inject(1);
+      await clk.nextPosedge;
+      fillPort.en.inject(0);
+      await clk.nextPosedge;
+
+      // Read it back
+      rdPort.en.inject(1);
+      rdPort.addr.inject(0x7);
+      await clk.nextPosedge;
+      expect(rdPort.valid.value, LogicValue.one);
+      expect(rdPort.data.value, LogicValue.ofInt(0x55, 8));
+      rdPort.en.inject(0);
+      await clk.waitCycles(2);
+
+      await Simulator.endSimulation();
+    });
+
+    test('fill invalidation clears valid bit', () async {
+      final clk = SimpleClockGenerator(10).clk;
+      final reset = Logic();
+      final cp = CachePorts.fresh(8, 16);
+      final cache = cp.createCache(clk, reset, setAssociativeFactory(lines: 8));
+      final fillPort = cp.fillPorts[0];
+      final rdPort = cp.readPorts[0];
+
+      await cache.build();
+      unawaited(Simulator.run());
+      await cp.resetCache(clk, reset);
+
+      // Fill to set valid
+      fillPort.en.inject(1);
+      fillPort.addr.inject(0x3);
+      fillPort.data.inject(0x99);
+      fillPort.valid.inject(1);
+      await clk.nextPosedge;
+      fillPort.en.inject(0);
+      await clk.waitCycles(2);
+
+      // Invalidate by writing with valid==0
+      fillPort.en.inject(1);
+      fillPort.addr.inject(0x3);
+      fillPort.data.inject(0x99);
+      fillPort.valid.inject(0);
+      await clk.nextPosedge;
+      fillPort.en.inject(0);
+      await clk.nextPosedge;
+
+      // Read should be invalid
+      rdPort.en.inject(1);
+      rdPort.addr.inject(0x3);
+      await clk.nextPosedge;
+      expect(rdPort.valid.value, LogicValue.zero);
+      rdPort.en.inject(0);
+      await clk.waitCycles(2);
+
+      await Simulator.endSimulation();
+    });
   });
 
   group('Cache narrow tests', () {

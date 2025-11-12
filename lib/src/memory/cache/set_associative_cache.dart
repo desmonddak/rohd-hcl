@@ -261,97 +261,29 @@ class SetAssociativeCache extends Cache {
                 getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth));
       }
 
-      // Process allocates (misses) and invalidates with separate tag RF
-      // (without valid bit).
-      Combinational([
+      // Use helper to process tag allocations and valid-bit updates.
+      final perWayTagAllocPorts = [
+        for (var way = 0; way < ways; way++) tagRFAlloc[way][flPortIdx]
+      ];
+      final perWayValidBitWrPorts = [
         for (var way = 0; way < ways; way++)
-          tagRFAlloc[way][flPortIdx].en < Const(0),
-        for (var way = 0; way < ways; way++)
-          tagRFAlloc[way][flPortIdx].addr < Const(0, width: _lineAddrWidth),
-        for (var way = 0; way < ways; way++)
-          tagRFAlloc[way][flPortIdx].data < Const(0, width: _tagWidth),
-        If(flPort.en, then: [
-          for (var line = 0; line < lines; line++)
-            If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
-                then: [
-                  for (var way = 0; way < ways; way++)
-                    If.block([
-                      Iff(
-                          // Fill with allocate.
-                          flPort.valid &
-                              fillValidPortMiss[flPortIdx] &
-                              Const(way, width: log2Ceil(ways))
-                                  .eq(policyAllocPorts[line][flPortIdx].way),
-                          [
-                            tagRFAlloc[way][flPortIdx].en < flPort.en,
-                            tagRFAlloc[way][flPortIdx].addr <
-                                Const(line, width: _lineAddrWidth),
-                            tagRFAlloc[way][flPortIdx].data <
-                                getTag(flPort.addr),
-                          ]),
-                      ElseIf(
-                          // Fill with invalidate.
-                          ~flPort.valid &
-                              Const(way, width: log2Ceil(ways))
-                                  .eq(policyInvalPorts[line][flPortIdx].way),
-                          [
-                            tagRFAlloc[way][flPortIdx].en < flPort.en,
-                            tagRFAlloc[way][flPortIdx].addr <
-                                Const(line, width: _lineAddrWidth),
-                            tagRFAlloc[way][flPortIdx].data <
-                                getTag(flPort.addr),
-                          ]),
-                    ])
-                ])
-        ])
-      ]);
-
-      // Handle valid bit updates from fills - write to valid bit RF
-      for (var way = 0; way < ways; way++) {
-        final matchWay = Const(way, width: log2Ceil(ways));
-        final validBitWrPort = validBitRFWritePorts[way][flPortIdx];
-
-        // Need to check which line's policy allocator provides the way
-        final allocWayMatches = [
-          for (var line = 0; line < lines; line++)
-            getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)) &
-                policyAllocPorts[line][flPortIdx].way.eq(matchWay)
-        ];
-        final allocWayMatch = allocWayMatches.isEmpty
-            ? Const(0)
-            : allocWayMatches.reduce((a, b) => a | b);
-
-        Combinational([
-          validBitWrPort.en < Const(0),
-          validBitWrPort.addr < Const(0, width: _lineAddrWidth),
-          validBitWrPort.data < Const(0, width: 1),
-          If(flPort.en, then: [
-            If.block([
-              // Valid fill with hit or miss - set valid bit to 1
-              Iff(
-                  flPort.valid &
-                      (~fillValidPortMiss[flPortIdx] &
-                              fillPortValidWay[flPortIdx].eq(matchWay) |
-                          fillValidPortMiss[flPortIdx] & allocWayMatch),
-                  [
-                    validBitWrPort.en < Const(1),
-                    validBitWrPort.addr < getLine(flPort.addr),
-                    validBitWrPort.data < Const(1, width: 1),
-                  ]),
-              // Invalid fill (invalidation) - set valid bit to 0
-              ElseIf(
-                  ~flPort.valid &
-                      ~fillValidPortMiss[flPortIdx] &
-                      fillPortValidWay[flPortIdx].eq(matchWay),
-                  [
-                    validBitWrPort.en < Const(1),
-                    validBitWrPort.addr < getLine(flPort.addr),
-                    validBitWrPort.data < Const(0, width: 1),
-                  ]),
-            ])
-          ])
-        ]);
-      }
+          validBitRFWritePorts[way][flPortIdx]
+      ];
+      final perLinePolicyAllocPorts = [
+        for (var line = 0; line < lines; line++)
+          policyAllocPorts[line][flPortIdx]
+      ];
+      _handleFillAllocAndValidUpdates(
+          flPort,
+          fillValidPortMiss[flPortIdx],
+          fillPortValidWay[flPortIdx],
+          perWayTagAllocPorts,
+          perLinePolicyAllocPorts,
+          [
+            for (var line = 0; line < lines; line++)
+              policyInvalPorts[line][flPortIdx]
+          ],
+          perWayValidBitWrPorts);
     }
     // The Data `RegisterFile`.
     // Each way has its own RF, indexed by line address.
@@ -557,8 +489,8 @@ class SetAssociativeCache extends Cache {
       If(fillHasHit, then: [evictWay < hitWay], orElse: [evictWay < allocWay])
     ]);
 
-  final evictTag = Logic(name: 'evict${nameSuffix}Tag', width: _tagWidth);
-  final evictData = Logic(name: 'evict${nameSuffix}Data', width: _dataWidth);
+    final evictTag = Logic(name: 'evict${nameSuffix}Tag', width: _tagWidth);
+    final evictData = Logic(name: 'evict${nameSuffix}Data', width: _dataWidth);
 
     if (ways == 1) {
       evictTag <= perWayEvictTagReadPorts[0].data;
@@ -583,7 +515,7 @@ class SetAssociativeCache extends Cache {
       ]);
     }
 
-  final allocWayValid = Logic(name: 'allocWayValid$nameSuffix');
+    final allocWayValid = Logic(name: 'allocWayValid$nameSuffix');
     if (ways == 1) {
       allocWayValid <= perWayValidBitRdPorts[0].data[0];
     } else {
@@ -592,19 +524,19 @@ class SetAssociativeCache extends Cache {
         validSelections.add(evictWay.eq(Const(way, width: log2Ceil(ways))) &
             perWayValidBitRdPorts[way].data[0]);
       }
-    allocWayValid <=
-      validSelections
-        .reduce((a, b) => a | b)
+      allocWayValid <=
+          validSelections
+              .reduce((a, b) => a | b)
               .named('allocWayValidReduction$nameSuffix');
     }
 
-  final allocEvictCond = (fillPort.valid & ~fillHasHit & allocWayValid)
-    .named('allocEvictCond$nameSuffix');
-  final invalEvictCond =
-    (~fillPort.valid & fillHasHit).named('invalEvictCond$nameSuffix');
+    final allocEvictCond = (fillPort.valid & ~fillHasHit & allocWayValid)
+        .named('allocEvictCond$nameSuffix');
+    final invalEvictCond =
+        (~fillPort.valid & fillHasHit).named('invalEvictCond$nameSuffix');
 
-  final evictAddrComb =
-    Logic(name: 'evictAddrComb$nameSuffix', width: fillPort.addrWidth);
+    final evictAddrComb =
+        Logic(name: 'evictAddrComb$nameSuffix', width: fillPort.addrWidth);
     Combinational([
       If(invalEvictCond, then: [
         evictAddrComb < fillPort.addr
@@ -677,6 +609,102 @@ class SetAssociativeCache extends Cache {
           perLinePolicyAllocPorts,
           perWayValidBitRdPorts,
           nameSuffix ?? '');
+    }
+  }
+
+  // Helper: process tag allocations and valid-bit updates for a single fill
+  // port. This was extracted from buildLogic() to reduce duplication and
+  // clarify responsibilities.
+  void _handleFillAllocAndValidUpdates(
+      ValidDataPortInterface flPort,
+      Logic fillMiss,
+      Logic fillPortValidWay,
+      List<DataPortInterface> perWayTagAllocPorts,
+      List<AccessInterface> perLinePolicyAllocPorts,
+      List<AccessInterface> perLinePolicyInvalPorts,
+      List<DataPortInterface> perWayValidBitWrPorts) {
+    // Tag RF (alloc/inval) defaults
+    Combinational([
+      for (var way = 0; way < ways; way++)
+        perWayTagAllocPorts[way].en < Const(0),
+      for (var way = 0; way < ways; way++)
+        perWayTagAllocPorts[way].addr < Const(0, width: _lineAddrWidth),
+      for (var way = 0; way < ways; way++)
+        perWayTagAllocPorts[way].data < Const(0, width: _tagWidth),
+      If(flPort.en, then: [
+        for (var line = 0; line < lines; line++)
+          If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
+              then: [
+                for (var way = 0; way < ways; way++)
+                  If.block([
+                    Iff(
+                        // Fill with allocate.
+                        flPort.valid &
+                            fillMiss &
+                            Const(way, width: log2Ceil(ways))
+                                .eq(perLinePolicyAllocPorts[line].way),
+                        [
+                          perWayTagAllocPorts[way].en < flPort.en,
+                          perWayTagAllocPorts[way].addr <
+                              Const(line, width: _lineAddrWidth),
+                          perWayTagAllocPorts[way].data < getTag(flPort.addr),
+                        ]),
+                    ElseIf(
+                        // Fill with invalidate.
+                        ~flPort.valid &
+                            Const(way, width: log2Ceil(ways))
+                                .eq(perLinePolicyInvalPorts[line].way),
+                        [
+                          perWayTagAllocPorts[way].en < flPort.en,
+                          perWayTagAllocPorts[way].addr <
+                              Const(line, width: _lineAddrWidth),
+                          perWayTagAllocPorts[way].data < getTag(flPort.addr),
+                        ]),
+                  ])
+              ])
+      ])
+    ]);
+
+    // Valid-bit writes from fills: default to disabled, enable on fill
+    for (var way = 0; way < ways; way++) {
+      final matchWay = Const(way, width: log2Ceil(ways));
+      final validBitWrPort = perWayValidBitWrPorts[way];
+
+      // Check whether allocator chose this way for the given line
+      final allocMatches = [
+        for (var line = 0; line < lines; line++)
+          getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)) &
+              perLinePolicyAllocPorts[line].way.eq(matchWay)
+      ];
+      final allocMatch = allocMatches.isEmpty
+          ? Const(0)
+          : allocMatches.reduce((a, b) => a | b);
+
+      Combinational([
+        validBitWrPort.en < Const(0),
+        validBitWrPort.addr < Const(0, width: _lineAddrWidth),
+        validBitWrPort.data < Const(0, width: 1),
+        If(flPort.en, then: [
+          If.block([
+            // Valid fill with hit or miss - set valid bit to 1
+            Iff(
+                flPort.valid &
+                    (~fillMiss & fillPortValidWay.eq(matchWay) |
+                        fillMiss & allocMatch),
+                [
+                  validBitWrPort.en < Const(1),
+                  validBitWrPort.addr < getLine(flPort.addr),
+                  validBitWrPort.data < Const(1, width: 1),
+                ]),
+            // Invalid fill (invalidation) - set valid bit to 0
+            ElseIf(~flPort.valid & ~fillMiss & fillPortValidWay.eq(matchWay), [
+              validBitWrPort.en < Const(1),
+              validBitWrPort.addr < getLine(flPort.addr),
+              validBitWrPort.data < Const(0, width: 1),
+            ]),
+          ])
+        ])
+      ]);
     }
   }
 
