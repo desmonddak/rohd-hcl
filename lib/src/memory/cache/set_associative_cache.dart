@@ -38,65 +38,91 @@ class SetAssociativeCache extends Cache {
     _tagWidth = reads[0].addrWidth - _lineAddrWidth;
     _dataWidth = dataWidth;
 
-    // Create tag RF interfaces (without valid bit)
+    // Create tag RF interfaces (without valid bit). Generator now returns
+    // port-major arrays ([port][way]) so per-port slices are already easy
+    // to pass to helpers and no transpose is required.
     final tagRFMatchFl = _genTagRFInterfaces(
         [for (final f in fills) f.fill], _tagWidth, _lineAddrWidth,
         prefix: 'match_fl');
+
     final tagRFMatchRd = _genTagRFInterfaces(reads, _tagWidth, _lineAddrWidth,
         prefix: 'match_rd');
+
     final tagRFAlloc = _genTagRFInterfaces(
         [for (final f in fills) f.fill], _tagWidth, _lineAddrWidth,
         prefix: 'alloc');
 
     // Create eviction tag read ports if needed (one per fill port per way)
     final hasEvictions = fills.isNotEmpty && fills[0].eviction != null;
+    // Make eviction read ports port-major: evictTagRfReadPorts[port][way]
     final evictTagRfReadPorts = hasEvictions
         ? List.generate(
-            ways,
-            (way) => List.generate(
-                numFills,
-                (i) => DataPortInterface(_tagWidth, _lineAddrWidth)
-                  ..en.named('evictTagRd_way${way}_port${i}_en')
-                  ..addr.named('evictTagRd_way${way}_port${i}_addr')
-                  ..data.named('evictTagRd_way${way}_port${i}_data')))
+            numFills,
+            (i) => List.generate(
+                ways,
+                (way) => DataPortInterface(_tagWidth, _lineAddrWidth)
+                  ..en.named('evictTagRd_port${i}_way${way}_en')
+                  ..addr.named('evictTagRd_port${i}_way${way}_addr')
+                  ..data.named('evictTagRd_port${i}_way${way}_data')))
         : <List<DataPortInterface>>[];
 
-    // The Tag `RegisterFile` (without valid bit).
+    // The Tag `RegisterFile` (without valid bit). RegisterFile expects
+    // way-major lists, so transpose our port-major arrays back into
+    // way-major views for construction.
+    // RegisterFile expects per-way lists. Build per-way views from the
+    // port-major tag RF arrays when instantiating per-way RegisterFiles.
     for (var way = 0; way < ways; way++) {
-      // Combine the read and fill match ports for this way.
-      final tagRFMatch = [...tagRFMatchFl[way], ...tagRFMatchRd[way]];
+      final allocPorts = [
+        for (var port = 0; port < numFills; port++) tagRFAlloc[port][way]
+      ];
+      final matchReadPorts = [
+            for (var port = 0; port < numFills; port++) tagRFMatchFl[port][way]
+          ] +
+          [for (var port = 0; port < numReads; port++) tagRFMatchRd[port][way]];
       final allTagReadPorts = hasEvictions
-          ? [...tagRFMatch, ...evictTagRfReadPorts[way]]
-          : tagRFMatch;
-      RegisterFile(clk, reset, tagRFAlloc[way], allTagReadPorts,
+          ? [
+              ...matchReadPorts,
+              for (var port = 0; port < numFills; port++)
+                evictTagRfReadPorts[port][way]
+            ]
+          : matchReadPorts;
+      RegisterFile(clk, reset, allocPorts, allTagReadPorts,
           numEntries: lines, name: 'tag_rf_way$way');
     }
 
     // Create valid bit register files (one bit wide, indexed by line address).
-    // Each way has its own valid bit RF.
-    // validBitRF[way][port] where port includes both reads and fills.
+    // Make these port-major: validBitRF[port][way]
     final validBitRFWritePorts = List.generate(
-        ways,
-        (way) => List.generate(
-            numFills + numReads, // Fills + potential read invalidates
-            (i) => DataPortInterface(1, _lineAddrWidth)
-              ..en.named('validBitWr_way${way}_port${i}_en')
-              ..addr.named('validBitWr_way${way}_port${i}_addr')
-              ..data.named('validBitWr_way${way}_port${i}_data')));
+        numFills + numReads,
+        (port) => List.generate(
+            ways, // per way
+            (way) => DataPortInterface(1, _lineAddrWidth)
+              ..en.named('validBitWr_port${port}_way${way}_en')
+              ..addr.named('validBitWr_port${port}_way${way}_addr')
+              ..data.named('validBitWr_port${port}_way${way}_data')));
 
     final validBitRFReadPorts = List.generate(
-        ways,
-        (way) => List.generate(
-            numFills + numReads, // For fill and read checks
-            (i) => DataPortInterface(1, _lineAddrWidth)
-              ..en.named('validBitRd_way${way}_port${i}_en')
-              ..addr.named('validBitRd_way${way}_port${i}_addr')
-              ..data.named('validBitRd_way${way}_port${i}_data')));
+        numFills + numReads,
+        (port) => List.generate(
+            ways, // per way
+            (way) => DataPortInterface(1, _lineAddrWidth)
+              ..en.named('validBitRd_port${port}_way${way}_en')
+              ..addr.named('validBitRd_port${port}_way${way}_addr')
+              ..data.named('validBitRd_port${port}_way${way}_data')));
 
     // Create valid bit register files
+    // Register files expect per-way arrays; transpose our port-major arrays
+    // into way-major views for RegisterFile construction.
     for (var way = 0; way < ways; way++) {
-      RegisterFile(
-          clk, reset, validBitRFWritePorts[way], validBitRFReadPorts[way],
+      final wrs = [
+        for (var port = 0; port < numFills + numReads; port++)
+          validBitRFWritePorts[port][way]
+      ];
+      final rds = [
+        for (var port = 0; port < numFills + numReads; port++)
+          validBitRFReadPorts[port][way]
+      ];
+      RegisterFile(clk, reset, wrs, rds,
           numEntries: lines, name: 'valid_bit_rf_way$way');
     }
 
@@ -105,21 +131,16 @@ class SetAssociativeCache extends Cache {
     // prepared before the match one-hot computations below.
     for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++) {
       final flPort = fills[flPortIdx].fill;
-      final perWayTagMatchFl = [
-        for (var way = 0; way < ways; way++) tagRFMatchFl[way][flPortIdx]
-      ];
-      final perWayValidBitRd = [
-        for (var way = 0; way < ways; way++) validBitRFReadPorts[way][flPortIdx]
-      ];
-      _prepareFillPortMatches(flPort, perWayTagMatchFl, perWayValidBitRd);
+      _prepareFillPortMatches(
+          flPort, tagRFMatchFl[flPortIdx], validBitRFReadPorts[flPortIdx]);
     }
 
     final fillPortValidOneHot = [
       for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++)
         [
           for (var way = 0; way < ways; way++)
-            (validBitRFReadPorts[way][flPortIdx].data[0] &
-                    tagRFMatchFl[way][flPortIdx]
+            (validBitRFReadPorts[flPortIdx][way].data[0] &
+                    tagRFMatchFl[flPortIdx][way]
                         .data
                         .eq(getTag(fills[flPortIdx].fill.addr)))
                 .named('match_fl${flPortIdx}_way$way')
@@ -146,22 +167,16 @@ class SetAssociativeCache extends Cache {
     // the wiring is colocated with other read-port logic.
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
       final rdPort = reads[rdPortIdx];
-      final perWayTagMatchRd = [
-        for (var way = 0; way < ways; way++) tagRFMatchRd[way][rdPortIdx]
-      ];
-      final perWayValidBitRd = [
-        for (var way = 0; way < ways; way++)
-          validBitRFReadPorts[way][numFills + rdPortIdx]
-      ];
-      _prepareReadPortMatches(rdPort, perWayTagMatchRd, perWayValidBitRd);
+      _prepareReadPortMatches(rdPort, tagRFMatchRd[rdPortIdx],
+          validBitRFReadPorts[numFills + rdPortIdx]);
     }
 
     final readPortValidOneHot = [
       for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++)
         [
           for (var way = 0; way < ways; way++)
-            (validBitRFReadPorts[way][numFills + rdPortIdx].data[0] &
-                    tagRFMatchRd[way][rdPortIdx]
+            (validBitRFReadPorts[numFills + rdPortIdx][way].data[0] &
+                    tagRFMatchRd[rdPortIdx][way]
                         .data
                         .eq(getTag(reads[rdPortIdx].addr)))
                 .named('match_rd${rdPortIdx}_way$way')
@@ -186,6 +201,9 @@ class SetAssociativeCache extends Cache {
     // Generate the replacment policy logic. Fills and reads both create
     // hits. A fill miss causes an allocation followed by a hit.
 
+    // Generate replacement policy access ports. _genReplacementAccesses now
+    // returns port-major arrays ([port][line]) to make per-port slicing
+    // straightforward.
     final policyFlHitPorts = _genReplacementAccesses(
         [for (final f in fills) f.fill],
         prefix: 'rp_fl');
@@ -197,15 +215,25 @@ class SetAssociativeCache extends Cache {
         [for (final f in fills) f.fill],
         prefix: 'rp_inval');
 
+    // Instantiate replacement policy modules per-line. Since the
+    // replacement generator now returned port-major arrays ([port][line]),
+    // we need to build the per-line views when wiring the replacement
+    // logic.
     for (var line = 0; line < lines; line++) {
-      replacement(
-          clk,
-          reset,
-          policyFlHitPorts[line]..addAll(policyRdHitPorts[line]),
-          policyAllocPorts[line],
-          policyInvalPorts[line],
-          name: 'rp_line$line',
-          ways: ways);
+      final flHits = [
+        for (var port = 0; port < numFills; port++) policyFlHitPorts[port][line]
+      ];
+      final rdHits = [
+        for (var port = 0; port < numReads; port++) policyRdHitPorts[port][line]
+      ];
+      final allocs = [
+        for (var port = 0; port < numFills; port++) policyAllocPorts[port][line]
+      ];
+      final inval = [
+        for (var port = 0; port < numFills; port++) policyInvalPorts[port][line]
+      ];
+      replacement(clk, reset, flHits..addAll(rdHits), allocs, inval,
+          name: 'rp_line$line', ways: ways);
     }
 
     // Eviction and fill helpers implemented as class-level methods below.
@@ -220,15 +248,17 @@ class SetAssociativeCache extends Cache {
     // Create eviction data read ports if needed (one per fill port per way)
     final evictDataRfReadPorts = hasEvictions
         ? List.generate(
-            ways,
-            (way) => List.generate(
-                numFills,
-                (i) => DataPortInterface(_dataWidth, _lineAddrWidth)
-                  ..en.named('evictDataRd_way${way}_port${i}_en')
-                  ..addr.named('evictDataRd_way${way}_port${i}_addr')
-                  ..data.named('evictDataRd_way${way}_port${i}_data')))
+            numFills,
+            (i) => List.generate(
+                ways,
+                (way) => DataPortInterface(_dataWidth, _lineAddrWidth)
+                  ..en.named('evictDataRd_port${i}_way${way}_en')
+                  ..addr.named('evictDataRd_port${i}_way${way}_addr')
+                  ..data.named('evictDataRd_port${i}_way${way}_data')))
         : <List<DataPortInterface>>[];
 
+    // Data interfaces: generator now returns port-major lists ([port][way])
+    // so per-port slicing is direct.
     final fillDataPorts = _genDataInterfaces(
         [for (final f in fills) f.fill], _dataWidth, _lineAddrWidth,
         prefix: 'data_fl');
@@ -237,9 +267,22 @@ class SetAssociativeCache extends Cache {
 
     for (var way = 0; way < ways; way++) {
       final allDataReadPorts = hasEvictions
-          ? [...readDataPorts[way], ...evictDataRfReadPorts[way]]
-          : readDataPorts[way];
-      RegisterFile(clk, reset, fillDataPorts[way], allDataReadPorts,
+          ? [
+                for (var port = 0; port < numReads; port++)
+                  readDataPorts[port][way]
+              ] +
+              [
+                for (var port = 0; port < numFills; port++)
+                  evictDataRfReadPorts[port][way]
+              ]
+          : [
+              for (var port = 0; port < numReads; port++)
+                readDataPorts[port][way]
+            ];
+      final fillPortsForWay = [
+        for (var port = 0; port < numFills; port++) fillDataPorts[port][way]
+      ];
+      RegisterFile(clk, reset, fillPortsForWay, allDataReadPorts,
           numEntries: lines, name: 'data_rf_way$way');
     }
 
@@ -248,40 +291,31 @@ class SetAssociativeCache extends Cache {
       // single-port view without indexing into the 2D arrays.
       final flPort = fills[flPortIdx].fill;
       final perWayFillDataPorts = [
-        for (var way = 0; way < ways; way++) fillDataPorts[way][flPortIdx]
+        for (var way = 0; way < ways; way++) fillDataPorts[flPortIdx][way]
       ];
       final perWayTagAllocPorts = [
-        for (var way = 0; way < ways; way++) tagRFAlloc[way][flPortIdx]
+        for (var way = 0; way < ways; way++) tagRFAlloc[flPortIdx][way]
       ];
       final perWayValidBitWrPorts = [
         for (var way = 0; way < ways; way++)
-          validBitRFWritePorts[way][flPortIdx]
+          validBitRFWritePorts[flPortIdx][way]
       ];
-      final perLinePolicyAllocPorts = [
-        for (var line = 0; line < lines; line++)
-          policyAllocPorts[line][flPortIdx]
-      ];
-      final perLinePolicyInvalPorts = [
-        for (var line = 0; line < lines; line++)
-          policyInvalPorts[line][flPortIdx]
-      ];
-      final perLinePolicyFlHitPorts = [
-        for (var line = 0; line < lines; line++)
-          policyFlHitPorts[line][flPortIdx]
-      ];
+      final perLinePolicyAllocPorts = policyAllocPorts[flPortIdx];
+      final perLinePolicyInvalPorts = policyInvalPorts[flPortIdx];
+      final perLinePolicyFlHitPorts = policyFlHitPorts[flPortIdx];
 
       if (hasEvictions) {
         final perWayEvictTagReadPorts = [
           for (var way = 0; way < ways; way++)
-            evictTagRfReadPorts[way][flPortIdx]
+            evictTagRfReadPorts[flPortIdx][way]
         ];
         final perWayEvictDataReadPorts = [
           for (var way = 0; way < ways; way++)
-            evictDataRfReadPorts[way][flPortIdx]
+            evictDataRfReadPorts[flPortIdx][way]
         ];
         final perWayValidBitRdPorts = [
           for (var way = 0; way < ways; way++)
-            validBitRFReadPorts[way][flPortIdx]
+            validBitRFReadPorts[flPortIdx][way]
         ];
 
         _handleFillPort(
@@ -324,17 +358,14 @@ class SetAssociativeCache extends Cache {
       final rdPort = reads[rdPortIdx];
 
       final perWayReadDataPorts = [
-        for (var way = 0; way < ways; way++) readDataPorts[way][rdPortIdx]
+        for (var way = 0; way < ways; way++) readDataPorts[rdPortIdx][way]
       ];
       final perWayValidBitWrPorts = [
         for (var way = 0; way < ways; way++)
-          validBitRFWritePorts[way][numFills + rdPortIdx]
+          validBitRFWritePorts[numFills + rdPortIdx][way]
       ];
 
-      final perLinePolicyRdHitPorts = [
-        for (var line = 0; line < lines; line++)
-          policyRdHitPorts[line][rdPortIdx]
-      ];
+      final perLinePolicyRdHitPorts = policyRdHitPorts[rdPortIdx];
 
       _handleReadPort(
           rdPort,
@@ -771,65 +802,66 @@ class SetAssociativeCache extends Cache {
   }
 
   /// Generates a 2D list of [DataPortInterface]s for the tag RF (without valid
-  /// bit). The dimensions are [ways][ports].
+  /// bit). The returned shape is port-major: [port][way].
   List<List<DataPortInterface>> _genTagRFInterfaces(
       List<ValidDataPortInterface> ports, int tagWidth, int addressWidth,
       {String prefix = 'tag'}) {
     final dataPorts = [
-      for (var way = 0; way < ways; way++)
+      for (var r = 0; r < ports.length; r++)
         [
-          for (var r = 0; r < ports.length; r++)
+          for (var way = 0; way < ways; way++)
             DataPortInterface(tagWidth, addressWidth)
         ]
     ];
-    for (var way = 0; way < ways; way++) {
-      for (var r = 0; r < ports.length; r++) {
-        final fullPrefix = '${prefix}_way${way}_port${r}_way$way';
-        dataPorts[way][r].en.named('${fullPrefix}_en');
-        dataPorts[way][r].addr.named('${fullPrefix}_addr');
-        dataPorts[way][r].data.named('${fullPrefix}_data');
+    for (var r = 0; r < ports.length; r++) {
+      for (var way = 0; way < ways; way++) {
+        final fullPrefix = '${prefix}_port${r}_way${way}';
+        dataPorts[r][way].en.named('${fullPrefix}_en');
+        dataPorts[r][way].addr.named('${fullPrefix}_addr');
+        dataPorts[r][way].data.named('${fullPrefix}_data');
       }
     }
     return dataPorts;
   }
 
   /// Generates a 2D list of [DataPortInterface]s for the data RF.
-  /// The dimensions are [ways][ports].
+  /// The returned shape is port-major: [port][way].
   List<List<DataPortInterface>> _genDataInterfaces(
       List<DataPortInterface> ports, int dataWidth, int addressWidth,
       {String prefix = 'data'}) {
     final dataPorts = [
-      for (var way = 0; way < ways; way++)
+      for (var r = 0; r < ports.length; r++)
         [
-          for (var r = 0; r < ports.length; r++)
+          for (var way = 0; way < ways; way++)
             DataPortInterface(dataWidth, addressWidth)
         ]
     ];
-    for (var way = 0; way < ways; way++) {
-      for (var r = 0; r < ports.length; r++) {
-        dataPorts[way][r].en.named('${prefix}_port${r}_way${way}_en');
-        dataPorts[way][r].addr.named('${prefix}_port${r}_way${way}_addr');
-        dataPorts[way][r].data.named('${prefix}_port${r}_way${way}_data');
+    for (var r = 0; r < ports.length; r++) {
+      for (var way = 0; way < ways; way++) {
+        dataPorts[r][way].en.named('${prefix}_port${r}_way${way}_en');
+        dataPorts[r][way].addr.named('${prefix}_port${r}_way${way}_addr');
+        dataPorts[r][way].data.named('${prefix}_port${r}_way${way}_data');
       }
     }
     return dataPorts;
   }
 
   /// Generate a 2D list of [AccessInterface]s for the replacement policy.
+  /// The returned shape is port-major: [port][line].
   List<List<AccessInterface>> _genReplacementAccesses(
       List<DataPortInterface> ports,
       {String prefix = 'replace'}) {
     final dataPorts = [
-      for (var line = 0; line < lines; line++)
-        [for (var i = 0; i < ports.length; i++) AccessInterface(ways)]
+      for (var r = 0; r < ports.length; r++)
+        [for (var line = 0; line < lines; line++) AccessInterface(ways)]
     ];
 
-    for (var line = 0; line < lines; line++) {
-      for (var r = 0; r < ports.length; r++) {
-        dataPorts[line][r]
+    for (var r = 0; r < ports.length; r++) {
+      for (var line = 0; line < lines; line++) {
+        dataPorts[r][line]
             .access
-            .named('${prefix}_line${line}_port${r}_access');
-        dataPorts[line][r].way.named('${prefix}_line${line}_port${r}_way');
+            .named('${prefix}_port${r}_line${line}_access');
+        dataPorts[r][line].way.named('${prefix}_port${r}_line${line}_way');
       }
     }
     return dataPorts;
