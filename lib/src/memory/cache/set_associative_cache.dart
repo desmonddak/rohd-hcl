@@ -119,37 +119,9 @@ class SetAssociativeCache extends Cache {
       }
     }
 
-    final fillPortValidOneHot = [
-      for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++)
-        [
-          for (var way = 0; way < ways; way++)
-            (validBitRFReadPorts[flPortIdx][way].data[0] &
-                    tagRFMatchFl[flPortIdx][way]
-                        .data
-                        .eq(getTag(fills[flPortIdx].fill.addr)))
-                .named('match_fl${flPortIdx}_way$way')
-        ]
-    ];
-    final fillPortValidWay = [
-      for (var fillPortIdx = 0; fillPortIdx < numFills; fillPortIdx++)
-        RecursivePriorityEncoder(fillPortValidOneHot[fillPortIdx].rswizzle())
-            .out
-            .slice(log2Ceil(ways) - 1, 0)
-            .named('fill_port${fillPortIdx}_way')
-    ];
-
-    final fillValidPortMiss = [
-      for (var fillPortIdx = 0; fillPortIdx < numFills; fillPortIdx++)
-        Logic(name: 'fill_port${fillPortIdx}_miss')
-    ];
-    for (var fillPortIdx = 0; fillPortIdx < numFills; fillPortIdx++) {
-      Logic? vsAccum;
-      for (var way = 0; way < ways; way++) {
-        final thisBit = fillPortValidOneHot[fillPortIdx][way];
-        vsAccum = (vsAccum == null) ? thisBit : (vsAccum | thisBit);
-      }
-      Combinational([fillValidPortMiss[fillPortIdx] < ~(vsAccum ?? Const(0))]);
-    }
+    // Per-fill match/encoder/miss are computed inside _FillPortHandler to
+    // keep per-RF read-port interfaces local to the RegisterFile instantiation
+    // while allowing the handler to encapsulate per-port logic.
 
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
       final rdPort = reads[rdPortIdx];
@@ -163,37 +135,8 @@ class SetAssociativeCache extends Cache {
       }
     }
 
-    final readPortValidOneHot = [
-      for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++)
-        [
-          for (var way = 0; way < ways; way++)
-            (validBitRFReadPorts[numFills + rdPortIdx][way].data[0] &
-                    tagRFMatchRd[rdPortIdx][way]
-                        .data
-                        .eq(getTag(reads[rdPortIdx].addr)))
-                .named('match_rd${rdPortIdx}_way$way')
-        ]
-    ];
-
-    final readValidPortMiss = [
-      for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++)
-        Logic(name: 'read_port${rdPortIdx}_miss')
-    ];
-    for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
-      Logic? vsAccum;
-      for (var way = 0; way < ways; way++) {
-        final thisBit = readPortValidOneHot[rdPortIdx][way];
-        vsAccum = (vsAccum == null) ? thisBit : (vsAccum | thisBit);
-      }
-      Combinational([readValidPortMiss[rdPortIdx] < ~(vsAccum ?? Const(0))]);
-    }
-    final readValidPortWay = [
-      for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++)
-        RecursivePriorityEncoder(readPortValidOneHot[rdPortIdx].rswizzle())
-            .out
-            .slice(log2Ceil(ways) - 1, 0)
-            .named('read_port${rdPortIdx}_way')
-    ];
+    // Per-read miss signals are constructed inside each _ReadPortHandler so
+    // the handler owns its combinational logic (symmetry with fill handler).
 
     final policyFlHitPorts = _genReplacementAccesses(
         [for (final f in fills) f.fill],
@@ -271,8 +214,8 @@ class SetAssociativeCache extends Cache {
         _FillPortHandler(
                 this,
                 flPort,
-                fillValidPortMiss[flPortIdx],
-                fillPortValidWay[flPortIdx],
+                tagRFMatchFl[flPortIdx],
+                validBitRFReadPorts[flPortIdx],
                 fillDataPorts[flPortIdx],
                 tagRFAlloc[flPortIdx],
                 validBitRFWritePorts[flPortIdx],
@@ -289,8 +232,8 @@ class SetAssociativeCache extends Cache {
         _FillPortHandler(
                 this,
                 flPort,
-                fillValidPortMiss[flPortIdx],
-                fillPortValidWay[flPortIdx],
+                tagRFMatchFl[flPortIdx],
+                validBitRFReadPorts[flPortIdx],
                 fillDataPorts[flPortIdx],
                 tagRFAlloc[flPortIdx],
                 validBitRFWritePorts[flPortIdx],
@@ -311,8 +254,8 @@ class SetAssociativeCache extends Cache {
       _ReadPortHandler(
               this,
               rdPort,
-              readValidPortMiss[rdPortIdx],
-              readValidPortWay[rdPortIdx],
+              tagRFMatchRd[rdPortIdx],
+              validBitRFReadPorts[numFills + rdPortIdx],
               readDataPorts[rdPortIdx],
               validBitRFWritePorts[numFills + rdPortIdx],
               policyRdHitPorts[rdPortIdx])
@@ -383,8 +326,10 @@ class SetAssociativeCache extends Cache {
 class _ReadPortHandler {
   final SetAssociativeCache cache;
   final ValidDataPortInterface rdPort;
-  final Logic readMiss;
-  final Logic readPortValidWay;
+  final List<DataPortInterface>
+      tagMatchReadPorts; // per-way tag match read ports
+  final List<DataPortInterface>
+      validBitReadPorts; // per-way valid-bit read ports
   final List<DataPortInterface> perWayReadDataPorts;
   final List<DataPortInterface> perWayValidBitWrPorts;
   final List<AccessInterface> perLinePolicyRdHitPorts;
@@ -392,13 +337,42 @@ class _ReadPortHandler {
   _ReadPortHandler(
       this.cache,
       this.rdPort,
-      this.readMiss,
-      this.readPortValidWay,
+      this.tagMatchReadPorts,
+      this.validBitReadPorts,
       this.perWayReadDataPorts,
       this.perWayValidBitWrPorts,
       this.perLinePolicyRdHitPorts);
 
   void wire() {
+    // Create the miss signal inside the handler so the handler fully owns
+    // its combinational outputs (matches fill-side behavior).
+    final readMiss = Logic(name: 'read_port${rdPort.name}_miss');
+
+    // Construct the per-way match one-hot inside the handler using the
+    // passed-in RF read ports.
+    final ways = cache.ways;
+    final readPortValidOneHot = [
+      for (var way = 0; way < ways; way++)
+        (validBitReadPorts[way].data[0] &
+                tagMatchReadPorts[way].data.eq(cache.getTag(rdPort.addr)))
+            .named('match_rd_port${rdPort.name}_way$way')
+    ];
+
+    // Encoder output (which way has valid data)
+    final readPortValidWay =
+        RecursivePriorityEncoder(readPortValidOneHot.rswizzle())
+            .out
+            .slice(log2Ceil(ways) - 1, 0)
+            .named('${rdPort.name}_valid_way');
+
+    // Compute miss by OR-reducing the one-hot
+    Logic? vsAccum;
+    for (var way = 0; way < ways; way++) {
+      final b = readPortValidOneHot[way];
+      vsAccum = (vsAccum == null) ? b : (vsAccum | b);
+    }
+    Combinational([readMiss < ~(vsAccum ?? Const(0))]);
+
     final hasHit = ~readMiss;
 
     Combinational([
@@ -464,8 +438,9 @@ class _ReadPortHandler {
 class _FillPortHandler {
   final SetAssociativeCache cache;
   final ValidDataPortInterface flPort;
-  final Logic fillMiss;
-  final Logic fillPortValidWay;
+  final List<DataPortInterface> tagMatchReadPorts; // per-way tag read ports
+  final List<DataPortInterface>
+      validBitReadPorts; // per-way valid-bit read ports
   final List<DataPortInterface> perWayFillDataPorts;
   final List<DataPortInterface> perWayTagAllocPorts;
   final List<DataPortInterface> perWayValidBitWrPorts;
@@ -481,8 +456,8 @@ class _FillPortHandler {
   _FillPortHandler(
       this.cache,
       this.flPort,
-      this.fillMiss,
-      this.fillPortValidWay,
+      this.tagMatchReadPorts,
+      this.validBitReadPorts,
       this.perWayFillDataPorts,
       this.perWayTagAllocPorts,
       this.perWayValidBitWrPorts,
@@ -496,6 +471,33 @@ class _FillPortHandler {
       this.nameSuffix);
 
   void wire() {
+    final ways = cache.ways;
+    final lines = cache.lines;
+
+    // Build the per-way match one-hot array inside the handler
+    final fillPortValidOneHot = [
+      for (var way = 0; way < ways; way++)
+        (validBitReadPorts[way].data[0] &
+                tagMatchReadPorts[way].data.eq(cache.getTag(flPort.addr)))
+            .named('match_fl${nameSuffix ?? ''}_way$way')
+    ];
+
+    // Encoder for which way is valid
+    final fillPortValidWay =
+        RecursivePriorityEncoder(fillPortValidOneHot.rswizzle())
+            .out
+            .slice(log2Ceil(ways) - 1, 0)
+            .named('fill_port${nameSuffix ?? ''}_way');
+
+    // Compute miss by OR-reducing the one-hot
+    Logic? vsAccum;
+    for (var way = 0; way < ways; way++) {
+      final b = fillPortValidOneHot[way];
+      vsAccum = (vsAccum == null) ? b : (vsAccum | b);
+    }
+    final fillMiss = Logic(name: 'fill_port${nameSuffix ?? ''}_miss');
+    Combinational([fillMiss < ~(vsAccum ?? Const(0))]);
+
     // Eviction handling (if present)
     if (evictPort != null &&
         perWayEvictTagReadPorts != null &&
@@ -566,14 +568,14 @@ class _FillPortHandler {
       if (cache.ways == 1) {
         allocWayValid <= perWayValidBitRdPorts![0].data[0];
       } else {
-        Logic? vsAccum;
+        Logic? vsAccum2;
         for (var way = 0; way < cache.ways; way++) {
           final sel = evictWay.eq(Const(way, width: log2Ceil(cache.ways))) &
               perWayValidBitRdPorts![way].data[0];
-          vsAccum = (vsAccum == null) ? sel : (vsAccum | sel);
+          vsAccum2 = (vsAccum2 == null) ? sel : (vsAccum2 | sel);
         }
         allocWayValid <=
-            (vsAccum ?? Const(0))
+            (vsAccum2 ?? Const(0))
                 .named('allocWayValidReduction${nameSuffix ?? ''}');
       }
 
@@ -640,8 +642,6 @@ class _FillPortHandler {
     }
 
     // Tag allocations
-    final ways = cache.ways;
-    final lines = cache.lines;
 
     Combinational([
       for (var way = 0; way < ways; way++)
@@ -693,7 +693,7 @@ class _FillPortHandler {
       final validBitWrPort = perWayValidBitWrPorts[way];
 
       // Build allocMatch by OR-reducing per-line conditions without creating a
-      // Dart list.
+      // Dart list
       Logic allocMatch = Const(0);
       if (lines > 0) {
         Logic? accum;
