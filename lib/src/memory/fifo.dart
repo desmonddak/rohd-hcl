@@ -12,6 +12,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
+import 'package:rohd_hcl/src/memory/register_file_with_ports.dart';
 import 'package:rohd_vf/rohd_vf.dart';
 
 /// A module [Fifo] implementing a simple FIFO (First In, First Out) buffer.
@@ -163,7 +164,7 @@ class Fifo<LogicType extends Logic> extends Module {
     // set up the RF storage
     final wrPort = DataPortInterface(dataWidth, _addrWidth);
     final rdPort = DataPortInterface(dataWidth, _addrWidth);
-    RegisterFile(
+    RegisterFileWithPorts(
       _clk,
       _reset,
       [wrPort],

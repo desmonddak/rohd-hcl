@@ -10,6 +10,7 @@
 import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
+import 'package:rohd_hcl/src/memory/register_file_with_ports.dart';
 
 /// A fully associative cache implementation.
 ///
@@ -93,7 +94,7 @@ class FullyAssociativeCache extends Cache {
     final tagRfReadPorts = List.generate(
         tagRfReadCount, (_) => DataPortInterface(tagWidth, wayAddrWidth));
 
-    RegisterFile(clk, reset, tagRfWritePorts, tagRfReadPorts,
+    RegisterFileWithPorts(clk, reset, tagRfWritePorts, tagRfReadPorts,
         numEntries: ways, name: 'tagRf');
 
     // Create separate valid bit storage using Logic arrays since we need
@@ -176,7 +177,7 @@ class FullyAssociativeCache extends Cache {
     final evictDataRfReadPorts = List.generate(
         numFills, (_) => DataPortInterface(dataWidth, wayAddrWidth));
 
-    RegisterFile(clk, reset, dataRfWritePorts,
+    RegisterFileWithPorts(clk, reset, dataRfWritePorts,
         [...dataRfReadPorts, ...evictDataRfReadPorts],
         numEntries: ways, name: 'dataRf');
 

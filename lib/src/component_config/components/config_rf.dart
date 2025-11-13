@@ -11,6 +11,7 @@ import 'dart:collection';
 
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
+import 'package:rohd_hcl/src/memory/register_file_with_ports.dart';
 
 /// A [Configurator] for [RegisterFile]s.
 class RegisterFileConfigurator extends Configurator {
@@ -43,7 +44,7 @@ class RegisterFileConfigurator extends Configurator {
   });
 
   @override
-  Module createModule() => RegisterFile(
+  Module createModule() => RegisterFileWithPorts(
       Logic(),
       Logic(),
       List.generate(

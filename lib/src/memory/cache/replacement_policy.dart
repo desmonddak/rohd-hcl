@@ -67,6 +67,21 @@ abstract class ReplacementPolicy extends Module {
   @protected
   final List<AccessInterface> invalidates = [];
 
+  /// The original external interfaces provided by the caller.
+  /// These are the AccessInterface objects that callers should drive.
+  ///
+  /// These are cloned internally to create the [hits], [allocs], and
+  /// [invalidates] lists.
+  ///
+  /// The original external hit interfaces provided by the caller.
+  final List<AccessInterface> extHits;
+
+  /// The original external alloc interfaces provided by the caller.
+  final List<AccessInterface> extAllocs;
+
+  /// The original external invalidate interfaces provided by the caller.
+  final List<AccessInterface> extInvalidates;
+
   /// Clock.
   Logic get clk => input('clk');
 
@@ -86,7 +101,10 @@ abstract class ReplacementPolicy extends Module {
       super.reserveName,
       super.reserveDefinitionName,
       String? definitionName})
-      : super(
+      : extHits = hits,
+        extAllocs = allocs,
+        extInvalidates = invalidates,
+        super(
             definitionName: definitionName ??
                 'replacement_H${hits.length}_M${allocs.length}_WAYS=$ways') {
     if (ways < 2 || (ways & (ways - 1)) != 0) {
@@ -125,6 +143,15 @@ abstract class ReplacementPolicy extends Module {
             uniquify: (original) => 'invalidate_${original}_$i'));
     }
   }
+
+  /// Public accessor for the internal cloned hit interfaces.
+  List<AccessInterface> get internalHits => hits;
+
+  /// Public accessor for the internal cloned alloc/miss interfaces.
+  List<AccessInterface> get internalAllocs => allocs;
+
+  /// Public accessor for the internal cloned invalidate interfaces.
+  List<AccessInterface> get internalInvalidates => invalidates;
 }
 
 // Other policies to implement Full LRU, LFU, Random, FIFO, MRU, Adaptive

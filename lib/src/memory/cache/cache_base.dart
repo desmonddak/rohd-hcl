@@ -162,6 +162,10 @@ abstract class Cache extends Module {
       {int ways,
       String name}) replacement;
 
+  /// Per-line replacement policy instances created by subclasses.
+  @protected
+  late final List<ReplacementPolicy> replByLine;
+
   /// Clock.
   Logic get clk => input('clk');
 

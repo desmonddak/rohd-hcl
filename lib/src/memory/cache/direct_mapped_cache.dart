@@ -9,6 +9,7 @@
 
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
+import 'package:rohd_hcl/src/memory/register_file_with_ports.dart';
 
 /// A direct-mapped cache (1-way set-associative cache).
 ///
@@ -58,7 +59,7 @@ class DirectMappedCache extends Cache {
         DataPortInterface(tagWidth, lineAddrWidth)
     ];
 
-    RegisterFile(
+    RegisterFileWithPorts(
       clk,
       reset,
       tagRfWritePorts,
@@ -82,7 +83,7 @@ class DirectMappedCache extends Cache {
           ..addr.named('validBitRd_port${i}_addr')
           ..data.named('validBitRd_port${i}_data'));
 
-    RegisterFile(clk, reset, validBitRfWritePorts, validBitRfReadPorts,
+    RegisterFileWithPorts(clk, reset, validBitRfWritePorts, validBitRfReadPorts,
         numEntries: lines, name: 'valid_bit_rf');
 
     // Data register file (including eviction read ports if needed)
@@ -104,7 +105,7 @@ class DirectMappedCache extends Cache {
         DataPortInterface(dataWidth, lineAddrWidth)
     ];
 
-    RegisterFile(
+    RegisterFileWithPorts(
       clk,
       reset,
       dataRfWritePorts,
