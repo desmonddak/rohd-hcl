@@ -131,8 +131,14 @@ class SetAssociativeCache extends Cache {
     // prepared before the match one-hot computations below.
     for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++) {
       final flPort = fills[flPortIdx].fill;
-      _prepareFillPortMatches(
-          flPort, tagRFMatchFl[flPortIdx], validBitRFReadPorts[flPortIdx]);
+      // Prepare tag-match and valid-bit read ports for this fill port
+      for (var way = 0; way < ways; way++) {
+        tagRFMatchFl[flPortIdx][way].addr <= getLine(flPort.addr);
+        tagRFMatchFl[flPortIdx][way].en <= flPort.en;
+
+        validBitRFReadPorts[flPortIdx][way].addr <= getLine(flPort.addr);
+        validBitRFReadPorts[flPortIdx][way].en <= flPort.en;
+      }
     }
 
     final fillPortValidOneHot = [
@@ -153,22 +159,36 @@ class SetAssociativeCache extends Cache {
             .slice(log2Ceil(ways) - 1, 0)
             .named('fill_port${fillPortIdx}_way')
     ];
+    // Build per-fill-port miss signals without allocating temporary Dart
+    // lists; accumulate the OR across ways into a single Logic and then
+    // invert it to produce the miss signal.
     final fillValidPortMiss = [
       for (var fillPortIdx = 0; fillPortIdx < numFills; fillPortIdx++)
-        (~[
-          for (var way = 0; way < ways; way++)
-            fillPortValidOneHot[fillPortIdx][way]
-        ].swizzle().or())
-            .named('fill_port${fillPortIdx}_miss')
+        Logic(name: 'fill_port${fillPortIdx}_miss')
     ];
+    for (var fillPortIdx = 0; fillPortIdx < numFills; fillPortIdx++) {
+      Logic? vsAccum;
+      for (var way = 0; way < ways; way++) {
+        final thisBit = fillPortValidOneHot[fillPortIdx][way];
+        vsAccum = (vsAccum == null) ? thisBit : (vsAccum | thisBit);
+      }
+      Combinational([fillValidPortMiss[fillPortIdx] < ~(vsAccum ?? Const(0))]);
+    }
 
     // Setup the tag match read interfaces and valid bit reads for reads.
     // Wire the per-way tag match and valid-bit read ports via a helper so
     // the wiring is colocated with other read-port logic.
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
       final rdPort = reads[rdPortIdx];
-      _prepareReadPortMatches(rdPort, tagRFMatchRd[rdPortIdx],
-          validBitRFReadPorts[numFills + rdPortIdx]);
+      // Prepare tag-match and valid-bit read ports for this read port.
+      for (var way = 0; way < ways; way++) {
+        tagRFMatchRd[rdPortIdx][way].addr <= getLine(rdPort.addr);
+        tagRFMatchRd[rdPortIdx][way].en <= rdPort.en;
+
+        validBitRFReadPorts[numFills + rdPortIdx][way].addr <=
+            getLine(rdPort.addr);
+        validBitRFReadPorts[numFills + rdPortIdx][way].en <= rdPort.en;
+      }
     }
 
     final readPortValidOneHot = [
@@ -182,14 +202,19 @@ class SetAssociativeCache extends Cache {
                 .named('match_rd${rdPortIdx}_way$way')
         ]
     ];
+    // Build per-read-port miss signals without temporary list allocations.
     final readValidPortMiss = [
       for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++)
-        (~[
-          for (var way = 0; way < ways; way++)
-            readPortValidOneHot[rdPortIdx][way]
-        ].swizzle().or())
-            .named('read_port${rdPortIdx}_miss')
+        Logic(name: 'read_port${rdPortIdx}_miss')
     ];
+    for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
+      Logic? vsAccum;
+      for (var way = 0; way < ways; way++) {
+        final thisBit = readPortValidOneHot[rdPortIdx][way];
+        vsAccum = (vsAccum == null) ? thisBit : (vsAccum | thisBit);
+      }
+      Combinational([readValidPortMiss[rdPortIdx] < ~(vsAccum ?? Const(0))]);
+    }
     final readValidPortWay = [
       for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++)
         RecursivePriorityEncoder(readPortValidOneHot[rdPortIdx].rswizzle())
@@ -290,47 +315,24 @@ class SetAssociativeCache extends Cache {
       // Build per-port slices so the class-level helper can operate on a
       // single-port view without indexing into the 2D arrays.
       final flPort = fills[flPortIdx].fill;
-      final perWayFillDataPorts = [
-        for (var way = 0; way < ways; way++) fillDataPorts[flPortIdx][way]
-      ];
-      final perWayTagAllocPorts = [
-        for (var way = 0; way < ways; way++) tagRFAlloc[flPortIdx][way]
-      ];
-      final perWayValidBitWrPorts = [
-        for (var way = 0; way < ways; way++)
-          validBitRFWritePorts[flPortIdx][way]
-      ];
       final perLinePolicyAllocPorts = policyAllocPorts[flPortIdx];
       final perLinePolicyInvalPorts = policyInvalPorts[flPortIdx];
       final perLinePolicyFlHitPorts = policyFlHitPorts[flPortIdx];
 
       if (hasEvictions) {
-        final perWayEvictTagReadPorts = [
-          for (var way = 0; way < ways; way++)
-            evictTagRfReadPorts[flPortIdx][way]
-        ];
-        final perWayEvictDataReadPorts = [
-          for (var way = 0; way < ways; way++)
-            evictDataRfReadPorts[flPortIdx][way]
-        ];
-        final perWayValidBitRdPorts = [
-          for (var way = 0; way < ways; way++)
-            validBitRFReadPorts[flPortIdx][way]
-        ];
-
         _handleFillPort(
             flPort,
             fillValidPortMiss[flPortIdx],
             fillPortValidWay[flPortIdx],
-            perWayFillDataPorts,
-            perWayTagAllocPorts,
-            perWayValidBitWrPorts,
+            fillDataPorts[flPortIdx],
+            tagRFAlloc[flPortIdx],
+            validBitRFWritePorts[flPortIdx],
             perLinePolicyAllocPorts,
             perLinePolicyFlHitPorts,
             perLinePolicyInvalPorts,
-            perWayEvictTagReadPorts,
-            perWayEvictDataReadPorts,
-            perWayValidBitRdPorts,
+            evictTagRfReadPorts[flPortIdx],
+            evictDataRfReadPorts[flPortIdx],
+            validBitRFReadPorts[flPortIdx],
             fills[flPortIdx].eviction,
             flPortIdx.toString());
       } else {
@@ -338,9 +340,9 @@ class SetAssociativeCache extends Cache {
             flPort,
             fillValidPortMiss[flPortIdx],
             fillPortValidWay[flPortIdx],
-            perWayFillDataPorts,
-            perWayTagAllocPorts,
-            perWayValidBitWrPorts,
+            fillDataPorts[flPortIdx],
+            tagRFAlloc[flPortIdx],
+            validBitRFWritePorts[flPortIdx],
             perLinePolicyAllocPorts,
             perLinePolicyFlHitPorts,
             perLinePolicyInvalPorts);
@@ -357,146 +359,19 @@ class SetAssociativeCache extends Cache {
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
       final rdPort = reads[rdPortIdx];
 
-      final perWayReadDataPorts = [
-        for (var way = 0; way < ways; way++) readDataPorts[rdPortIdx][way]
-      ];
-      final perWayValidBitWrPorts = [
-        for (var way = 0; way < ways; way++)
-          validBitRFWritePorts[numFills + rdPortIdx][way]
-      ];
-
-      final perLinePolicyRdHitPorts = policyRdHitPorts[rdPortIdx];
-
       _handleReadPort(
           rdPort,
           readValidPortMiss[rdPortIdx],
           readValidPortWay[rdPortIdx],
-          perWayReadDataPorts,
-          perWayValidBitWrPorts,
-          perLinePolicyRdHitPorts);
+          readDataPorts[rdPortIdx],
+          validBitRFWritePorts[numFills + rdPortIdx],
+          policyRdHitPorts[rdPortIdx]);
     }
 
     // Eviction handling is now invoked from within _handleFillPort when
     // eviction ports are present. The per-port invocation occurs at the
     // time fills are processed above, so there's no separate top-level
     // eviction loop needed here.
-  }
-
-  // Class-level eviction helper: perform eviction read/select and drive the
-  // eviction output for a single fill/eviction port. Mirrors the previous
-  // local helper but exists at class scope.
-  void _handleEvictPort(
-      ValidDataPortInterface evictPort,
-      ValidDataPortInterface fillPort,
-      Logic fillMiss,
-      Logic fillPortValidWay,
-      List<DataPortInterface> perWayEvictTagReadPorts,
-      List<DataPortInterface> perWayEvictDataReadPorts,
-      List<AccessInterface> perLinePolicyAllocPorts,
-      List<DataPortInterface> perWayValidBitRdPorts,
-      String nameSuffix) {
-    for (var way = 0; way < ways; way++) {
-      final evictTagReadPort = perWayEvictTagReadPorts[way];
-      final evictDataReadPort = perWayEvictDataReadPorts[way];
-
-      evictTagReadPort.en <= fillPort.en;
-      evictTagReadPort.addr <= getLine(fillPort.addr);
-
-      evictDataReadPort.en <= fillPort.en;
-      evictDataReadPort.addr <= getLine(fillPort.addr);
-    }
-
-    final evictWay =
-        Logic(name: 'evict${nameSuffix}Way', width: log2Ceil(ways));
-    final fillHasHit = ~fillMiss;
-
-    final allocWay =
-        Logic(name: 'evict${nameSuffix}AllocWay', width: log2Ceil(ways));
-    final hitWay =
-        Logic(name: 'evict${nameSuffix}HitWay', width: log2Ceil(ways));
-
-    if (lines == 1) {
-      allocWay <= perLinePolicyAllocPorts[0].way;
-      hitWay <= fillPortValidWay;
-    } else {
-      final allocCases = <CaseItem>[];
-      final hitCases = <CaseItem>[];
-      for (var line = 0; line < lines; line++) {
-        allocCases.add(CaseItem(Const(line, width: _lineAddrWidth),
-            [allocWay < perLinePolicyAllocPorts[line].way]));
-        hitCases.add(CaseItem(
-            Const(line, width: _lineAddrWidth), [hitWay < fillPortValidWay]));
-      }
-      Combinational([Case(getLine(fillPort.addr), allocCases)]);
-      Combinational([Case(getLine(fillPort.addr), hitCases)]);
-    }
-
-    Combinational([
-      If(fillHasHit, then: [evictWay < hitWay], orElse: [evictWay < allocWay])
-    ]);
-
-    final evictTag = Logic(name: 'evict${nameSuffix}Tag', width: _tagWidth);
-    final evictData = Logic(name: 'evict${nameSuffix}Data', width: _dataWidth);
-
-    if (ways == 1) {
-      evictTag <= perWayEvictTagReadPorts[0].data;
-      evictData <= perWayEvictDataReadPorts[0].data;
-    } else {
-      final tagSelections = <Conditional>[];
-      final dataSelections = <Conditional>[];
-      for (var way = 0; way < ways; way++) {
-        final isThisWay = evictWay.eq(Const(way, width: log2Ceil(ways)));
-        tagSelections.add(If(isThisWay,
-            then: [evictTag < perWayEvictTagReadPorts[way].data]));
-        dataSelections.add(If(isThisWay,
-            then: [evictData < perWayEvictDataReadPorts[way].data]));
-      }
-      Combinational([
-        evictTag < Const(0, width: _tagWidth),
-        ...tagSelections,
-      ]);
-      Combinational([
-        evictData < Const(0, width: _dataWidth),
-        ...dataSelections,
-      ]);
-    }
-
-    final allocWayValid = Logic(name: 'allocWayValid$nameSuffix');
-    if (ways == 1) {
-      allocWayValid <= perWayValidBitRdPorts[0].data[0];
-    } else {
-      final validSelections = <Logic>[];
-      for (var way = 0; way < ways; way++) {
-        validSelections.add(evictWay.eq(Const(way, width: log2Ceil(ways))) &
-            perWayValidBitRdPorts[way].data[0]);
-      }
-      allocWayValid <=
-          validSelections
-              .reduce((a, b) => a | b)
-              .named('allocWayValidReduction$nameSuffix');
-    }
-
-    final allocEvictCond = (fillPort.valid & ~fillHasHit & allocWayValid)
-        .named('allocEvictCond$nameSuffix');
-    final invalEvictCond =
-        (~fillPort.valid & fillHasHit).named('invalEvictCond$nameSuffix');
-
-    final evictAddrComb =
-        Logic(name: 'evictAddrComb$nameSuffix', width: fillPort.addrWidth);
-    Combinational([
-      If(invalEvictCond, then: [
-        evictAddrComb < fillPort.addr
-      ], orElse: [
-        evictAddrComb < [evictTag, getLine(fillPort.addr)].swizzle()
-      ])
-    ]);
-
-    Combinational([
-      evictPort.en < (fillPort.en & (invalEvictCond | allocEvictCond)),
-      evictPort.valid < (fillPort.en & (invalEvictCond | allocEvictCond)),
-      evictPort.addr < evictAddrComb,
-      evictPort.data < evictData,
-    ]);
   }
 
   // Class-level private helper: top-level fill handling for a single fill
@@ -517,8 +392,226 @@ class SetAssociativeCache extends Cache {
       List<DataPortInterface>? perWayValidBitRdPorts,
       ValidDataPortInterface? evictPort,
       String? nameSuffix]) {
+    // Local eviction helper nested here so eviction wiring is colocated
+    // with the fill handling for a single port. Care is taken to pass a
+    // unique nameSuffix per-call from the caller so created Logic names
+    // don't collide across fill ports.
+    void handleEvictPort(
+        ValidDataPortInterface evictPort,
+        ValidDataPortInterface fillPort,
+        Logic fillMiss,
+        Logic fillPortValidWay,
+        List<DataPortInterface> perWayEvictTagReadPorts,
+        List<DataPortInterface> perWayEvictDataReadPorts,
+        List<AccessInterface> perLinePolicyAllocPorts,
+        List<DataPortInterface> perWayValidBitRdPorts,
+        String nameSuffix) {
+      for (var way = 0; way < ways; way++) {
+        final evictTagReadPort = perWayEvictTagReadPorts[way];
+        final evictDataReadPort = perWayEvictDataReadPorts[way];
+
+        evictTagReadPort.en <= fillPort.en;
+        evictTagReadPort.addr <= getLine(fillPort.addr);
+
+        evictDataReadPort.en <= fillPort.en;
+        evictDataReadPort.addr <= getLine(fillPort.addr);
+      }
+
+      final evictWay =
+          Logic(name: 'evict${nameSuffix}Way', width: log2Ceil(ways));
+      final fillHasHit = ~fillMiss;
+
+      final allocWay =
+          Logic(name: 'evict${nameSuffix}AllocWay', width: log2Ceil(ways));
+      final hitWay =
+          Logic(name: 'evict${nameSuffix}HitWay', width: log2Ceil(ways));
+
+      if (lines == 1) {
+        allocWay <= perLinePolicyAllocPorts[0].way;
+        hitWay <= fillPortValidWay;
+      } else {
+        final allocCases = <CaseItem>[];
+        for (var line = 0; line < lines; line++) {
+          allocCases.add(CaseItem(Const(line, width: _lineAddrWidth),
+              [allocWay < perLinePolicyAllocPorts[line].way]));
+        }
+        Combinational([Case(getLine(fillPort.addr), allocCases)]);
+        // hitWay is line-independent; drive it directly from fillPortValidWay.
+        Combinational([hitWay < fillPortValidWay]);
+      }
+
+      Combinational([
+        If(fillHasHit, then: [evictWay < hitWay], orElse: [evictWay < allocWay])
+      ]);
+
+      final evictTag = Logic(name: 'evict${nameSuffix}Tag', width: _tagWidth);
+      final evictData =
+          Logic(name: 'evict${nameSuffix}Data', width: _dataWidth);
+
+      if (ways == 1) {
+        evictTag <= perWayEvictTagReadPorts.first.data;
+        evictData <= perWayEvictDataReadPorts.first.data;
+      } else {
+        final tagSelections = <Conditional>[];
+        final dataSelections = <Conditional>[];
+        for (var way = 0; way < ways; way++) {
+          final isThisWay = evictWay.eq(Const(way, width: log2Ceil(ways)));
+          tagSelections.add(If(isThisWay,
+              then: [evictTag < perWayEvictTagReadPorts[way].data]));
+          dataSelections.add(If(isThisWay,
+              then: [evictData < perWayEvictDataReadPorts[way].data]));
+        }
+        Combinational([
+          evictTag < Const(0, width: _tagWidth),
+          ...tagSelections,
+        ]);
+        Combinational([
+          evictData < Const(0, width: _dataWidth),
+          ...dataSelections,
+        ]);
+      }
+
+      final allocWayValid = Logic(name: 'allocWayValid$nameSuffix');
+      if (ways == 1) {
+        allocWayValid <= perWayValidBitRdPorts[0].data[0];
+      } else {
+        Logic? vsAccum;
+        for (var way = 0; way < ways; way++) {
+          final sel = evictWay.eq(Const(way, width: log2Ceil(ways))) &
+              perWayValidBitRdPorts[way].data[0];
+          vsAccum = (vsAccum == null) ? sel : (vsAccum | sel);
+        }
+        allocWayValid <=
+            (vsAccum ?? Const(0)).named('allocWayValidReduction$nameSuffix');
+      }
+
+      final allocEvictCond = (fillPort.valid & ~fillHasHit & allocWayValid)
+          .named('allocEvictCond$nameSuffix');
+      final invalEvictCond =
+          (~fillPort.valid & fillHasHit).named('invalEvictCond$nameSuffix');
+
+      final evictAddrComb =
+          Logic(name: 'evictAddrComb$nameSuffix', width: fillPort.addrWidth);
+      Combinational([
+        If(invalEvictCond, then: [
+          evictAddrComb < fillPort.addr
+        ], orElse: [
+          evictAddrComb < [evictTag, getLine(fillPort.addr)].swizzle()
+        ])
+      ]);
+
+      Combinational([
+        evictPort.en < (fillPort.en & (invalEvictCond | allocEvictCond)),
+        evictPort.valid < (fillPort.en & (invalEvictCond | allocEvictCond)),
+        evictPort.addr < evictAddrComb,
+        evictPort.data < evictData,
+      ]);
+    }
+
     // Policy: initialize and drive per-line policy ports for this fill
     // port (fl hit, inval, alloc). This was previously in buildLogic().
+    // Local helper: perform tag allocations and valid-bit updates for this
+    // fill port. Nested so the helper can access _lineAddrWidth, _tagWidth,
+    // and _dataWidth directly and remain colocated with the fill logic.
+    void handleFillAllocAndValidUpdates(
+        ValidDataPortInterface flPort,
+        Logic fillMiss,
+        Logic fillPortValidWay,
+        List<DataPortInterface> perWayTagAllocPorts,
+        List<AccessInterface> perLinePolicyAllocPorts,
+        List<AccessInterface> perLinePolicyInvalPorts,
+        List<DataPortInterface> perWayValidBitWrPorts) {
+      // Tag RF (alloc/inval) defaults
+      Combinational([
+        for (var way = 0; way < ways; way++)
+          perWayTagAllocPorts[way].en < Const(0),
+        for (var way = 0; way < ways; way++)
+          perWayTagAllocPorts[way].addr < Const(0, width: _lineAddrWidth),
+        for (var way = 0; way < ways; way++)
+          perWayTagAllocPorts[way].data < Const(0, width: _tagWidth),
+        If(flPort.en, then: [
+          for (var line = 0; line < lines; line++)
+            If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
+                then: [
+                  for (var way = 0; way < ways; way++)
+                    If.block([
+                      Iff(
+                          // Fill with allocate.
+                          flPort.valid &
+                              fillMiss &
+                              Const(way, width: log2Ceil(ways))
+                                  .eq(perLinePolicyAllocPorts[line].way),
+                          [
+                            perWayTagAllocPorts[way].en < flPort.en,
+                            perWayTagAllocPorts[way].addr <
+                                Const(line, width: _lineAddrWidth),
+                            perWayTagAllocPorts[way].data < getTag(flPort.addr),
+                          ]),
+                      ElseIf(
+                          // Fill with invalidate.
+                          ~flPort.valid &
+                              Const(way, width: log2Ceil(ways))
+                                  .eq(perLinePolicyInvalPorts[line].way),
+                          [
+                            perWayTagAllocPorts[way].en < flPort.en,
+                            perWayTagAllocPorts[way].addr <
+                                Const(line, width: _lineAddrWidth),
+                            perWayTagAllocPorts[way].data < getTag(flPort.addr),
+                          ]),
+                    ])
+                ])
+        ])
+      ]);
+
+      // Valid-bit writes from fills: default to disabled, enable on fill
+      for (var way = 0; way < ways; way++) {
+        final matchWay = Const(way, width: log2Ceil(ways));
+        final validBitWrPort = perWayValidBitWrPorts[way];
+
+        // Check whether allocator chose this way for the given line.
+        // Build the OR of per-line conditions directly to avoid a temporary
+        // Dart list allocation.
+        Logic allocMatch = Const(0);
+        if (lines > 0) {
+          Logic? accum;
+          for (var line = 0; line < lines; line++) {
+            final cond =
+                getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)) &
+                    perLinePolicyAllocPorts[line].way.eq(matchWay);
+            accum = (accum == null) ? cond : (accum | cond);
+          }
+          allocMatch = accum ?? Const(0);
+        }
+
+        Combinational([
+          validBitWrPort.en < Const(0),
+          validBitWrPort.addr < Const(0, width: _lineAddrWidth),
+          validBitWrPort.data < Const(0, width: 1),
+          If(flPort.en, then: [
+            If.block([
+              // Valid fill with hit or miss - set valid bit to 1
+              Iff(
+                  flPort.valid &
+                      (~fillMiss & fillPortValidWay.eq(matchWay) |
+                          fillMiss & allocMatch),
+                  [
+                    validBitWrPort.en < Const(1),
+                    validBitWrPort.addr < getLine(flPort.addr),
+                    validBitWrPort.data < Const(1, width: 1),
+                  ]),
+              // Invalid fill (invalidation) - set valid bit to 0
+              ElseIf(
+                  ~flPort.valid & ~fillMiss & fillPortValidWay.eq(matchWay), [
+                validBitWrPort.en < Const(1),
+                validBitWrPort.addr < getLine(flPort.addr),
+                validBitWrPort.data < Const(0, width: 1),
+              ]),
+            ])
+          ])
+        ]);
+      }
+    }
+
     Combinational([
       for (var line = 0; line < lines; line++)
         perLinePolicyInvalPorts[line].access < Const(0),
@@ -551,7 +644,7 @@ class SetAssociativeCache extends Cache {
               getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth));
     }
     // Perform tag allocations and valid-bit updates for this fill port.
-    _handleFillAllocAndValidUpdates(
+    handleFillAllocAndValidUpdates(
         flPort,
         fillMiss,
         fillPortValidWay,
@@ -591,7 +684,7 @@ class SetAssociativeCache extends Cache {
         perWayEvictTagReadPorts != null &&
         perWayEvictDataReadPorts != null &&
         perWayValidBitRdPorts != null) {
-      _handleEvictPort(
+      handleEvictPort(
           evictPort,
           flPort,
           fillMiss,
@@ -601,102 +694,6 @@ class SetAssociativeCache extends Cache {
           perLinePolicyAllocPorts,
           perWayValidBitRdPorts,
           nameSuffix ?? '');
-    }
-  }
-
-  // Helper: process tag allocations and valid-bit updates for a single fill
-  // port. This was extracted from buildLogic() to reduce duplication and
-  // clarify responsibilities.
-  void _handleFillAllocAndValidUpdates(
-      ValidDataPortInterface flPort,
-      Logic fillMiss,
-      Logic fillPortValidWay,
-      List<DataPortInterface> perWayTagAllocPorts,
-      List<AccessInterface> perLinePolicyAllocPorts,
-      List<AccessInterface> perLinePolicyInvalPorts,
-      List<DataPortInterface> perWayValidBitWrPorts) {
-    // Tag RF (alloc/inval) defaults
-    Combinational([
-      for (var way = 0; way < ways; way++)
-        perWayTagAllocPorts[way].en < Const(0),
-      for (var way = 0; way < ways; way++)
-        perWayTagAllocPorts[way].addr < Const(0, width: _lineAddrWidth),
-      for (var way = 0; way < ways; way++)
-        perWayTagAllocPorts[way].data < Const(0, width: _tagWidth),
-      If(flPort.en, then: [
-        for (var line = 0; line < lines; line++)
-          If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
-              then: [
-                for (var way = 0; way < ways; way++)
-                  If.block([
-                    Iff(
-                        // Fill with allocate.
-                        flPort.valid &
-                            fillMiss &
-                            Const(way, width: log2Ceil(ways))
-                                .eq(perLinePolicyAllocPorts[line].way),
-                        [
-                          perWayTagAllocPorts[way].en < flPort.en,
-                          perWayTagAllocPorts[way].addr <
-                              Const(line, width: _lineAddrWidth),
-                          perWayTagAllocPorts[way].data < getTag(flPort.addr),
-                        ]),
-                    ElseIf(
-                        // Fill with invalidate.
-                        ~flPort.valid &
-                            Const(way, width: log2Ceil(ways))
-                                .eq(perLinePolicyInvalPorts[line].way),
-                        [
-                          perWayTagAllocPorts[way].en < flPort.en,
-                          perWayTagAllocPorts[way].addr <
-                              Const(line, width: _lineAddrWidth),
-                          perWayTagAllocPorts[way].data < getTag(flPort.addr),
-                        ]),
-                  ])
-              ])
-      ])
-    ]);
-
-    // Valid-bit writes from fills: default to disabled, enable on fill
-    for (var way = 0; way < ways; way++) {
-      final matchWay = Const(way, width: log2Ceil(ways));
-      final validBitWrPort = perWayValidBitWrPorts[way];
-
-      // Check whether allocator chose this way for the given line
-      final allocMatches = [
-        for (var line = 0; line < lines; line++)
-          getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)) &
-              perLinePolicyAllocPorts[line].way.eq(matchWay)
-      ];
-      final allocMatch = allocMatches.isEmpty
-          ? Const(0)
-          : allocMatches.reduce((a, b) => a | b);
-
-      Combinational([
-        validBitWrPort.en < Const(0),
-        validBitWrPort.addr < Const(0, width: _lineAddrWidth),
-        validBitWrPort.data < Const(0, width: 1),
-        If(flPort.en, then: [
-          If.block([
-            // Valid fill with hit or miss - set valid bit to 1
-            Iff(
-                flPort.valid &
-                    (~fillMiss & fillPortValidWay.eq(matchWay) |
-                        fillMiss & allocMatch),
-                [
-                  validBitWrPort.en < Const(1),
-                  validBitWrPort.addr < getLine(flPort.addr),
-                  validBitWrPort.data < Const(1, width: 1),
-                ]),
-            // Invalid fill (invalidation) - set valid bit to 0
-            ElseIf(~flPort.valid & ~fillMiss & fillPortValidWay.eq(matchWay), [
-              validBitWrPort.en < Const(1),
-              validBitWrPort.addr < getLine(flPort.addr),
-              validBitWrPort.data < Const(0, width: 1),
-            ]),
-          ])
-        ])
-      ]);
     }
   }
 
@@ -774,35 +771,9 @@ class SetAssociativeCache extends Cache {
   }
 
   // Prepare tag-match and valid-bit read ports for a single fill port.
-  void _prepareFillPortMatches(
-      ValidDataPortInterface flPort,
-      List<DataPortInterface> perWayTagMatchFl,
-      List<DataPortInterface> perWayValidBitRd) {
-    for (var way = 0; way < ways; way++) {
-      perWayTagMatchFl[way].addr <= getLine(flPort.addr);
-      perWayTagMatchFl[way].en <= flPort.en;
-
-      perWayValidBitRd[way].addr <= getLine(flPort.addr);
-      perWayValidBitRd[way].en <= flPort.en;
-    }
-  }
-
-  // Prepare tag-match and valid-bit read ports for a single read port.
-  void _prepareReadPortMatches(
-      ValidDataPortInterface rdPort,
-      List<DataPortInterface> perWayTagMatchRd,
-      List<DataPortInterface> perWayValidBitRd) {
-    for (var way = 0; way < ways; way++) {
-      perWayTagMatchRd[way].addr <= getLine(rdPort.addr);
-      perWayTagMatchRd[way].en <= rdPort.en;
-
-      perWayValidBitRd[way].addr <= getLine(rdPort.addr);
-      perWayValidBitRd[way].en <= rdPort.en;
-    }
-  }
 
   /// Generates a 2D list of [DataPortInterface]s for the tag RF (without valid
-  /// bit). The returned shape is port-major: [port][way].
+  /// bit). The returned shape is port-major.
   List<List<DataPortInterface>> _genTagRFInterfaces(
       List<ValidDataPortInterface> ports, int tagWidth, int addressWidth,
       {String prefix = 'tag'}) {
@@ -815,7 +786,7 @@ class SetAssociativeCache extends Cache {
     ];
     for (var r = 0; r < ports.length; r++) {
       for (var way = 0; way < ways; way++) {
-        final fullPrefix = '${prefix}_port${r}_way${way}';
+        final fullPrefix = '${prefix}_port${r}_way$way';
         dataPorts[r][way].en.named('${fullPrefix}_en');
         dataPorts[r][way].addr.named('${fullPrefix}_addr');
         dataPorts[r][way].data.named('${fullPrefix}_data');
@@ -825,7 +796,7 @@ class SetAssociativeCache extends Cache {
   }
 
   /// Generates a 2D list of [DataPortInterface]s for the data RF.
-  /// The returned shape is port-major: [port][way].
+  /// The returned shape is port-major.
   List<List<DataPortInterface>> _genDataInterfaces(
       List<DataPortInterface> ports, int dataWidth, int addressWidth,
       {String prefix = 'data'}) {
@@ -847,7 +818,7 @@ class SetAssociativeCache extends Cache {
   }
 
   /// Generate a 2D list of [AccessInterface]s for the replacement policy.
-  /// The returned shape is port-major: [port][line].
+  /// The returned shape is port-major.
   List<List<AccessInterface>> _genReplacementAccesses(
       List<DataPortInterface> ports,
       {String prefix = 'replace'}) {
