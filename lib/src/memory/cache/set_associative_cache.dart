@@ -16,8 +16,7 @@ class SetAssociativeCache extends Cache {
   late int _lineAddrWidth;
   late int _tagWidth;
   late int _dataWidth;
-  // Expose RF instances so callers can access their ports via the cache
-  // instance.
+
   /// Tag register files, one per way.
   late final List<RegisterFileWithPorts> tagRfs;
 
@@ -26,10 +25,6 @@ class SetAssociativeCache extends Cache {
 
   /// Data register files, one per way.l
   late final List<RegisterFileWithPorts> dataRfs;
-  // Per-line replacement instances created during buildLogic (inherited).
-  // The replacement instances themselves retain references to the external
-  // AccessInterface objects (extHits/extAllocs/extInvalidates). Helpers
-  // will index `replByLine[line].ext*` directly instead of using a holder.
 
   /// Constructs a [Cache] supporting multiple read and fill ports.
   ///
@@ -57,41 +52,33 @@ class SetAssociativeCache extends Cache {
     // at construction time instead of pre-building 2D arrays.
     tagRfs = List<RegisterFileWithPorts>.generate(ways, (way) {
       // Allocation (write) ports: one per fill port
-      final allocPorts = List<DataPortInterface>.generate(numFills, (port) {
-        final dpi = DataPortInterface(_tagWidth, _lineAddrWidth);
-        dpi.en.named('alloc_port${port}_way${way}_en');
-        dpi.addr.named('alloc_port${port}_way${way}_addr');
-        dpi.data.named('alloc_port${port}_way${way}_data');
-        return dpi;
-      });
+      final allocPorts = [
+        for (var port = 0; port < numFills; port++)
+          DataPortInterface(_tagWidth, _lineAddrWidth)
+            ..en.named('alloc_port${port}_way${way}_en')
+            ..addr.named('alloc_port${port}_way${way}_addr')
+            ..data.named('alloc_port${port}_way${way}_data')
+      ];
 
-      // Match (read) ports: fills first, then reads
-      final matchReadPorts = <DataPortInterface>[];
-      for (var port = 0; port < numFills; port++) {
-        final dpi = DataPortInterface(_tagWidth, _lineAddrWidth);
-        dpi.en.named('match_fl_port${port}_way${way}_en');
-        dpi.addr.named('match_fl_port${port}_way${way}_addr');
-        dpi.data.named('match_fl_port${port}_way${way}_data');
-        matchReadPorts.add(dpi);
-      }
-      for (var port = 0; port < numReads; port++) {
-        final dpi = DataPortInterface(_tagWidth, _lineAddrWidth);
-        dpi.en.named('match_rd_port${port}_way${way}_en');
-        dpi.addr.named('match_rd_port${port}_way${way}_addr');
-        dpi.data.named('match_rd_port${port}_way${way}_data');
-        matchReadPorts.add(dpi);
-      }
-
-      // Evict tag read ports come after fill/read ports when evictions are used
-      if (hasEvictions) {
-        for (var port = 0; port < numFills; port++) {
-          final dpi = DataPortInterface(_tagWidth, _lineAddrWidth);
-          dpi.en.named('evictTagRd_port${port}_way${way}_en');
-          dpi.addr.named('evictTagRd_port${port}_way${way}_addr');
-          dpi.data.named('evictTagRd_port${port}_way${way}_data');
-          matchReadPorts.add(dpi);
-        }
-      }
+      // Match (read) ports: fills first, then reads, then optional evict-reads
+      final matchReadPorts = [
+        for (var port = 0; port < numFills; port++)
+          DataPortInterface(_tagWidth, _lineAddrWidth)
+            ..en.named('match_fl_port${port}_way${way}_en')
+            ..addr.named('match_fl_port${port}_way${way}_addr')
+            ..data.named('match_fl_port${port}_way${way}_data'),
+        for (var port = 0; port < numReads; port++)
+          DataPortInterface(_tagWidth, _lineAddrWidth)
+            ..en.named('match_rd_port${port}_way${way}_en')
+            ..addr.named('match_rd_port${port}_way${way}_addr')
+            ..data.named('match_rd_port${port}_way${way}_data'),
+        if (hasEvictions)
+          for (var port = 0; port < numFills; port++)
+            DataPortInterface(_tagWidth, _lineAddrWidth)
+              ..en.named('evictTagRd_port${port}_way${way}_en')
+              ..addr.named('evictTagRd_port${port}_way${way}_addr')
+              ..data.named('evictTagRd_port${port}_way${way}_data')
+      ];
 
       return RegisterFileWithPorts(clk, reset, allocPorts, matchReadPorts,
           numEntries: lines, name: 'tag_rf_way$way');
@@ -124,39 +111,27 @@ class SetAssociativeCache extends Cache {
     for (var line = 0; line < lines; line++) {
       final flHits = [
         for (var port = 0; port < numFills; port++)
-          (() {
-            final ai = AccessInterface(ways);
-            ai.access.named('rp_fl_port${port}_line${line}_access');
-            ai.way.named('rp_fl_port${port}_line${line}_way');
-            return ai;
-          })()
+          AccessInterface(ways)
+            ..access.named('rp_fl_port${port}_line${line}_access')
+            ..way.named('rp_fl_port${port}_line${line}_way')
       ];
       final rdHits = [
         for (var port = 0; port < numReads; port++)
-          (() {
-            final ai = AccessInterface(ways);
-            ai.access.named('rp_rd_port${port}_line${line}_access');
-            ai.way.named('rp_rd_port${port}_line${line}_way');
-            return ai;
-          })()
+          AccessInterface(ways)
+            ..access.named('rp_rd_port${port}_line${line}_access')
+            ..way.named('rp_rd_port${port}_line${line}_way')
       ];
       final allocs = [
         for (var port = 0; port < numFills; port++)
-          (() {
-            final ai = AccessInterface(ways);
-            ai.access.named('rp_alloc_port${port}_line${line}_access');
-            ai.way.named('rp_alloc_port${port}_line${line}_way');
-            return ai;
-          })()
+          AccessInterface(ways)
+            ..access.named('rp_alloc_port${port}_line${line}_access')
+            ..way.named('rp_alloc_port${port}_line${line}_way')
       ];
       final inval = [
         for (var port = 0; port < numFills; port++)
-          (() {
-            final ai = AccessInterface(ways);
-            ai.access.named('rp_inval_port${port}_line${line}_access');
-            ai.way.named('rp_inval_port${port}_line${line}_way');
-            return ai;
-          })()
+          AccessInterface(ways)
+            ..access.named('rp_inval_port${port}_line${line}_access')
+            ..way.named('rp_inval_port${port}_line${line}_way')
       ];
 
       final rp = replacement(clk, reset, flHits..addAll(rdHits), allocs, inval,
@@ -167,32 +142,27 @@ class SetAssociativeCache extends Cache {
     // Construct data RFs per-way with read ports (reads first, then evicts if
     // present) and fill write ports for fills.
     dataRfs = List<RegisterFileWithPorts>.generate(ways, (way) {
-      final allDataReadPorts = <DataPortInterface>[];
-      for (var port = 0; port < numReads; port++) {
-        final dpi = DataPortInterface(_dataWidth, _lineAddrWidth);
-        dpi.en.named('data_rd_port${port}_way${way}_en');
-        dpi.addr.named('data_rd_port${port}_way${way}_addr');
-        dpi.data.named('data_rd_port${port}_way${way}_data');
-        allDataReadPorts.add(dpi);
-      }
-      if (hasEvictions) {
-        for (var port = 0; port < numFills; port++) {
-          final dpi = DataPortInterface(_dataWidth, _lineAddrWidth);
-          dpi.en.named('evictDataRd_port${port}_way${way}_en');
-          dpi.addr.named('evictDataRd_port${port}_way${way}_addr');
-          dpi.data.named('evictDataRd_port${port}_way${way}_data');
-          allDataReadPorts.add(dpi);
-        }
-      }
+      final allDataReadPorts = [
+        for (var port = 0; port < numReads; port++)
+          DataPortInterface(_dataWidth, _lineAddrWidth)
+            ..en.named('data_rd_port${port}_way${way}_en')
+            ..addr.named('data_rd_port${port}_way${way}_addr')
+            ..data.named('data_rd_port${port}_way${way}_data'),
+        if (hasEvictions)
+          for (var port = 0; port < numFills; port++)
+            DataPortInterface(_dataWidth, _lineAddrWidth)
+              ..en.named('evictDataRd_port${port}_way${way}_en')
+              ..addr.named('evictDataRd_port${port}_way${way}_addr')
+              ..data.named('evictDataRd_port${port}_way${way}_data')
+      ];
 
-      final fillPortsForWay =
-          List<DataPortInterface>.generate(numFills, (port) {
-        final dpi = DataPortInterface(_dataWidth, _lineAddrWidth);
-        dpi.en.named('data_fl_port${port}_way${way}_en');
-        dpi.addr.named('data_fl_port${port}_way${way}_addr');
-        dpi.data.named('data_fl_port${port}_way${way}_data');
-        return dpi;
-      });
+      final fillPortsForWay = [
+        for (var port = 0; port < numFills; port++)
+          DataPortInterface(_dataWidth, _lineAddrWidth)
+            ..en.named('data_fl_port${port}_way${way}_en')
+            ..addr.named('data_fl_port${port}_way${way}_addr')
+            ..data.named('data_fl_port${port}_way${way}_data')
+      ];
 
       return RegisterFileWithPorts(
           clk, reset, fillPortsForWay, allDataReadPorts,
@@ -217,33 +187,8 @@ class SetAssociativeCache extends Cache {
     }
   }
 
-  // Note: interface helper constructors were inlined into per-way loops to
-  // ensure interfaces are only created at RegisterFile construction time.
-
-  // Replacement access helper was inlined into the per-line construction
-  // above to ensure creation location matches usage.
-  // Wire a read port by using the register-file instances directly so the
-  // helper can compute per-way ports rather than receiving them as args.
-  // Note: interface helper constructors were inlined into per-way loops to
-  // ensure interfaces are only created at RegisterFile construction time.
-
-  // Replacement access helper was inlined into the per-line construction
-  // above to ensure creation location matches usage.
-  // Wire a read port by using the register-file instances directly so the
-  // helper can compute per-way ports rather than receiving them as args.
   void _wireReadPortHelper(int rdPortIdx, ValidDataPortInterface rdPort) {
     final numFills = fills.length;
-    // Build per-way port arrays from the register-file instances.
-    final ways = this.ways;
-    final perWayValidBitWrPorts = [
-      for (var way = 0; way < ways; way++)
-        validBitRfs[way].extWrites[numFills + rdPortIdx]
-    ];
-
-    // Drive per-way tag and valid-bit read ports for this read port so the
-    // match expressions below observe valid data. These correspond to the
-    // read ports created at RegisterFile construction time (fills first,
-    // then reads — read ports are offset by numFills).
     for (var way = 0; way < ways; way++) {
       validBitRfs[way].extReads[numFills + rdPortIdx].en <= rdPort.en;
       validBitRfs[way].extReads[numFills + rdPortIdx].addr <=
@@ -251,9 +196,6 @@ class SetAssociativeCache extends Cache {
       tagRfs[way].extReads[numFills + rdPortIdx].en <= rdPort.en;
       tagRfs[way].extReads[numFills + rdPortIdx].addr <= getLine(rdPort.addr);
     }
-
-    // Begin logic from former handler
-    final readMiss = Logic(name: 'read_port${rdPort.name}_miss');
 
     final readPortValidOneHot = [
       for (var way = 0; way < ways; way++)
@@ -271,29 +213,35 @@ class SetAssociativeCache extends Cache {
             .slice(log2Ceil(ways) - 1, 0)
             .named('${rdPort.name}_valid_way');
 
+    // Begin logic from former handler
     Logic? vsAccum;
     for (var way = 0; way < ways; way++) {
       final b = readPortValidOneHot[way];
       vsAccum = (vsAccum == null) ? b : (vsAccum | b);
     }
-    Combinational([readMiss < ~(vsAccum ?? Const(0))]);
 
+    final readMiss =
+        (~(vsAccum ?? Const(0))).named('read_port_${rdPort.name}_miss');
     final hasHit = ~readMiss;
 
+    // Drive read outputs: defaults then per-way gated assignments.
     Combinational([
       rdPort.valid < Const(0),
       rdPort.data < Const(0, width: rdPort.dataWidth),
-      If(rdPort.en & hasHit, then: [
-        for (var way = 0; way < ways; way++)
-          If(readPortValidWay.eq(Const(way, width: log2Ceil(ways))), then: [
-            dataRfs[way].extReads[rdPortIdx].en < rdPort.en,
-            dataRfs[way].extReads[rdPortIdx].addr < getLine(rdPort.addr),
-            rdPort.data < dataRfs[way].extReads[rdPortIdx].data,
-            rdPort.valid < Const(1),
-          ], orElse: [
-            dataRfs[way].extReads[rdPortIdx].en < Const(0)
-          ])
-      ])
+      for (var way = 0; way < ways; way++)
+        If(
+            readPortValidWay.eq(Const(way, width: log2Ceil(ways))) &
+                rdPort.en &
+                hasHit,
+            then: [
+              dataRfs[way].extReads[rdPortIdx].en < rdPort.en,
+              dataRfs[way].extReads[rdPortIdx].addr < getLine(rdPort.addr),
+              rdPort.data < dataRfs[way].extReads[rdPortIdx].data,
+              rdPort.valid < Const(1),
+            ],
+            orElse: [
+              dataRfs[way].extReads[rdPortIdx].en < Const(0)
+            ])
     ]);
 
     for (var line = 0; line < lines; line++) {
@@ -307,7 +255,7 @@ class SetAssociativeCache extends Cache {
     if (rdPort.hasReadWithInvalidate) {
       for (var way = 0; way < ways; way++) {
         final matchWay = Const(way, width: log2Ceil(ways));
-        final validBitWrPort = perWayValidBitWrPorts[way];
+        final validBitWrPort = validBitRfs[way].extWrites[numFills + rdPortIdx];
 
         final shouldInvalidate = flop(
             clk,
@@ -326,7 +274,7 @@ class SetAssociativeCache extends Cache {
       }
     } else {
       for (var way = 0; way < ways; way++) {
-        final validBitWrPort = perWayValidBitWrPorts[way];
+        final validBitWrPort = validBitRfs[way].extWrites[numFills + rdPortIdx];
         validBitWrPort.en <= Const(0);
         validBitWrPort.addr <= Const(0, width: _lineAddrWidth);
         validBitWrPort.data <= Const(0, width: 1);
@@ -342,13 +290,6 @@ class SetAssociativeCache extends Cache {
     final numReads = reads.length;
     final ways = this.ways;
 
-    // Per-way write ports for data, tag allocations and valid bits.
-    // These are accessed directly below via the RF instances to avoid
-    // allocating short-lived lists.
-
-    // Drive per-way tag and valid-bit read ports for the fill port so the
-    // match expressions below observe valid data. These correspond to the
-    // read ports created at RegisterFile construction time (fills first).
     for (var way = 0; way < ways; way++) {
       validBitRfs[way].extReads[flPortIdx].en <= flPort.en;
       validBitRfs[way].extReads[flPortIdx].addr <= getLine(flPort.addr);
@@ -374,8 +315,8 @@ class SetAssociativeCache extends Cache {
       final b = fillPortValidOneHot[way];
       vsAccum = (vsAccum == null) ? b : (vsAccum | b);
     }
-    final fillMiss = Logic(name: 'fill_port${nameSuffix ?? ''}_miss');
-    Combinational([fillMiss < ~(vsAccum ?? Const(0))]);
+    final fillMiss =
+        (~(vsAccum ?? Const(0))).named('fill_port${nameSuffix ?? ''}_miss');
 
     // Eviction handling: when an eviction port is present, wire per-way
     // evict read ports directly from the register files and compute
@@ -389,10 +330,6 @@ class SetAssociativeCache extends Cache {
         dataRfs[way].extReads[numReads + flPortIdx].addr <=
             getLine(flPort.addr);
       }
-
-      final evictWay =
-          Logic(name: 'evict${nameSuffix ?? ''}Way', width: log2Ceil(ways));
-      final fillHasHit = ~fillMiss;
 
       final allocWay = Logic(
           name: 'evict${nameSuffix ?? ''}AllocWay', width: log2Ceil(ways));
@@ -412,41 +349,38 @@ class SetAssociativeCache extends Cache {
         Combinational([hitWay < fillPortValidWay]);
       }
 
-      Combinational([
-        If(fillHasHit, then: [evictWay < hitWay], orElse: [evictWay < allocWay])
-      ]);
+      // Compute whether the fill hit any way and select an eviction way.
+      // Place these here so they are in scope for both the single-line and
+      // multi-line cases.
+      final fillHasHit = (~fillMiss).named('fill_has_hit${nameSuffix ?? ''}');
+      final evictWay = mux(fillHasHit, hitWay, allocWay)
+          .named('evict${nameSuffix ?? ''}Way');
 
       final evictTag =
           Logic(name: 'evict${nameSuffix ?? ''}Tag', width: _tagWidth);
       final evictData =
           Logic(name: 'evict${nameSuffix ?? ''}Data', width: _dataWidth);
 
+      final allocWayValid = Logic(name: 'allocWayValid${nameSuffix ?? ''}');
+
       if (ways == 1) {
         evictTag <= tagRfs[0].extReads[numFills + numReads + flPortIdx].data;
         evictData <= dataRfs[0].extReads[numReads + flPortIdx].data;
-      } else {
-        final tagSelections = <Conditional>[];
-        final dataSelections = <Conditional>[];
-        for (var way = 0; way < ways; way++) {
-          final isThisWay = evictWay.eq(Const(way, width: log2Ceil(ways)));
-          tagSelections.add(If(isThisWay, then: [
-            evictTag <
-                tagRfs[way].extReads[numFills + numReads + flPortIdx].data
-          ]));
-          dataSelections.add(If(isThisWay, then: [
-            evictData < dataRfs[way].extReads[numReads + flPortIdx].data
-          ]));
-        }
-        Combinational(
-            [evictTag < Const(0, width: _tagWidth), ...tagSelections]);
-        Combinational(
-            [evictData < Const(0, width: _dataWidth), ...dataSelections]);
-      }
-
-      final allocWayValid = Logic(name: 'allocWayValid${nameSuffix ?? ''}');
-      if (ways == 1) {
         allocWayValid <= validBitRfs[0].extReads[flPortIdx].data[0];
       } else {
+        Combinational([
+          evictTag < Const(0, width: _tagWidth),
+          evictData < Const(0, width: _dataWidth),
+          for (var way = 0; way < ways; way++)
+            If(evictWay.eq(Const(way, width: log2Ceil(ways))), then: [
+              evictTag <
+                  tagRfs[way].extReads[numFills + numReads + flPortIdx].data,
+              evictData < dataRfs[way].extReads[numReads + flPortIdx].data,
+            ])
+        ]);
+
+        // Multi-way allocation valid reduction: any selected evict way that
+        // has its valid bit set makes the allocation-way-valid true.
         Logic? vsAccum2;
         for (var way = 0; way < ways; way++) {
           final sel = evictWay.eq(Const(way, width: log2Ceil(ways))) &
@@ -473,12 +407,11 @@ class SetAssociativeCache extends Cache {
         ])
       ]);
 
-      final evict = evictPort;
       Combinational([
-        evict.en < (flPort.en & (invalEvictCond | allocEvictCond)),
-        evict.valid < (flPort.en & (invalEvictCond | allocEvictCond)),
-        evict.addr < evictAddrComb,
-        evict.data < evictData,
+        evictPort.en < (flPort.en & (invalEvictCond | allocEvictCond)),
+        evictPort.valid < (flPort.en & (invalEvictCond | allocEvictCond)),
+        evictPort.addr < evictAddrComb,
+        evictPort.data < evictData,
       ]);
     }
 
