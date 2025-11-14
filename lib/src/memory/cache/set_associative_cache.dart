@@ -149,7 +149,7 @@ class SetAssociativeCache extends Cache {
     for (var flPortIdx = 0; flPortIdx < numFills; flPortIdx++) {
       // Call helper which will index the class-level policyByLine arrays
       // for the current fill port.
-      _wireFillPortHelper(
+      _fillPortHookup(
           flPortIdx,
           fills[flPortIdx].fill,
           hasEvictions ? fills[flPortIdx].eviction : null,
@@ -157,11 +157,11 @@ class SetAssociativeCache extends Cache {
     }
 
     for (var rdPortIdx = 0; rdPortIdx < numReads; rdPortIdx++) {
-      _wireReadPortHelper(rdPortIdx, reads[rdPortIdx]);
+      _readPortHookup(rdPortIdx, reads[rdPortIdx]);
     }
   }
 
-  void _wireReadPortHelper(int rdPortIdx, ValidDataPortInterface rdPort) {
+  void _readPortHookup(int rdPortIdx, ValidDataPortInterface rdPort) {
     final numFills = fills.length;
     for (var way = 0; way < ways; way++) {
       validBitRFs[way].extReads[numFills + rdPortIdx].en <= rdPort.en;
@@ -253,7 +253,7 @@ class SetAssociativeCache extends Cache {
 
   // Wire a fill port similarly; compute per-way ports from RF instances so
   // callers don't need to pass them.
-  void _wireFillPortHelper(int flPortIdx, ValidDataPortInterface flPort,
+  void _fillPortHookup(int flPortIdx, ValidDataPortInterface flPort,
       ValidDataPortInterface? evictPort, String? nameSuffix) {
     final numFills = fills.length;
     final numReads = reads.length;
