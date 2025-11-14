@@ -18,13 +18,13 @@ class SetAssociativeCache extends Cache {
   late int _dataWidth;
 
   /// Tag register files, one per way.
-  late final List<RegisterFileWithPorts> tagRFs;
+  late final List<RegisterFileExportedInterfaces> tagRFs;
 
   /// Valid bit register files, one per way.
-  late final List<RegisterFileWithPorts> validBitRFs;
+  late final List<RegisterFileExportedInterfaces> validBitRFs;
 
   /// Data register files, one per way.l
-  late final List<RegisterFileWithPorts> dataRFs;
+  late final List<RegisterFileExportedInterfaces> dataRFs;
 
   /// Constructs a [Cache] supporting multiple read and fill ports.
   ///
@@ -39,20 +39,19 @@ class SetAssociativeCache extends Cache {
 
   @override
   void buildLogic() {
-    // Number of fill and read ports.
-    final numFills = fills.length;
-    final numReads = reads.length;
     _lineAddrWidth = log2Ceil(lines);
     _tagWidth = reads.isNotEmpty ? reads[0].addrWidth - _lineAddrWidth : 0;
     _dataWidth = dataWidth;
 
+    final numFills = fills.length;
+    final numReads = reads.length;
     final hasEvictions = fills.isNotEmpty && fills[0].eviction != null;
 
     // Construct tag RFs per-way; build the small per-way interface lists
     // at construction time instead of pre-building 2D arrays.
-    tagRFs = List<RegisterFileWithPorts>.generate(
+    tagRFs = List<RegisterFileExportedInterfaces>.generate(
         ways,
-        (way) => RegisterFileWithPorts(
+        (way) => RegisterFileExportedInterfaces(
             clk,
             reset,
             [
@@ -77,9 +76,9 @@ class SetAssociativeCache extends Cache {
 
     // Construct valid-bit RFs per-way with write/read ports ordered as
     // (fills first, then reads).
-    validBitRFs = List<RegisterFileWithPorts>.generate(
+    validBitRFs = List<RegisterFileExportedInterfaces>.generate(
         ways,
-        (way) => RegisterFileWithPorts(
+        (way) => RegisterFileExportedInterfaces(
             clk,
             reset,
             [
@@ -124,9 +123,9 @@ class SetAssociativeCache extends Cache {
 
     // Construct data RFs per-way with read ports (reads first, then evicts if
     // present) and fill write ports for fills.
-    dataRFs = List<RegisterFileWithPorts>.generate(
+    dataRFs = List<RegisterFileExportedInterfaces>.generate(
         ways,
-        (way) => RegisterFileWithPorts(
+        (way) => RegisterFileExportedInterfaces(
             clk,
             reset,
             [
@@ -161,21 +160,21 @@ class SetAssociativeCache extends Cache {
     }
   }
 
+  /// Wire a read port.
   void _readPortHookup(int rdPortIdx, ValidDataPortInterface rdPort) {
     final numFills = fills.length;
     for (var way = 0; way < ways; way++) {
-      validBitRFs[way].extReads[numFills + rdPortIdx].en <= rdPort.en;
-      validBitRFs[way].extReads[numFills + rdPortIdx].addr <=
-          getLine(rdPort.addr);
-      tagRFs[way].extReads[numFills + rdPortIdx].en <= rdPort.en;
-      tagRFs[way].extReads[numFills + rdPortIdx].addr <= getLine(rdPort.addr);
+      validBitRFs[way].reads[numFills + rdPortIdx].en <= rdPort.en;
+      validBitRFs[way].reads[numFills + rdPortIdx].addr <= getLine(rdPort.addr);
+      tagRFs[way].reads[numFills + rdPortIdx].en <= rdPort.en;
+      tagRFs[way].reads[numFills + rdPortIdx].addr <= getLine(rdPort.addr);
     }
 
     final readPortValidOneHot = [
       for (var way = 0; way < ways; way++)
-        (validBitRFs[way].extReads[numFills + rdPortIdx].data[0] &
+        (validBitRFs[way].reads[numFills + rdPortIdx].data[0] &
                 tagRFs[way]
-                    .extReads[numFills + rdPortIdx]
+                    .reads[numFills + rdPortIdx]
                     .data
                     .eq(getTag(rdPort.addr)))
             .named('match_rd_port${rdPort.name}_way$way')
@@ -202,29 +201,29 @@ class SetAssociativeCache extends Cache {
                 rdPort.en &
                 hasHit,
             then: [
-              dataRFs[way].extReads[rdPortIdx].en < rdPort.en,
-              dataRFs[way].extReads[rdPortIdx].addr < getLine(rdPort.addr),
-              rdPort.data < dataRFs[way].extReads[rdPortIdx].data,
+              dataRFs[way].reads[rdPortIdx].en < rdPort.en,
+              dataRFs[way].reads[rdPortIdx].addr < getLine(rdPort.addr),
+              rdPort.data < dataRFs[way].reads[rdPortIdx].data,
               rdPort.valid < Const(1),
             ],
             orElse: [
-              dataRFs[way].extReads[rdPortIdx].en < Const(0)
+              dataRFs[way].reads[rdPortIdx].en < Const(0)
             ])
     ]);
 
     for (var line = 0; line < lines; line++) {
-      replacementPoliciesPerLine[line].extHits[numFills + rdPortIdx].access <=
+      replacementPoliciesPerLine[line].hits[numFills + rdPortIdx].access <=
           rdPort.en &
               ~readMiss &
               getLine(rdPort.addr).eq(Const(line, width: _lineAddrWidth));
-      replacementPoliciesPerLine[line].extHits[numFills + rdPortIdx].way <=
+      replacementPoliciesPerLine[line].hits[numFills + rdPortIdx].way <=
           readPortValidWay;
     }
 
     if (rdPort.hasReadWithInvalidate) {
       for (var way = 0; way < ways; way++) {
         final matchWay = Const(way, width: log2Ceil(ways));
-        final validBitWrPort = validBitRFs[way].extWrites[numFills + rdPortIdx];
+        final validBitWrPort = validBitRFs[way].writes[numFills + rdPortIdx];
 
         final shouldInvalidate = flop(
             clk,
@@ -243,7 +242,7 @@ class SetAssociativeCache extends Cache {
       }
     } else {
       for (var way = 0; way < ways; way++) {
-        final validBitWrPort = validBitRFs[way].extWrites[numFills + rdPortIdx];
+        final validBitWrPort = validBitRFs[way].writes[numFills + rdPortIdx];
         validBitWrPort.en <= Const(0);
         validBitWrPort.addr <= Const(0, width: _lineAddrWidth);
         validBitWrPort.data <= Const(0, width: 1);
@@ -251,8 +250,7 @@ class SetAssociativeCache extends Cache {
     }
   }
 
-  // Wire a fill port similarly; compute per-way ports from RF instances so
-  // callers don't need to pass them.
+  // Wire a fill port.
   void _fillPortHookup(int flPortIdx, ValidDataPortInterface flPort,
       ValidDataPortInterface? evictPort, String? nameSuffix) {
     final numFills = fills.length;
@@ -260,16 +258,16 @@ class SetAssociativeCache extends Cache {
     final ways = this.ways;
 
     for (var way = 0; way < ways; way++) {
-      validBitRFs[way].extReads[flPortIdx].en <= flPort.en;
-      validBitRFs[way].extReads[flPortIdx].addr <= getLine(flPort.addr);
-      tagRFs[way].extReads[flPortIdx].en <= flPort.en;
-      tagRFs[way].extReads[flPortIdx].addr <= getLine(flPort.addr);
+      validBitRFs[way].reads[flPortIdx].en <= flPort.en;
+      validBitRFs[way].reads[flPortIdx].addr <= getLine(flPort.addr);
+      tagRFs[way].reads[flPortIdx].en <= flPort.en;
+      tagRFs[way].reads[flPortIdx].addr <= getLine(flPort.addr);
     }
 
     final fillPortValidOneHot = [
       for (var way = 0; way < ways; way++)
-        (validBitRFs[way].extReads[flPortIdx].data[0] &
-                tagRFs[way].extReads[flPortIdx].data.eq(getTag(flPort.addr)))
+        (validBitRFs[way].reads[flPortIdx].data[0] &
+                tagRFs[way].reads[flPortIdx].data.eq(getTag(flPort.addr)))
             .named('match_fl${nameSuffix ?? ''}_way$way')
     ];
     final fillPortValidWay =
@@ -287,12 +285,11 @@ class SetAssociativeCache extends Cache {
     // allocation/eviction selection signals without temporary lists.
     if (evictPort != null) {
       for (var way = 0; way < ways; way++) {
-        tagRFs[way].extReads[numFills + numReads + flPortIdx].en <= flPort.en;
-        tagRFs[way].extReads[numFills + numReads + flPortIdx].addr <=
+        tagRFs[way].reads[numFills + numReads + flPortIdx].en <= flPort.en;
+        tagRFs[way].reads[numFills + numReads + flPortIdx].addr <=
             getLine(flPort.addr);
-        dataRFs[way].extReads[numReads + flPortIdx].en <= flPort.en;
-        dataRFs[way].extReads[numReads + flPortIdx].addr <=
-            getLine(flPort.addr);
+        dataRFs[way].reads[numReads + flPortIdx].en <= flPort.en;
+        dataRFs[way].reads[numReads + flPortIdx].addr <= getLine(flPort.addr);
       }
 
       final allocWay = Logic(
@@ -301,7 +298,7 @@ class SetAssociativeCache extends Cache {
           Logic(name: 'evict${nameSuffix ?? ''}HitWay', width: log2Ceil(ways));
 
       if (lines == 1) {
-        allocWay <= replacementPoliciesPerLine[0].extAllocs[flPortIdx].way;
+        allocWay <= replacementPoliciesPerLine[0].allocs[flPortIdx].way;
         hitWay <= fillPortValidWay;
       } else {
         Combinational([
@@ -309,7 +306,7 @@ class SetAssociativeCache extends Cache {
             for (var line = 0; line < lines; line++)
               CaseItem(Const(line, width: _lineAddrWidth), [
                 allocWay <
-                    replacementPoliciesPerLine[line].extAllocs[flPortIdx].way
+                    replacementPoliciesPerLine[line].allocs[flPortIdx].way
               ])
           ])
         ]);
@@ -330,9 +327,9 @@ class SetAssociativeCache extends Cache {
       final allocWayValid = Logic(name: 'allocWayValid${nameSuffix ?? ''}');
 
       if (ways == 1) {
-        evictTag <= tagRFs[0].extReads[numFills + numReads + flPortIdx].data;
-        evictData <= dataRFs[0].extReads[numReads + flPortIdx].data;
-        allocWayValid <= validBitRFs[0].extReads[flPortIdx].data[0];
+        evictTag <= tagRFs[0].reads[numFills + numReads + flPortIdx].data;
+        evictData <= dataRFs[0].reads[numReads + flPortIdx].data;
+        allocWayValid <= validBitRFs[0].reads[flPortIdx].data[0];
       } else {
         Combinational([
           evictTag < Const(0, width: _tagWidth),
@@ -340,8 +337,8 @@ class SetAssociativeCache extends Cache {
           for (var way = 0; way < ways; way++)
             If(evictWay.eq(Const(way, width: log2Ceil(ways))), then: [
               evictTag <
-                  tagRFs[way].extReads[numFills + numReads + flPortIdx].data,
-              evictData < dataRFs[way].extReads[numReads + flPortIdx].data,
+                  tagRFs[way].reads[numFills + numReads + flPortIdx].data,
+              evictData < dataRFs[way].reads[numReads + flPortIdx].data,
             ])
         ]);
 
@@ -350,7 +347,7 @@ class SetAssociativeCache extends Cache {
         final allocSel = [
           for (var way = 0; way < ways; way++)
             evictWay.eq(Const(way, width: log2Ceil(ways))) &
-                validBitRFs[way].extReads[flPortIdx].data[0]
+                validBitRFs[way].reads[flPortIdx].data[0]
         ];
         allocWayValid <=
             allocSel
@@ -367,11 +364,9 @@ class SetAssociativeCache extends Cache {
       final evictAddrComb = Logic(
           name: 'evictAddrComb${nameSuffix ?? ''}', width: flPort.addrWidth);
       Combinational([
-        If(invalEvictCond, then: [
-          evictAddrComb < flPort.addr
-        ], orElse: [
-          evictAddrComb < [evictTag, getLine(flPort.addr)].swizzle()
-        ])
+        evictAddrComb <
+            mux(invalEvictCond, flPort.addr,
+                [evictTag, getLine(flPort.addr)].swizzle())
       ]);
 
       Combinational([
@@ -385,28 +380,28 @@ class SetAssociativeCache extends Cache {
     // Default combinational setup for policy hit/inval signals and per-line selection
     Combinational([
       for (var line = 0; line < lines; line++)
-        replacementPoliciesPerLine[line].extInvalidates[flPortIdx].access <
+        replacementPoliciesPerLine[line].invalidates[flPortIdx].access <
             Const(0),
       for (var line = 0; line < lines; line++)
-        replacementPoliciesPerLine[line].extHits[flPortIdx].access < Const(0),
+        replacementPoliciesPerLine[line].hits[flPortIdx].access < Const(0),
       If(flPort.en, then: [
         for (var line = 0; line < lines; line++)
           If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
               then: [
                 If.block([
                   Iff(flPort.valid & ~fillMiss, [
-                    replacementPoliciesPerLine[line].extHits[flPortIdx].access <
+                    replacementPoliciesPerLine[line].hits[flPortIdx].access <
                         flPort.en,
-                    replacementPoliciesPerLine[line].extHits[flPortIdx].way <
+                    replacementPoliciesPerLine[line].hits[flPortIdx].way <
                         fillPortValidWay,
                   ]),
                   ElseIf(~flPort.valid, [
                     replacementPoliciesPerLine[line]
-                            .extInvalidates[flPortIdx]
+                            .invalidates[flPortIdx]
                             .access <
                         flPort.en,
                     replacementPoliciesPerLine[line]
-                            .extInvalidates[flPortIdx]
+                            .invalidates[flPortIdx]
                             .way <
                         fillPortValidWay,
                   ]),
@@ -417,7 +412,7 @@ class SetAssociativeCache extends Cache {
 
     // Alloc access signals per-line
     for (var line = 0; line < lines; line++) {
-      replacementPoliciesPerLine[line].extAllocs[flPortIdx].access <=
+      replacementPoliciesPerLine[line].allocs[flPortIdx].access <=
           flPort.en &
               flPort.valid &
               fillMiss &
@@ -430,11 +425,11 @@ class SetAssociativeCache extends Cache {
     // Tag allocations
     Combinational([
       for (var way = 0; way < ways; way++)
-        tagRFs[way].extWrites[flPortIdx].en < Const(0),
+        tagRFs[way].writes[flPortIdx].en < Const(0),
       for (var way = 0; way < ways; way++)
-        tagRFs[way].extWrites[flPortIdx].addr < Const(0, width: _lineAddrWidth),
+        tagRFs[way].writes[flPortIdx].addr < Const(0, width: _lineAddrWidth),
       for (var way = 0; way < ways; way++)
-        tagRFs[way].extWrites[flPortIdx].data < Const(0, width: _tagWidth),
+        tagRFs[way].writes[flPortIdx].data < Const(0, width: _tagWidth),
       If(flPort.en, then: [
         for (var line = 0; line < lines; line++)
           If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
@@ -446,26 +441,26 @@ class SetAssociativeCache extends Cache {
                             fillMiss &
                             Const(way, width: log2Ceil(ways)).eq(
                                 replacementPoliciesPerLine[line]
-                                    .extAllocs[flPortIdx]
+                                    .allocs[flPortIdx]
                                     .way),
                         [
-                          tagRFs[way].extWrites[flPortIdx].en < flPort.en,
-                          tagRFs[way].extWrites[flPortIdx].addr <
+                          tagRFs[way].writes[flPortIdx].en < flPort.en,
+                          tagRFs[way].writes[flPortIdx].addr <
                               Const(line, width: _lineAddrWidth),
-                          tagRFs[way].extWrites[flPortIdx].data <
+                          tagRFs[way].writes[flPortIdx].data <
                               getTag(flPort.addr),
                         ]),
                     ElseIf(
                         ~flPort.valid &
                             Const(way, width: log2Ceil(ways)).eq(
                                 replacementPoliciesPerLine[line]
-                                    .extInvalidates[flPortIdx]
+                                    .invalidates[flPortIdx]
                                     .way),
                         [
-                          tagRFs[way].extWrites[flPortIdx].en < flPort.en,
-                          tagRFs[way].extWrites[flPortIdx].addr <
+                          tagRFs[way].writes[flPortIdx].en < flPort.en,
+                          tagRFs[way].writes[flPortIdx].addr <
                               Const(line, width: _lineAddrWidth),
-                          tagRFs[way].extWrites[flPortIdx].data <
+                          tagRFs[way].writes[flPortIdx].data <
                               getTag(flPort.addr),
                         ]),
                   ])
@@ -476,7 +471,7 @@ class SetAssociativeCache extends Cache {
     // Valid-bit updates per-way
     for (var way = 0; way < ways; way++) {
       final matchWay = Const(way, width: log2Ceil(ways));
-      final validBitWrPort = validBitRFs[way].extWrites[flPortIdx];
+      final validBitWrPort = validBitRFs[way].writes[flPortIdx];
 
       Logic allocMatch = Const(0);
       if (lines > 0) {
@@ -485,7 +480,7 @@ class SetAssociativeCache extends Cache {
           final cond =
               getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)) &
                   replacementPoliciesPerLine[line]
-                      .extAllocs[flPortIdx]
+                      .allocs[flPortIdx]
                       .way
                       .eq(matchWay);
           accum = (accum == null) ? cond : (accum | cond);
@@ -521,7 +516,7 @@ class SetAssociativeCache extends Cache {
     // Data RF writes (per-way)
     for (var way = 0; way < ways; way++) {
       final matchWay = Const(way, width: log2Ceil(ways));
-      final fillRFPort = dataRFs[way].extWrites[flPortIdx];
+      final fillRFPort = dataRFs[way].writes[flPortIdx];
       Combinational([
         fillRFPort.en < Const(0),
         fillRFPort.addr < Const(0, width: _lineAddrWidth),
@@ -531,15 +526,15 @@ class SetAssociativeCache extends Cache {
             If(
                 (fillMiss &
                         replacementPoliciesPerLine[line]
-                            .extAllocs[flPortIdx]
+                            .allocs[flPortIdx]
                             .access &
                         replacementPoliciesPerLine[line]
-                            .extAllocs[flPortIdx]
+                            .allocs[flPortIdx]
                             .way
                             .eq(matchWay)) |
                     (~fillMiss &
                         replacementPoliciesPerLine[line]
-                            .extHits[flPortIdx]
+                            .hits[flPortIdx]
                             .access &
                         fillPortValidWay.eq(matchWay)),
                 then: [

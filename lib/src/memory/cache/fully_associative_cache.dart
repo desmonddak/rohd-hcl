@@ -94,7 +94,7 @@ class FullyAssociativeCache extends Cache {
     final tagRfReadPorts = List.generate(
         tagRfReadCount, (_) => DataPortInterface(tagWidth, wayAddrWidth));
 
-    RegisterFileWithPorts(clk, reset, tagRfWritePorts, tagRfReadPorts,
+    RegisterFileExportedInterfaces(clk, reset, tagRfWritePorts, tagRfReadPorts,
         numEntries: ways, name: 'tagRf');
 
     // Create separate valid bit storage using Logic arrays since we need
@@ -177,7 +177,7 @@ class FullyAssociativeCache extends Cache {
     final evictDataRfReadPorts = List.generate(
         numFills, (_) => DataPortInterface(dataWidth, wayAddrWidth));
 
-    RegisterFileWithPorts(clk, reset, dataRfWritePorts,
+    RegisterFileExportedInterfaces(clk, reset, dataRfWritePorts,
         [...dataRfReadPorts, ...evictDataRfReadPorts],
         numEntries: ways, name: 'dataRf');
 

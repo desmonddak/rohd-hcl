@@ -59,7 +59,7 @@ class DirectMappedCache extends Cache {
         DataPortInterface(tagWidth, lineAddrWidth)
     ];
 
-    RegisterFileWithPorts(
+    RegisterFileExportedInterfaces(
       clk,
       reset,
       tagRfWritePorts,
@@ -83,7 +83,8 @@ class DirectMappedCache extends Cache {
           ..addr.named('validBitRd_port${i}_addr')
           ..data.named('validBitRd_port${i}_data'));
 
-    RegisterFileWithPorts(clk, reset, validBitRfWritePorts, validBitRfReadPorts,
+    RegisterFileExportedInterfaces(
+        clk, reset, validBitRfWritePorts, validBitRfReadPorts,
         numEntries: lines, name: 'valid_bit_rf');
 
     // Data register file (including eviction read ports if needed)
@@ -105,7 +106,7 @@ class DirectMappedCache extends Cache {
         DataPortInterface(dataWidth, lineAddrWidth)
     ];
 
-    RegisterFileWithPorts(
+    RegisterFileExportedInterfaces(
       clk,
       reset,
       dataRfWritePorts,

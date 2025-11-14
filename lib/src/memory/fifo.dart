@@ -164,7 +164,7 @@ class Fifo<LogicType extends Logic> extends Module {
     // set up the RF storage
     final wrPort = DataPortInterface(dataWidth, _addrWidth);
     final rdPort = DataPortInterface(dataWidth, _addrWidth);
-    RegisterFileWithPorts(
+    RegisterFileExportedInterfaces(
       _clk,
       _reset,
       [wrPort],

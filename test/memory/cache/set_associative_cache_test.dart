@@ -42,7 +42,6 @@ void main() {
       final cp = CachePorts.fresh(8, 16, attachEvictionsToFills: true);
       final cache = cp.createCache(clk, reset, setAssociativeFactory(lines: 8));
       await cache.build();
-      File('cache.v').writeAsStringSync(cache.generateSynth());
     });
 
     test('Cache smoke test', () async {

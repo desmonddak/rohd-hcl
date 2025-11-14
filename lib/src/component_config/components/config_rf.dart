@@ -44,7 +44,7 @@ class RegisterFileConfigurator extends Configurator {
   });
 
   @override
-  Module createModule() => RegisterFileWithPorts(
+  Module createModule() => RegisterFileExportedInterfaces(
       Logic(),
       Logic(),
       List.generate(
