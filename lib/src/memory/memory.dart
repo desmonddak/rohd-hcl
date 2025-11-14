@@ -84,30 +84,6 @@ class DataPortInterface extends Interface<DataPortGroup> {
   DataPortInterface clone() => DataPortInterface(dataWidth, addrWidth);
 }
 
-/// A [DataPortInterface] variant that prefixes its internal port names with a
-/// provided base name. Useful for creating interfaces with consistent port
-/// naming.
-class NamedDataPortInterface extends DataPortInterface {
-  /// The base name used to prefix the internal ports.
-  final String baseName;
-
-  /// Constructs a new named data port interface. The [name] defaults to
-  /// `'data_port'` and will be used to generate port names like
-  /// `<name>_en`, `<name>_addr`, and `<name>_data`.
-  NamedDataPortInterface(super.dataWidth, super.addrWidth,
-      {String name = 'data_port'})
-      : baseName = name,
-        super() {
-    en.named('${baseName}_en');
-    addr.named('${baseName}_addr');
-    data.named('${baseName}_data');
-  }
-
-  @override
-  NamedDataPortInterface clone() =>
-      NamedDataPortInterface(dataWidth, addrWidth, name: baseName);
-}
-
 /// A generic memory with variable numbers of read and write ports.
 abstract class Memory extends Module {
   /// The number of write ports.

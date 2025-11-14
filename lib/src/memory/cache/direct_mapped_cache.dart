@@ -56,23 +56,15 @@ class DirectMappedCache extends Cache {
         clk,
         reset,
         List.generate(
-            numFills,
-            (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
-                name: 'alloc_port${i}_way0')),
+            numFills, (i) => DataPortInterface(tagWidth, lineAddrWidth)),
         [
           ...List.generate(
-              numFills,
-              (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
-                  name: 'match_fl_port${i}_way0')),
+              numFills, (i) => DataPortInterface(tagWidth, lineAddrWidth)),
           ...List.generate(
-              numReads,
-              (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
-                  name: 'match_rd_port${i}_way0')),
+              numReads, (i) => DataPortInterface(tagWidth, lineAddrWidth)),
           if (hasEvictions)
             ...List.generate(
-                numFills,
-                (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
-                    name: 'evictTagRd_port${i}_way0'))
+                numFills, (i) => DataPortInterface(tagWidth, lineAddrWidth))
         ],
         numEntries: lines,
         name: 'tag_rf');
@@ -81,13 +73,9 @@ class DirectMappedCache extends Cache {
         clk,
         reset,
         List.generate(
-            numFills + numReads,
-            (i) => NamedDataPortInterface(1, lineAddrWidth,
-                name: 'validBitWr_port${i}_way0')),
+            numFills + numReads, (i) => DataPortInterface(1, lineAddrWidth)),
         List.generate(
-            numFills + numReads,
-            (i) => NamedDataPortInterface(1, lineAddrWidth,
-                name: 'validBitRd_port${i}_way0')),
+            numFills + numReads, (i) => DataPortInterface(1, lineAddrWidth)),
         numEntries: lines,
         name: 'valid_bit_rf');
 
@@ -95,19 +83,13 @@ class DirectMappedCache extends Cache {
         clk,
         reset,
         List.generate(
-            numFills,
-            (i) => NamedDataPortInterface(dataWidth, lineAddrWidth,
-                name: 'data_fl_port${i}_way0')),
+            numFills, (i) => DataPortInterface(dataWidth, lineAddrWidth)),
         [
           ...List.generate(
-              numReads,
-              (i) => NamedDataPortInterface(dataWidth, lineAddrWidth,
-                  name: 'data_rd_port${i}_way0')),
+              numReads, (i) => DataPortInterface(dataWidth, lineAddrWidth)),
           if (hasEvictions)
             ...List.generate(
-                numFills,
-                (i) => NamedDataPortInterface(dataWidth, lineAddrWidth,
-                    name: 'evictDataRd_port${i}_way0'))
+                numFills, (i) => DataPortInterface(dataWidth, lineAddrWidth))
         ],
         numEntries: lines,
         name: 'data_rf');

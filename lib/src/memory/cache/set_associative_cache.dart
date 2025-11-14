@@ -53,24 +53,16 @@ class SetAssociativeCache extends Cache {
         (way) => RegisterFile(
             clk,
             reset,
-            List.generate(
-                numFills,
-                (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                    name: 'alloc_port${port}_way$way')),
+            List.generate(numFills,
+                (port) => DataPortInterface(_tagWidth, _lineAddrWidth)),
             [
-              ...List.generate(
-                  numFills,
-                  (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                      name: 'match_fl_port${port}_way$way')),
-              ...List.generate(
-                  numReads,
-                  (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                      name: 'match_rd_port${port}_way$way')),
+              ...List.generate(numFills,
+                  (port) => DataPortInterface(_tagWidth, _lineAddrWidth)),
+              ...List.generate(numReads,
+                  (port) => DataPortInterface(_tagWidth, _lineAddrWidth)),
               if (hasEvictions)
-                ...List.generate(
-                    numFills,
-                    (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                        name: 'evictTagRd_port${port}_way$way'))
+                ...List.generate(numFills,
+                    (port) => DataPortInterface(_tagWidth, _lineAddrWidth))
             ],
             numEntries: lines,
             name: 'tag_rf_way$way'));
@@ -82,14 +74,10 @@ class SetAssociativeCache extends Cache {
         (way) => RegisterFile(
             clk,
             reset,
-            List.generate(
-                numFills + numReads,
-                (port) => NamedDataPortInterface(1, _lineAddrWidth,
-                    name: 'validBitWr_port${port}_way$way')),
-            List.generate(
-                numFills + numReads,
-                (port) => NamedDataPortInterface(1, _lineAddrWidth,
-                    name: 'validBitRd_port${port}_way$way')),
+            List.generate(numFills + numReads,
+                (port) => DataPortInterface(1, _lineAddrWidth)),
+            List.generate(numFills + numReads,
+                (port) => DataPortInterface(1, _lineAddrWidth)),
             numEntries: lines,
             name: 'valid_bit_rf_way$way'));
 
@@ -101,27 +89,11 @@ class SetAssociativeCache extends Cache {
             clk,
             reset,
             [
-              ...List.generate(
-                  numFills,
-                  (port) => NamedAccessInterface(ways,
-                      name: 'rp_fl_port${port}_line$line')),
-              ...List.generate(
-                  numReads,
-                  (port) => NamedAccessInterface(ways,
-                      name: 'rp_rd_port${port}_line$line'))
+              ...List.generate(numFills, (port) => AccessInterface(ways)),
+              ...List.generate(numReads, (port) => AccessInterface(ways))
             ],
-            [
-              ...List.generate(
-                  numFills,
-                  (port) => NamedAccessInterface(ways,
-                      name: 'rp_alloc_port${port}_line$line'))
-            ],
-            [
-              ...List.generate(
-                  numFills,
-                  (port) => NamedAccessInterface(ways,
-                      name: 'rp_inval_port${port}_line$line'))
-            ],
+            [...List.generate(numFills, (port) => AccessInterface(ways))],
+            [...List.generate(numFills, (port) => AccessInterface(ways))],
             name: 'rp_line$line',
             ways: ways));
 
@@ -132,20 +104,14 @@ class SetAssociativeCache extends Cache {
         (way) => RegisterFile(
             clk,
             reset,
-            List.generate(
-                numFills,
-                (port) => NamedDataPortInterface(_dataWidth, _lineAddrWidth,
-                    name: 'data_fl_port${port}_way$way')),
+            List.generate(numFills,
+                (port) => DataPortInterface(_dataWidth, _lineAddrWidth)),
             [
-              ...List.generate(
-                  numReads,
-                  (port) => NamedDataPortInterface(_dataWidth, _lineAddrWidth,
-                      name: 'data_rd_port${port}_way$way')),
+              ...List.generate(numReads,
+                  (port) => DataPortInterface(_dataWidth, _lineAddrWidth)),
               if (hasEvictions)
-                ...List.generate(
-                    numFills,
-                    (port) => NamedDataPortInterface(_dataWidth, _lineAddrWidth,
-                        name: 'evictDataRd_port${port}_way$way'))
+                ...List.generate(numFills,
+                    (port) => DataPortInterface(_dataWidth, _lineAddrWidth))
             ],
             numEntries: lines,
             name: 'data_rf_way$way'));
