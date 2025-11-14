@@ -304,13 +304,15 @@ class SetAssociativeCache extends Cache {
         allocWay <= replacementPoliciesPerLine[0].extAllocs[flPortIdx].way;
         hitWay <= fillPortValidWay;
       } else {
-        final allocCases = <CaseItem>[];
-        for (var line = 0; line < lines; line++) {
-          allocCases.add(CaseItem(Const(line, width: _lineAddrWidth), [
-            allocWay < replacementPoliciesPerLine[line].extAllocs[flPortIdx].way
-          ]));
-        }
-        Combinational([Case(getLine(flPort.addr), allocCases)]);
+        Combinational([
+          Case(getLine(flPort.addr), [
+            for (var line = 0; line < lines; line++)
+              CaseItem(Const(line, width: _lineAddrWidth), [
+                allocWay <
+                    replacementPoliciesPerLine[line].extAllocs[flPortIdx].way
+              ])
+          ])
+        ]);
         Combinational([hitWay < fillPortValidWay]);
       }
 
@@ -345,14 +347,15 @@ class SetAssociativeCache extends Cache {
 
         // Multi-way allocation valid reduction: any selected evict way that
         // has its valid bit set makes the allocation-way-valid true.
-        Logic? vsAccum2;
-        for (var way = 0; way < ways; way++) {
-          final sel = evictWay.eq(Const(way, width: log2Ceil(ways))) &
-              validBitRFs[way].extReads[flPortIdx].data[0];
-          vsAccum2 = (vsAccum2 == null) ? sel : (vsAccum2 | sel);
-        }
+        final allocSel = [
+          for (var way = 0; way < ways; way++)
+            evictWay.eq(Const(way, width: log2Ceil(ways))) &
+                validBitRFs[way].extReads[flPortIdx].data[0]
+        ];
         allocWayValid <=
-            (vsAccum2 ?? Const(0))
+            allocSel
+                .swizzle()
+                .or()
                 .named('allocWayValidReduction${nameSuffix ?? ''}');
       }
 
