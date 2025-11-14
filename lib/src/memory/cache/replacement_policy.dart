@@ -48,6 +48,26 @@ class AccessInterface extends Interface<DataPortGroup> {
   AccessInterface clone() => AccessInterface(numWays);
 }
 
+/// An [AccessInterface] variant that prefixes its internal port names with
+/// a user-provided base name. Useful for creating named external interfaces
+/// where port naming should follow a consistent prefix.
+class NamedAccessInterface extends AccessInterface {
+  /// The base name used to prefix internal port names.
+  final String baseName;
+
+  /// Constructs a new named access interface. The [name] parameter defaults
+  /// to `'access_interface'` and will be used to generate port names like
+  /// `<name>_access` and `<name>_way`.
+  NamedAccessInterface(super.numWays, {String name = 'access_interface'})
+      : baseName = name {
+    access.named('${baseName}_access');
+    way.named('${baseName}_way');
+  }
+
+  @override
+  NamedAccessInterface clone() => NamedAccessInterface(numWays, name: baseName);
+}
+
 /// A module [ReplacementPolicy] for choosing which way to use for a
 /// set-associative cache upon a store miss. It tracks accesses to ways to
 /// implement policies like LRU for choosing the way to return on a miss.

@@ -183,13 +183,14 @@ class FullyAssociativeCache extends Cache {
 
     // Create replacement policy instance. We need a single policy for the
     // entire cache since there's only one 'line'.
-    final policyReadHits =
-        List.generate(numReads, (_) => AccessInterface(ways));
-    final policyFillHits =
-        List.generate(numFills, (_) => AccessInterface(ways));
-    final policyAllocs = List.generate(numFills, (_) => AccessInterface(ways));
-    final policyInvalidates =
-        List.generate(numFills, (_) => AccessInterface(ways));
+    final policyReadHits = List.generate(
+        numReads, (i) => NamedAccessInterface(ways, name: 'fa_rd_port$i'));
+    final policyFillHits = List.generate(
+        numFills, (i) => NamedAccessInterface(ways, name: 'fa_fl_port$i'));
+    final policyAllocs = List.generate(
+        numFills, (i) => NamedAccessInterface(ways, name: 'fa_alloc_port$i'));
+    final policyInvalidates = List.generate(
+        numFills, (i) => NamedAccessInterface(ways, name: 'fa_inval_port$i'));
 
     replacement(clk, reset, [...policyReadHits, ...policyFillHits],
         policyAllocs, policyInvalidates,

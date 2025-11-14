@@ -164,7 +164,7 @@ abstract class Cache extends Module {
 
   /// Per-line replacement policy instances created by subclasses.
   @protected
-  late final List<ReplacementPolicy> replByLine;
+  late final List<ReplacementPolicy> replacementPoliciesPerLine;
 
   /// Clock.
   Logic get clk => input('clk');
