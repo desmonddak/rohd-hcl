@@ -53,22 +53,24 @@ class SetAssociativeCache extends Cache {
         (way) => RegisterFile(
             clk,
             reset,
+            List.generate(
+                numFills,
+                (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
+                    name: 'alloc_port${port}_way$way')),
             [
-              for (var port = 0; port < numFills; port++)
-                NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                    name: 'alloc_port${port}_way$way')
-            ],
-            [
-              for (var port = 0; port < numFills; port++)
-                NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                    name: 'match_fl_port${port}_way$way'),
-              for (var port = 0; port < numReads; port++)
-                NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                    name: 'match_rd_port${port}_way$way'),
+              ...List.generate(
+                  numFills,
+                  (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
+                      name: 'match_fl_port${port}_way$way')),
+              ...List.generate(
+                  numReads,
+                  (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
+                      name: 'match_rd_port${port}_way$way')),
               if (hasEvictions)
-                for (var port = 0; port < numFills; port++)
-                  NamedDataPortInterface(_tagWidth, _lineAddrWidth,
-                      name: 'evictTagRd_port${port}_way$way')
+                ...List.generate(
+                    numFills,
+                    (port) => NamedDataPortInterface(_tagWidth, _lineAddrWidth,
+                        name: 'evictTagRd_port${port}_way$way'))
             ],
             numEntries: lines,
             name: 'tag_rf_way$way'));
@@ -80,45 +82,48 @@ class SetAssociativeCache extends Cache {
         (way) => RegisterFile(
             clk,
             reset,
-            [
-              for (var port = 0; port < numFills + numReads; port++)
-                NamedDataPortInterface(1, _lineAddrWidth,
-                    name: 'validBitWr_port${port}_way$way')
-            ],
-            [
-              for (var port = 0; port < numFills + numReads; port++)
-                NamedDataPortInterface(1, _lineAddrWidth,
-                    name: 'validBitRd_port${port}_way$way')
-            ],
+            List.generate(
+                numFills + numReads,
+                (port) => NamedDataPortInterface(1, _lineAddrWidth,
+                    name: 'validBitWr_port${port}_way$way')),
+            List.generate(
+                numFills + numReads,
+                (port) => NamedDataPortInterface(1, _lineAddrWidth,
+                    name: 'validBitRd_port${port}_way$way')),
             numEntries: lines,
             name: 'valid_bit_rf_way$way'));
 
     // Instantiate one replacement policy module per cache line using the
     // line-major arrays directly. Initialize replacement instance list.
-    lineReplacementPolicy = [
-      for (var line = 0; line < lines; line++)
-        replacement(
+    lineReplacementPolicy = List.generate(
+        lines,
+        (line) => replacement(
             clk,
             reset,
             [
-              for (var port = 0; port < numFills; port++)
-                NamedAccessInterface(ways, name: 'rp_fl_port${port}_line$line'),
-              for (var port = 0; port < numReads; port++)
-                NamedAccessInterface(ways, name: 'rp_rd_port${port}_line$line')
+              ...List.generate(
+                  numFills,
+                  (port) => NamedAccessInterface(ways,
+                      name: 'rp_fl_port${port}_line$line')),
+              ...List.generate(
+                  numReads,
+                  (port) => NamedAccessInterface(ways,
+                      name: 'rp_rd_port${port}_line$line'))
             ],
             [
-              for (var port = 0; port < numFills; port++)
-                NamedAccessInterface(ways,
-                    name: 'rp_alloc_port${port}_line$line')
+              ...List.generate(
+                  numFills,
+                  (port) => NamedAccessInterface(ways,
+                      name: 'rp_alloc_port${port}_line$line'))
             ],
             [
-              for (var port = 0; port < numFills; port++)
-                NamedAccessInterface(ways,
-                    name: 'rp_inval_port${port}_line$line')
+              ...List.generate(
+                  numFills,
+                  (port) => NamedAccessInterface(ways,
+                      name: 'rp_inval_port${port}_line$line'))
             ],
             name: 'rp_line$line',
-            ways: ways)
-    ];
+            ways: ways));
 
     // Construct data RFs per-way with read ports (reads first, then evicts if
     // present) and fill write ports for fills.
@@ -127,19 +132,20 @@ class SetAssociativeCache extends Cache {
         (way) => RegisterFile(
             clk,
             reset,
+            List.generate(
+                numFills,
+                (port) => NamedDataPortInterface(_dataWidth, _lineAddrWidth,
+                    name: 'data_fl_port${port}_way$way')),
             [
-              for (var port = 0; port < numFills; port++)
-                NamedDataPortInterface(_dataWidth, _lineAddrWidth,
-                    name: 'data_fl_port${port}_way$way')
-            ],
-            [
-              for (var port = 0; port < numReads; port++)
-                NamedDataPortInterface(_dataWidth, _lineAddrWidth,
-                    name: 'data_rd_port${port}_way$way'),
+              ...List.generate(
+                  numReads,
+                  (port) => NamedDataPortInterface(_dataWidth, _lineAddrWidth,
+                      name: 'data_rd_port${port}_way$way')),
               if (hasEvictions)
-                for (var port = 0; port < numFills; port++)
-                  NamedDataPortInterface(_dataWidth, _lineAddrWidth,
-                      name: 'evictDataRd_port${port}_way$way')
+                ...List.generate(
+                    numFills,
+                    (port) => NamedDataPortInterface(_dataWidth, _lineAddrWidth,
+                        name: 'evictDataRd_port${port}_way$way'))
             ],
             numEntries: lines,
             name: 'data_rf_way$way'));

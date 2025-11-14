@@ -80,7 +80,8 @@ abstract class PartialProductArray {
     while (product.length <= absMax) {
       product.add(Const(0));
     }
-    return [for (final c in columns) partialProducts[row][c - rowShift[row]]];
+    return List.generate(columns.length,
+        (i) => partialProducts[row][columns[i] - rowShift[row]]);
   }
 
   /// Set the [Logic] at absolute position ([row], [col]) to [val].
@@ -294,7 +295,7 @@ abstract class PartialProductMatrix extends Module {
     if (!_outputsGenerated) {
       throw RohdHclException('generate outputs before accessing rows');
     }
-    return [for (var row = 0; row < _array.rows; row++) output('row_$row')];
+    return List.generate(_array.rows, (row) => output('row_$row'));
   }
 
   /// Give access to the _array for [PartialProductSignExtension] to operate.

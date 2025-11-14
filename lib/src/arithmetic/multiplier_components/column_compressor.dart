@@ -134,14 +134,15 @@ class CompressTerm implements Comparable<CompressTerm> {
         value = logic.value;
       case CompressTermType.sum:
         // xor the eval of the terms
-        final termValues = [for (final term in inputs) term.evaluate()];
+        final termValues =
+            List.generate(inputs.length, (i) => inputs[i].evaluate());
         final sum = termValues.swizzle().xor();
         value = sum;
       case CompressTermType.carry:
-        final termValues = [for (final term in inputs) term.evaluate()];
-        final termValuesInt = [
-          for (var i = 0; i < termValues.length; i++) termValues[i].toInt()
-        ];
+        final termValues =
+            List.generate(inputs.length, (i) => inputs[i].evaluate());
+        final termValuesInt =
+            List.generate(termValues.length, (i) => termValues[i].toInt());
 
         final count = (termValuesInt.isNotEmpty)
             ? termValuesInt.reduce((c, term) => c + term)
@@ -227,10 +228,8 @@ class ColumnCompressor extends Module {
     this.clk = (clk != null) ? addInput('clk', clk) : null;
     this.reset = (reset != null) ? addInput('reset', reset) : null;
     this.enable = (enable != null) ? addInput('enable', enable) : null;
-    _rows = [
-      for (var row = 0; row < inRows.length; row++)
-        addInput('row_$row', inRows[row], width: inRows[row].width)
-    ];
+    _rows = List.generate(inRows.length,
+        (row) => addInput('row_$row', inRows[row], width: inRows[row].width));
     // pp = PartialProductMatrixStore(inputRows, rowShift);
     columns = List.generate(maxWidth(), (i) => ColumnQueue());
 
@@ -306,11 +305,11 @@ class ColumnCompressor extends Module {
           if (depth > 3) {
             inputs.add(queue.removeFirst());
             compressor = Compressor3(
-                [for (final i in inputs) i.logic].swizzle(),
+                List.generate(inputs.length, (i) => inputs[i].logic).swizzle(),
                 name: 'cmp3_iter${iteration}_col$col');
           } else {
             compressor = Compressor2(
-                [for (final i in inputs) i.logic].swizzle(),
+                List.generate(inputs.length, (i) => inputs[i].logic).swizzle(),
                 name: 'cmp2_iter${iteration}_col$col');
           }
           final t = CompressTerm(

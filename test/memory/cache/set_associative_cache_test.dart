@@ -328,7 +328,8 @@ void main() {
         clk,
         reset,
         // Wrap fill ports into composite FillEvictInterface expected by API.
-        [for (final p in cp.fillPorts) FillEvictInterface(p)],
+        List.generate(
+            cp.fillPorts.length, (i) => FillEvictInterface(cp.fillPorts[i])),
         cp.readPorts,
       );
       await cache.build();

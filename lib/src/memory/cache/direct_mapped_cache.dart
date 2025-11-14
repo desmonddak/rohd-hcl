@@ -7,6 +7,7 @@
 // 2025 October 15
 // Author: Desmond Kirkpatrick <desmond.a.kirkpatrick@intel.com>
 
+import 'package:meta/meta.dart';
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
 
@@ -17,6 +18,18 @@ import 'package:rohd_hcl/rohd_hcl.dart';
 /// and way selection logic, making it more efficient but potentially having
 /// more conflict misses.
 class DirectMappedCache extends Cache {
+  /// The tag register file.
+  @protected
+  late final RegisterFile tagRF;
+
+  /// The data register file.
+  @protected
+  late final RegisterFile dataRF;
+
+  /// The valid bit register file.
+  @protected
+  late final RegisterFile validBitRF;
+
   /// Constructs a [DirectMappedCache] with a single way.
   ///
   /// Defines a direct-mapped cache with [lines] entries. Each address maps
@@ -39,68 +52,68 @@ class DirectMappedCache extends Cache {
     // consistent with other cache implementations).
     final hasEvictions = fills.isNotEmpty && fills[0].eviction != null;
 
-    final tagRF = RegisterFile(
+    tagRF = RegisterFile(
         clk,
         reset,
+        List.generate(
+            numFills,
+            (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
+                name: 'alloc_port${i}_way0')),
         [
-          for (var i = 0; i < numFills; i++)
-            NamedDataPortInterface(tagWidth, lineAddrWidth,
-                name: 'alloc_port${i}_way0')
-        ],
-        [
-          for (var i = 0; i < numFills; i++)
-            NamedDataPortInterface(tagWidth, lineAddrWidth,
-                name: 'match_fl_port${i}_way0'),
-          for (var i = 0; i < numReads; i++)
-            NamedDataPortInterface(tagWidth, lineAddrWidth,
-                name: 'match_rd_port${i}_way0'),
+          ...List.generate(
+              numFills,
+              (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
+                  name: 'match_fl_port${i}_way0')),
+          ...List.generate(
+              numReads,
+              (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
+                  name: 'match_rd_port${i}_way0')),
           if (hasEvictions)
-            for (var i = 0; i < numFills; i++)
-              NamedDataPortInterface(tagWidth, lineAddrWidth,
-                  name: 'evictTagRd_port${i}_way0')
+            ...List.generate(
+                numFills,
+                (i) => NamedDataPortInterface(tagWidth, lineAddrWidth,
+                    name: 'evictTagRd_port${i}_way0'))
         ],
         numEntries: lines,
         name: 'tag_rf');
 
-    final validBitRF = RegisterFile(
+    validBitRF = RegisterFile(
         clk,
         reset,
-        [
-          for (var i = 0; i < numFills + numReads; i++)
-            NamedDataPortInterface(1, lineAddrWidth,
-                name: 'validBitWr_port${i}_way0')
-        ],
-        [
-          for (var i = 0; i < numFills + numReads; i++)
-            NamedDataPortInterface(1, lineAddrWidth,
-                name: 'validBitRd_port${i}_way0')
-        ],
+        List.generate(
+            numFills + numReads,
+            (i) => NamedDataPortInterface(1, lineAddrWidth,
+                name: 'validBitWr_port${i}_way0')),
+        List.generate(
+            numFills + numReads,
+            (i) => NamedDataPortInterface(1, lineAddrWidth,
+                name: 'validBitRd_port${i}_way0')),
         numEntries: lines,
         name: 'valid_bit_rf');
 
-    final dataRF = RegisterFile(
+    dataRF = RegisterFile(
         clk,
         reset,
+        List.generate(
+            numFills,
+            (i) => NamedDataPortInterface(dataWidth, lineAddrWidth,
+                name: 'data_fl_port${i}_way0')),
         [
-          for (var i = 0; i < numFills; i++)
-            NamedDataPortInterface(dataWidth, lineAddrWidth,
-                name: 'data_fl_port${i}_way0')
-        ],
-        [
-          for (var i = 0; i < numReads; i++)
-            NamedDataPortInterface(dataWidth, lineAddrWidth,
-                name: 'data_rd_port${i}_way0'),
+          ...List.generate(
+              numReads,
+              (i) => NamedDataPortInterface(dataWidth, lineAddrWidth,
+                  name: 'data_rd_port${i}_way0')),
           if (hasEvictions)
-            for (var i = 0; i < numFills; i++)
-              NamedDataPortInterface(dataWidth, lineAddrWidth,
-                  name: 'evictDataRd_port${i}_way0')
+            ...List.generate(
+                numFills,
+                (i) => NamedDataPortInterface(dataWidth, lineAddrWidth,
+                    name: 'evictDataRd_port${i}_way0'))
         ],
         numEntries: lines,
         name: 'data_rf');
 
-    // Handle fill operations (per-way). Direct-mapped caches have ways==1,
-    // so we index way 0.
-    for (var fillIdx = 0; fillIdx < numFills; fillIdx++) {
+    // Helper: handle a fill port at index `fillIdx`.
+    void handleFillPort(int fillIdx) {
       final fillPort = fills[fillIdx].fill;
       final tagWrPort = tagRF.writes[fillIdx];
       final dataWrPort = dataRF.writes[fillIdx];
@@ -146,34 +159,88 @@ class DirectMappedCache extends Cache {
           ])
         ])
       ]);
+
+      // If eviction outputs are present, build eviction reads and outputs.
+      if (hasEvictions) {
+        final evictPort = fills[fillIdx].eviction!;
+
+        final evictDataReadPort = dataRF.reads[numReads + fillIdx];
+        final evictTagReadPort = tagRF.reads[numFills + numReads + fillIdx];
+
+        // Read the tag and data at the line being filled.
+        evictTagReadPort.en <= fillPort.en;
+        evictTagReadPort.addr <= getLine(fillPort.addr);
+
+        evictDataReadPort.en <= fillPort.en;
+        evictDataReadPort.addr <= getLine(fillPort.addr);
+
+        // Check if the line being filled has valid data (for eviction).
+        final validBitRdPort = validBitRF.reads[fillIdx];
+        final lineValid =
+            validBitRdPort.data[0].named('evict${fillIdx}LineValid');
+
+        // Check if this fill is a hit.
+        final storedTag =
+            evictTagReadPort.data.named('evict${fillIdx}StoredTag');
+        final requestTag =
+            getTag(fillPort.addr).named('evict${fillIdx}RequestTag');
+        final fillHasHit = (lineValid & storedTag.eq(requestTag))
+            .named('evict${fillIdx}FillHasHit');
+
+        final allocEvictCond = (fillPort.valid & ~fillHasHit & lineValid)
+            .named('allocEvictCond$fillIdx');
+        final invalEvictCond =
+            (~fillPort.valid & fillHasHit).named('invalEvictCond$fillIdx');
+
+        final evictAddrComb =
+            Logic(name: 'evictAddrComb$fillIdx', width: fillPort.addrWidth);
+        Combinational([
+          evictAddrComb <
+              mux(invalEvictCond, fillPort.addr,
+                  [evictTagReadPort.data, getLine(fillPort.addr)].swizzle())
+        ]);
+
+        Combinational([
+          evictPort.en < (fillPort.en & (invalEvictCond | allocEvictCond)),
+          evictPort.valid < (fillPort.en & (invalEvictCond | allocEvictCond)),
+          evictPort.addr < evictAddrComb,
+          evictPort.data < evictDataReadPort.data,
+        ]);
+      }
+    }
+
+    // Call helper for each fill port.
+    for (var fillIdx = 0; fillIdx < numFills; fillIdx++) {
+      handleFillPort(fillIdx);
     }
 
     // Handle read operations
-    for (var readIdx = 0; readIdx < numReads; readIdx++) {
+    // Helper: handle a read port at index `readIdx`
+    void handleReadPort(int readIdx) {
       final readPort = reads[readIdx];
       final tagRdPort = tagRF.reads[numFills + readIdx];
       final dataRdPort = dataRF.reads[readIdx];
 
-      // Read tag
+      // Read tag.
       tagRdPort.en <= readPort.en;
       tagRdPort.addr <= getLine(readPort.addr);
 
-      // Read data
+      // Read data.
       dataRdPort.en <= readPort.en;
       dataRdPort.addr <= getLine(readPort.addr);
 
-      // Read valid bit for read port check
+      // Read valid bit for read port check.
       final validBitRdPort = validBitRF.reads[numFills + readIdx];
       validBitRdPort.en <= readPort.en;
       validBitRdPort.addr <= getLine(readPort.addr);
 
-      // Check for cache hit: valid bit is set AND tag matches
+      // Check for cache hit: valid bit is set AND tag matches.
       final storedTag = tagRdPort.data;
       final requestTag = getTag(readPort.addr);
 
       final hit = validBitRdPort.data[0] & storedTag.eq(requestTag);
 
-      // Output data and valid signal
+      // Output data and valid signal.
       readPort.data <= dataRdPort.data;
       readPort.valid <= hit;
 
@@ -182,7 +249,7 @@ class DirectMappedCache extends Cache {
       if (readPort.hasReadWithInvalidate) {
         final validBitWrPort = validBitRF.writes[numFills + readIdx];
 
-        // Register the signals for next cycle write
+        // Register the signals for next cycle write.
         final shouldInvalidate = flop(
             clk, readPort.readWithInvalidate & hit & readPort.en,
             reset: reset);
@@ -191,7 +258,7 @@ class DirectMappedCache extends Cache {
         Combinational([
           validBitWrPort.en < shouldInvalidate,
           validBitWrPort.addr < invalidateAddr,
-          validBitWrPort.data < Const(0, width: 1), // Invalidate = set to 0
+          validBitWrPort.data < Const(0, width: 1), // Invalidate = set to 0.
         ]);
       } else {
         // No readWithInvalidate, so no valid bit writes from this read port.
@@ -202,66 +269,9 @@ class DirectMappedCache extends Cache {
       }
     }
 
-    // Handle evictions if eviction ports are provided.
-    if (hasEvictions) {
-      for (var evictIdx = 0; evictIdx < numFills; evictIdx++) {
-        final evictPort = fills[evictIdx].eviction!;
-        final fillPort = fills[evictIdx].fill; // Corresponding fill port.
-
-        final evictDataReadPort = dataRF.reads[numReads + evictIdx];
-        final evictTagReadPort = tagRF.reads[numFills + numReads + evictIdx];
-
-        // Read the tag and data at the line being filled
-        evictTagReadPort.en <= fillPort.en;
-        evictTagReadPort.addr <= getLine(fillPort.addr);
-
-        evictDataReadPort.en <= fillPort.en;
-        evictDataReadPort.addr <= getLine(fillPort.addr);
-
-        // Check if the line being filled has valid data (for eviction)
-        final validBitRdPort = validBitRF.reads[evictIdx];
-        final lineValid =
-            validBitRdPort.data[0].named('evict${evictIdx}LineValid');
-
-        // Check if this fill is a hit
-        final storedTag =
-            evictTagReadPort.data.named('evict${evictIdx}StoredTag');
-        final requestTag =
-            getTag(fillPort.addr).named('evict${evictIdx}RequestTag');
-        final fillHasHit = (lineValid & storedTag.eq(requestTag))
-            .named('evict${evictIdx}FillHasHit');
-
-        // Two eviction conditions:
-        // 1. Allocation eviction: valid fill to a line with valid data (miss)
-        //    - overwrites existing valid entry with new data
-        // 2. Invalidation eviction: invalid fill that hits
-        //    - invalidates an existing entry
-        final allocEvictCond = (fillPort.valid & ~fillHasHit & lineValid)
-            .named('allocEvictCond$evictIdx');
-        final invalEvictCond =
-            (~fillPort.valid & fillHasHit).named('invalEvictCond$evictIdx');
-
-        // Construct the eviction address:
-        // - For invalidation: use the fill address (which matched)
-        // - For allocation: reconstruct from stored tag + line address
-        final evictAddrComb =
-            Logic(name: 'evictAddrComb$evictIdx', width: fillPort.addrWidth);
-        // Use mux: if invalidation eviction, use fill address; else reconstruct
-        // from stored tag + line address.
-        Combinational([
-          evictAddrComb <
-              mux(invalEvictCond, fillPort.addr,
-                  [evictTagReadPort.data, getLine(fillPort.addr)].swizzle())
-        ]);
-
-        // Drive eviction outputs
-        Combinational([
-          evictPort.en < (fillPort.en & (invalEvictCond | allocEvictCond)),
-          evictPort.valid < (fillPort.en & (invalEvictCond | allocEvictCond)),
-          evictPort.addr < evictAddrComb,
-          evictPort.data < evictDataReadPort.data,
-        ]);
-      }
+    // Call helper for each read port.
+    for (var readIdx = 0; readIdx < numReads; readIdx++) {
+      handleReadPort(readIdx);
     }
   }
 }

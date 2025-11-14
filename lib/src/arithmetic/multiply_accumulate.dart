@@ -233,7 +233,7 @@ class CompressionTreeMultiplyAccumulate extends MultiplyAccumulate {
         c[c.width - 1],
         Const(0));
 
-    final additionalRow = [for (var i = 0; i < c.width; i++) c[i]];
+    final additionalRow = List.generate(c.width, (i) => c[i]);
     while (additionalRow.length < lastRowLen) {
       additionalRow.add(additionalRowSign);
     }
