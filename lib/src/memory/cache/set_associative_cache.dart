@@ -9,7 +9,6 @@
 
 import 'package:rohd/rohd.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
-import 'package:rohd_hcl/src/memory/register_file_with_ports.dart';
 
 /// A set-associative cache supporting multiple read and fill ports.
 class SetAssociativeCache extends Cache {
@@ -18,13 +17,13 @@ class SetAssociativeCache extends Cache {
   late int _dataWidth;
 
   /// Tag register files, one per way.
-  late final List<RegisterFileExportedInterfaces> tagRFs;
+  late final List<RegisterFile> tagRFs;
 
   /// Valid bit register files, one per way.
-  late final List<RegisterFileExportedInterfaces> validBitRFs;
+  late final List<RegisterFile> validBitRFs;
 
   /// Data register files, one per way.l
-  late final List<RegisterFileExportedInterfaces> dataRFs;
+  late final List<RegisterFile> dataRFs;
 
   /// Constructs a [Cache] supporting multiple read and fill ports.
   ///
@@ -49,9 +48,9 @@ class SetAssociativeCache extends Cache {
 
     // Construct tag RFs per-way; build the small per-way interface lists
     // at construction time instead of pre-building 2D arrays.
-    tagRFs = List<RegisterFileExportedInterfaces>.generate(
+    tagRFs = List<RegisterFile>.generate(
         ways,
-        (way) => RegisterFileExportedInterfaces(
+        (way) => RegisterFile(
             clk,
             reset,
             [
@@ -76,9 +75,9 @@ class SetAssociativeCache extends Cache {
 
     // Construct valid-bit RFs per-way with write/read ports ordered as
     // (fills first, then reads).
-    validBitRFs = List<RegisterFileExportedInterfaces>.generate(
+    validBitRFs = List<RegisterFile>.generate(
         ways,
-        (way) => RegisterFileExportedInterfaces(
+        (way) => RegisterFile(
             clk,
             reset,
             [
@@ -96,7 +95,7 @@ class SetAssociativeCache extends Cache {
 
     // Instantiate one replacement policy module per cache line using the
     // line-major arrays directly. Initialize replacement instance list.
-    replacementPoliciesPerLine = [
+    lineReplacementPolicy = [
       for (var line = 0; line < lines; line++)
         replacement(
             clk,
@@ -123,9 +122,9 @@ class SetAssociativeCache extends Cache {
 
     // Construct data RFs per-way with read ports (reads first, then evicts if
     // present) and fill write ports for fills.
-    dataRFs = List<RegisterFileExportedInterfaces>.generate(
+    dataRFs = List<RegisterFile>.generate(
         ways,
-        (way) => RegisterFileExportedInterfaces(
+        (way) => RegisterFile(
             clk,
             reset,
             [
@@ -212,11 +211,11 @@ class SetAssociativeCache extends Cache {
     ]);
 
     for (var line = 0; line < lines; line++) {
-      replacementPoliciesPerLine[line].hits[numFills + rdPortIdx].access <=
+      lineReplacementPolicy[line].hits[numFills + rdPortIdx].access <=
           rdPort.en &
               ~readMiss &
               getLine(rdPort.addr).eq(Const(line, width: _lineAddrWidth));
-      replacementPoliciesPerLine[line].hits[numFills + rdPortIdx].way <=
+      lineReplacementPolicy[line].hits[numFills + rdPortIdx].way <=
           readPortValidWay;
     }
 
@@ -280,9 +279,6 @@ class SetAssociativeCache extends Cache {
     final fillMiss =
         (~fillPortValidAny).named('fill_port${nameSuffix ?? ''}_miss');
 
-    // Eviction handling: when an eviction port is present, wire per-way
-    // evict read ports directly from the register files and compute
-    // allocation/eviction selection signals without temporary lists.
     if (evictPort != null) {
       for (var way = 0; way < ways; way++) {
         tagRFs[way].reads[numFills + numReads + flPortIdx].en <= flPort.en;
@@ -298,15 +294,14 @@ class SetAssociativeCache extends Cache {
           Logic(name: 'evict${nameSuffix ?? ''}HitWay', width: log2Ceil(ways));
 
       if (lines == 1) {
-        allocWay <= replacementPoliciesPerLine[0].allocs[flPortIdx].way;
+        allocWay <= lineReplacementPolicy[0].allocs[flPortIdx].way;
         hitWay <= fillPortValidWay;
       } else {
         Combinational([
           Case(getLine(flPort.addr), [
             for (var line = 0; line < lines; line++)
               CaseItem(Const(line, width: _lineAddrWidth), [
-                allocWay <
-                    replacementPoliciesPerLine[line].allocs[flPortIdx].way
+                allocWay < lineReplacementPolicy[line].allocs[flPortIdx].way
               ])
           ])
         ]);
@@ -314,8 +309,6 @@ class SetAssociativeCache extends Cache {
       }
 
       // Compute whether the fill hit any way and select an eviction way.
-      // Place these here so they are in scope for both the single-line and
-      // multi-line cases.
       final fillHasHit = (~fillMiss).named('fill_has_hit${nameSuffix ?? ''}');
       final evictWay = mux(fillHasHit, hitWay, allocWay)
           .named('evict${nameSuffix ?? ''}Way');
@@ -377,32 +370,28 @@ class SetAssociativeCache extends Cache {
       ]);
     }
 
-    // Default combinational setup for policy hit/inval signals and per-line selection
+    // Default combinational setup for policy hit/inval signals and per-line
+    // selection.
     Combinational([
       for (var line = 0; line < lines; line++)
-        replacementPoliciesPerLine[line].invalidates[flPortIdx].access <
-            Const(0),
+        lineReplacementPolicy[line].invalidates[flPortIdx].access < Const(0),
       for (var line = 0; line < lines; line++)
-        replacementPoliciesPerLine[line].hits[flPortIdx].access < Const(0),
+        lineReplacementPolicy[line].hits[flPortIdx].access < Const(0),
       If(flPort.en, then: [
         for (var line = 0; line < lines; line++)
           If(getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)),
               then: [
                 If.block([
                   Iff(flPort.valid & ~fillMiss, [
-                    replacementPoliciesPerLine[line].hits[flPortIdx].access <
+                    lineReplacementPolicy[line].hits[flPortIdx].access <
                         flPort.en,
-                    replacementPoliciesPerLine[line].hits[flPortIdx].way <
+                    lineReplacementPolicy[line].hits[flPortIdx].way <
                         fillPortValidWay,
                   ]),
                   ElseIf(~flPort.valid, [
-                    replacementPoliciesPerLine[line]
-                            .invalidates[flPortIdx]
-                            .access <
+                    lineReplacementPolicy[line].invalidates[flPortIdx].access <
                         flPort.en,
-                    replacementPoliciesPerLine[line]
-                            .invalidates[flPortIdx]
-                            .way <
+                    lineReplacementPolicy[line].invalidates[flPortIdx].way <
                         fillPortValidWay,
                   ]),
                 ])
@@ -410,9 +399,9 @@ class SetAssociativeCache extends Cache {
       ])
     ]);
 
-    // Alloc access signals per-line
+    // Alloc access signals per-line.
     for (var line = 0; line < lines; line++) {
-      replacementPoliciesPerLine[line].allocs[flPortIdx].access <=
+      lineReplacementPolicy[line].allocs[flPortIdx].access <=
           flPort.en &
               flPort.valid &
               fillMiss &
@@ -422,7 +411,7 @@ class SetAssociativeCache extends Cache {
               ));
     }
 
-    // Tag allocations
+    // Tag allocations.
     Combinational([
       for (var way = 0; way < ways; way++)
         tagRFs[way].writes[flPortIdx].en < Const(0),
@@ -440,7 +429,7 @@ class SetAssociativeCache extends Cache {
                         flPort.valid &
                             fillMiss &
                             Const(way, width: log2Ceil(ways)).eq(
-                                replacementPoliciesPerLine[line]
+                                lineReplacementPolicy[line]
                                     .allocs[flPortIdx]
                                     .way),
                         [
@@ -453,7 +442,7 @@ class SetAssociativeCache extends Cache {
                     ElseIf(
                         ~flPort.valid &
                             Const(way, width: log2Ceil(ways)).eq(
-                                replacementPoliciesPerLine[line]
+                                lineReplacementPolicy[line]
                                     .invalidates[flPortIdx]
                                     .way),
                         [
@@ -468,7 +457,7 @@ class SetAssociativeCache extends Cache {
       ])
     ]);
 
-    // Valid-bit updates per-way
+    // Valid-bit updates per-way.
     for (var way = 0; way < ways; way++) {
       final matchWay = Const(way, width: log2Ceil(ways));
       final validBitWrPort = validBitRFs[way].writes[flPortIdx];
@@ -477,12 +466,9 @@ class SetAssociativeCache extends Cache {
       if (lines > 0) {
         Logic? accum;
         for (var line = 0; line < lines; line++) {
-          final cond =
-              getLine(flPort.addr).eq(Const(line, width: _lineAddrWidth)) &
-                  replacementPoliciesPerLine[line]
-                      .allocs[flPortIdx]
-                      .way
-                      .eq(matchWay);
+          final cond = getLine(flPort.addr)
+                  .eq(Const(line, width: _lineAddrWidth)) &
+              lineReplacementPolicy[line].allocs[flPortIdx].way.eq(matchWay);
           accum = (accum == null) ? cond : (accum | cond);
         }
         allocMatch = accum ?? Const(0);
@@ -513,7 +499,7 @@ class SetAssociativeCache extends Cache {
       ]);
     }
 
-    // Data RF writes (per-way)
+    // Data RF writes (per-way).
     for (var way = 0; way < ways; way++) {
       final matchWay = Const(way, width: log2Ceil(ways));
       final fillRFPort = dataRFs[way].writes[flPortIdx];
@@ -525,17 +511,13 @@ class SetAssociativeCache extends Cache {
           for (var line = 0; line < lines; line++)
             If(
                 (fillMiss &
-                        replacementPoliciesPerLine[line]
-                            .allocs[flPortIdx]
-                            .access &
-                        replacementPoliciesPerLine[line]
+                        lineReplacementPolicy[line].allocs[flPortIdx].access &
+                        lineReplacementPolicy[line]
                             .allocs[flPortIdx]
                             .way
                             .eq(matchWay)) |
                     (~fillMiss &
-                        replacementPoliciesPerLine[line]
-                            .hits[flPortIdx]
-                            .access &
+                        lineReplacementPolicy[line].hits[flPortIdx].access &
                         fillPortValidWay.eq(matchWay)),
                 then: [
                   fillRFPort.addr < getLine(flPort.addr),
