@@ -27,7 +27,7 @@ void main() {
     final dataOut = sr.dataOut;
     final data3 = sr.stages[2];
 
-    final data = List.generate(20, (i) => i * 3);
+    final data = [for (var i = 0; i < 20; i++) i * 3];
 
     unawaited(Simulator.run());
 

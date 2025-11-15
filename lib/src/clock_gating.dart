@@ -111,8 +111,7 @@ class ClockGateControlInterface extends PairInterface {
       isPresent: isPresent,
       hasEnableOverride: hasEnableOverride,
       additionalPorts: (additionalPorts != null)
-          ? List.generate(additionalPorts!.length,
-              (i) => additionalPorts![i].clone(name: additionalPorts![i].name))
+          ? [for (final p in additionalPorts!) p.clone(name: p.name)]
           : null,
       gatedClockGenerator: gatedClockGenerator);
 }

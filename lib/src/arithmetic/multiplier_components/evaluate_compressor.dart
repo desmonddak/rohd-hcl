@@ -38,9 +38,7 @@ extension EvaluateLiveColumnCompressor on ColumnCompressor {
           rowLogic.insert(0, colList[row].logic);
         }
       }
-      final rowBits = List.generate(rowLogic.length, (i) => rowLogic[i].value)
-          .reversed
-          .toList();
+      final rowBits = [for (final c in rowLogic) c.value].reversed.toList();
       // ignore: cascade_invocations
       rowBits.addAll(List.filled(rowShift[row], LogicValue.zero));
       final rowBitsExtend = rowBits.length < width

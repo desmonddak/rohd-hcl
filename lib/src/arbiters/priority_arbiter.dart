@@ -29,10 +29,10 @@ class PriorityArbiter extends Arbiter {
             Const(
               LogicValue.filled(count, LogicValue.z).withSet(i, LogicValue.one),
             ),
-            List.generate(count, (g) => grants[g] < (i == g ? 1 : 0)),
+            [for (var g = 0; g < count; g++) grants[g] < (i == g ? 1 : 0)],
           )
       ], defaultItem: [
-        ...List.generate(count, (g) => grants[g] < 0)
+        for (var g = 0; g < count; g++) grants[g] < 0
       ]),
     ]);
   }
