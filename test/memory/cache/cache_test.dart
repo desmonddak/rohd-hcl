@@ -50,13 +50,22 @@ CacheFactory setAssociativeFactory({int ways = 4, int lines = 2}) =>
         );
 
 /// Return a typed factory that constructs a FullyAssociativeCache.
-CacheFactory fullyAssociativeFactory({int ways = 4}) =>
+CacheFactory fullyAssociativeFactory({
+  int ways = 4,
+  bool generateOccupancy = false,
+  ReplacementPolicy Function(Logic clk, Logic reset, List<AccessInterface> hits,
+          List<AccessInterface> allocs, List<AccessInterface> invalidates,
+          {int ways, String name})?
+      replacementFactory,
+}) =>
     (clk, reset, fills, reads) => FullyAssociativeCache(
           clk,
           reset,
           fills,
           reads,
           ways: ways,
+          replacement: replacementFactory ?? PseudoLRUReplacement.new,
+          generateOccupancy: generateOccupancy,
         );
 
 class CachePorts {

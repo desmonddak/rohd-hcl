@@ -42,90 +42,64 @@ class AvailableInvalidatedReplacement extends ReplacementPolicy {
       validBits[w] <= flop(clk, validBitsNext[w], reset: reset);
     }
 
-    // Build expressions for postInvalidate (apply invalidates to current valid
-    // bits) Compute postInvalidate expression: current valid bit with
-    // invalidates applied.
-    final exprPostInv = List<Logic>.generate(ways, (w) {
-      var cur = validBits[w];
-      for (var i = 0; i < intInvalidates.length; i++) {
-        final inval = intInvalidates[i];
-        final match = inval.way.eq(Const(w, width: log2Ceil(ways)));
-        cur = mux(inval.access & match, Const(0), cur);
-      }
-      return cur.named('exprPostInv_w$w');
-    });
+    // (No debug outputs added here.)
 
-    // Build invalid vector: 1 for each invalid way (available).
-    final invalidBits = List<Logic>.generate(
-        ways, (w) => (~exprPostInv[w]).named('invalidBit$w'));
-
-    // For each alloc interface, pick the lowest-index invalid way.
+    // Compute way address width.
     final wayWidth = log2Ceil(ways) == 0 ? 1 : log2Ceil(ways);
-    final allocPicks = List<Logic>.generate(
-        intAllocs.length, (i) => Logic(width: wayWidth, name: 'alloc_pick_$i'));
-    final allocPickNext = List<Logic>.generate(intAllocs.length,
-        (i) => Logic(width: wayWidth, name: 'alloc_pick_next_$i'));
-    final allocPickLatched = List<Logic>.generate(intAllocs.length,
-        (i) => Logic(width: wayWidth, name: 'alloc_pick_latched_$i'));
 
-    // For multi-alloc support, perform greedy allocation in port order by
-    // tracking earlier claims as one-hot vectors. For each alloc port we
-    // compute available = invalidBits & ~earlierClaims, priority-encode that
-    // to choose a way, then add that choice to earlierClaims for the next
-    // alloc port.
-    final earlierClaims = List<Logic>.generate(ways, (w) => Const(0));
-    final allocPickOneHot = <List<Logic>>[];
+    // Compute the post-invalidate valid bit state combinationally.
+    // Start with registered validBits, then apply all invalidates.
+    // Use variable reassignment like PseudoLRU to chain updates.
+    var updateValidBits = List<Logic>.generate(
+        ways, (w) => validBits[w].named('updateValid_start_w$w'));
 
+    for (var i = 0; i < intInvalidates.length; i++) {
+      final inval = intInvalidates[i];
+      final nextValidBits = List<Logic>.generate(ways, (w) {
+        final match = inval.way.eq(Const(w, width: log2Ceil(ways)));
+        return mux(inval.access & match, Const(0), updateValidBits[w])
+            .named('validAfterInv${i}_w$w');
+      });
+      updateValidBits = nextValidBits;
+    }
+
+    // Chain allocs so each sees the effect of earlier allocs' claims.
+    // This follows the PseudoLRU pattern of updating state between allocs.
     for (var i = 0; i < intAllocs.length; i++) {
       final a = intAllocs[i];
 
-      // build available vector: invalidBits & ~earlierClaims.
-      final availVec = List<Logic>.generate(ways,
-          (w) => (invalidBits[w] & ~earlierClaims[w]).named('avail_${i}_$w'));
+      // Build invalid bits from current valid bit state.
+      final invalidBits = List<Logic>.generate(
+          ways, (w) => (~updateValidBits[w]).named('invalidBit${i}_w$w'));
 
+      // Pick the lowest-index invalid way.
       Logic pickWay;
       if (ways == 1) {
         pickWay = Const(0, width: wayWidth);
       } else {
-        pickWay = RecursivePriorityEncoder(availVec.rswizzle())
+        pickWay = RecursivePriorityEncoder(invalidBits.rswizzle())
             .out
-            .slice(wayWidth - 1, 0);
-      }
-      allocPicks[i] = pickWay;
-
-      // compute one-hot encoding of pickWay (and gate with access).
-      final oneHot = List<Logic>.generate(
-          ways,
-          (w) => (a.access & allocPicks[i].eq(Const(w, width: wayWidth)))
-              .named('pick_${i}_$w'));
-      allocPickOneHot.add(oneHot);
-
-      // update earlierClaims for next alloc.
-      for (var w = 0; w < ways; w++) {
-        earlierClaims[w] =
-            (earlierClaims[w] | oneHot[w]).named('earlierClaim_${i}_$w');
+            .slice(wayWidth - 1, 0)
+            .named('pickWay$i');
       }
 
-      // latch the picked way on the next clock edge when alloc is asserted.
-      allocPickLatched[i] <= flop(clk, allocPickNext[i], reset: reset);
+      // Drive the alloc interface with the picked way.
+      a.way <= pickWay;
 
-      // next value is pickWay when access is asserted, otherwise keep previous.
-      allocPickNext[i] <= mux(a.access, pickWay, allocPickLatched[i]);
-
-      // drive the alloc interface `way` from the latched value so reads are
-      // stable.
-      a.way <= allocPickLatched[i];
+      // Update the valid bits to reflect this alloc's claim, so next alloc sees
+      // it.
+      final nextValidBits = List<Logic>.generate(ways, (w) {
+        final isPickedWay = pickWay.eq(Const(w, width: wayWidth));
+        final thisClaim = a.access & isPickedWay;
+        return mux(thisClaim, Const(1), updateValidBits[w])
+            .named('validAfterAlloc${i}_w$w');
+      });
+      updateValidBits = nextValidBits;
     }
 
-    // Compute validBitsNext: set bit if alloc claims it, clear if invalidated,
-    // else keep.
+    // Register the final valid bit state.
     for (var w = 0; w < ways; w++) {
-      // detect if any alloc picked this way this cycle by ORing one-hot picks.
-      Logic allocClaim = Const(0);
-      for (var i = 0; i < allocPickOneHot.length; i++) {
-        allocClaim = allocClaim | allocPickOneHot[i][w];
-      }
-      validBitsNext[w] <= (exprPostInv[w] | allocClaim);
+      validBitsNext[w] <= updateValidBits[w];
     }
   }
 }

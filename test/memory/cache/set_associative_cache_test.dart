@@ -34,6 +34,105 @@ void main() {
     await Simulator.reset();
   });
 
+  test(
+      'SetAssociativeCache: RWI with simultaneous fills on different addresses',
+      () async {
+    final clk = SimpleClockGenerator(2).clk;
+    final reset = Logic();
+
+    const ways = 4;
+
+    final fillPorts = List.generate(2, (_) => ValidDataPortInterface(32, 32));
+    final fills = fillPorts.map(FillEvictInterface.new).toList();
+    final readPorts = List.generate(
+        2, (_) => ValidDataPortInterface(32, 32, hasReadWithInvalidate: true));
+
+    final cache = SetAssociativeCache(clk, reset, fills, readPorts, ways: ways);
+
+    await cache.build();
+    unawaited(Simulator.run());
+
+    // Reset and initialize all signals
+    reset.inject(0);
+    for (final fillPort in fillPorts) {
+      fillPort.en.inject(0);
+      fillPort.valid.inject(0);
+      fillPort.addr.inject(0);
+      fillPort.data.inject(0);
+    }
+    for (final readPort in readPorts) {
+      readPort.en.inject(0);
+      readPort.readWithInvalidate.inject(0);
+      readPort.addr.inject(0);
+    }
+    await clk.waitCycles(2);
+    reset.inject(1);
+    await clk.nextPosedge;
+    reset.inject(0);
+    await clk.nextPosedge;
+
+    // Log suppressed: fill address 0x100 with data 0x10100
+    fillPorts[0].addr.inject(0x100);
+    fillPorts[0].data.inject(0x10100);
+    fillPorts[0].valid.inject(1);
+    fillPorts[0].en.inject(1);
+    await clk.nextPosedge;
+    fillPorts[0].en.inject(0);
+    await clk.nextPosedge;
+
+    // Log suppressed: verify 0x100 is in cache
+    readPorts[0].addr.inject(0x100);
+    readPorts[0].en.inject(1);
+    await clk.nextPosedge;
+    await clk.nextNegedge;
+    var hit = readPorts[0].valid.value.toInt();
+    var data = readPorts[0].data.value.toInt();
+    expect(hit, 1, reason: 'Should hit after fill (hit=$hit)');
+    expect(data, 0x10100,
+        reason: 'Should return data=0x${0x10100.toRadixString(16)} '
+            '(data=0x${data.toRadixString(16)})');
+    readPorts[0].en.inject(0);
+    await clk.nextPosedge;
+
+    // Log suppressed: RWI simultaneously with fills description
+    // Use addresses that map to different sets to avoid conflicts
+    // 0x200 and 0x300 should map to different sets than 0x100
+    fillPorts[0].addr.inject(0x200);
+    fillPorts[0].data.inject(0x10200);
+    fillPorts[0].valid.inject(1);
+    fillPorts[0].en.inject(1);
+
+    fillPorts[1].addr.inject(0x300);
+    fillPorts[1].data.inject(0x10300);
+    fillPorts[1].valid.inject(1);
+    fillPorts[1].en.inject(1);
+
+    readPorts[0].addr.inject(0x100);
+    readPorts[0].readWithInvalidate.inject(1);
+    readPorts[0].en.inject(1);
+
+    await clk.nextPosedge;
+    await clk.nextNegedge;
+
+    hit = readPorts[0].valid.value.toInt();
+    data = readPorts[0].data.value.toInt();
+    expect(hit, 1,
+        reason:
+            'RWI should hit on 0x100 despite simultaneous fills (hit=$hit)');
+    expect(data, 0x10100,
+        reason: 'RWI should return correct data 0x${0x10100.toRadixString(16)} '
+            '(data=0x${data.toRadixString(16)})');
+
+    for (final fillPort in fillPorts) {
+      fillPort.en.inject(0);
+    }
+    readPorts[0].en.inject(0);
+    readPorts[0].readWithInvalidate.inject(0);
+    await clk.nextPosedge;
+
+    await Simulator.endSimulation();
+  });
+
   group('SetAssociativeCache basic tests', () {
     test('instantiate cache', () async {
       final clk = SimpleClockGenerator(10).clk;

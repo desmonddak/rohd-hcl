@@ -93,7 +93,10 @@ class SetAssociativeCache extends Cache {
               ...List.generate(numReads, (port) => AccessInterface(ways))
             ],
             [...List.generate(numFills, (port) => AccessInterface(ways))],
-            [...List.generate(numFills, (port) => AccessInterface(ways))],
+            [
+              ...List.generate(numFills, (port) => AccessInterface(ways)),
+              ...List.generate(numReads, (port) => AccessInterface(ways))
+            ],
             name: 'rp_line$line',
             ways: ways));
 
@@ -211,12 +214,35 @@ class SetAssociativeCache extends Cache {
           validBitWrPort.data < Const(0, width: 1),
         ]);
       }
+
+      // Notify replacement policy about RWI invalidates (flopped, like valid
+      // bit updates)
+      final shouldInvalidateAny = flop(
+          clk, rdPort.readWithInvalidate & hasHit & rdPort.en,
+          reset: reset);
+      final invalidateAddr = flop(clk, getLine(rdPort.addr), reset: reset);
+
+      for (var line = 0; line < lines; line++) {
+        lineReplacementPolicy[line].invalidates[numFills + rdPortIdx].access <=
+            shouldInvalidateAny &
+                invalidateAddr.eq(Const(line, width: _lineAddrWidth));
+        lineReplacementPolicy[line].invalidates[numFills + rdPortIdx].way <=
+            flop(clk, readPortValidWay, reset: reset);
+      }
     } else {
       for (var way = 0; way < ways; way++) {
         final validBitWrPort = validBitRFs[way].writes[numFills + rdPortIdx];
         validBitWrPort.en <= Const(0);
         validBitWrPort.addr <= Const(0, width: _lineAddrWidth);
         validBitWrPort.data <= Const(0, width: 1);
+      }
+
+      // No RWI invalidates for this read port
+      for (var line = 0; line < lines; line++) {
+        lineReplacementPolicy[line].invalidates[numFills + rdPortIdx].access <=
+            Const(0);
+        lineReplacementPolicy[line].invalidates[numFills + rdPortIdx].way <=
+            Const(0, width: log2Ceil(ways));
       }
     }
   }

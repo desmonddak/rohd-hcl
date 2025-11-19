@@ -229,8 +229,13 @@ class CachedRequestResponseChannel extends RequestResponseChannelBase {
     final cacheWriteActive = cacheWriteIntf.valid;
     final respFromDownstreamGated = respFromDownstream & ~cacheWriteActive;
 
-    final camSpaceAvailable =
-        ~pendingRequestsCam.full! | respFromDownstreamGated;
+    // Check if the CAM supports simultaneous fill and RWI when full.
+    // If not supported, only allow fills when CAM is not full.
+    final camCanBypass = pendingRequestsCam.canBypassFillWithRWI;
+
+    final camSpaceAvailable = camCanBypass
+        ? (~pendingRequestsCam.full! | respFromDownstreamGated)
+        : ~pendingRequestsCam.full!;
 
     upstreamReq.ready <=
         (cacheHit &

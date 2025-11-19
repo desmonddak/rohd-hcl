@@ -23,6 +23,12 @@ class FullyAssociativeCache extends Cache {
   /// generated.
   final bool generateOccupancy;
 
+  /// Whether this cache supports simultaneous fill and read-with-invalidate
+  /// when the cache is full (requires bypass network).
+  /// Currently false - fills cannot complete when cache is full even if
+  /// an RWI is freeing a slot in the same cycle (invalidate is delayed).
+  final bool supportsFillReadWithInvalidateBypass = false;
+
   /// High if the entire cache is full and it cannot accept any more new
   /// entries. Only available if [generateOccupancy] is `true`.
   Logic? get full => tryOutput('full');
@@ -34,6 +40,12 @@ class FullyAssociativeCache extends Cache {
   /// The number of valid entries in the cache.
   /// Only available if [generateOccupancy] is `true`.
   Logic? get occupancy => tryOutput('occupancy');
+
+  /// Returns whether this cache supports simultaneous fill and
+  /// read-with-invalidate bypass when the cache is full. When false, fills
+  /// cannot complete when the cache is full even if an RWI in the same cycle is
+  /// freeing up a slot.
+  bool get canBypassFillWithRWI => supportsFillReadWithInvalidateBypass;
 
   /// The width of the tag. In a fully associative cache,
   /// this is the full address width since there's no line indexing.
@@ -164,8 +176,11 @@ class FullyAssociativeCache extends Cache {
             fillValidBitNewValues[way][fillIdx], fillNewValue);
       }
 
-      return mux(anyReadInvalidate, Const(0),
-          mux(anyFillUpdate, fillNewValue, validBits[way]));
+      // Fills take precedence over read invalidates (prevents flopped RWI
+      // invalidates from overriding fills that allocate to recently-invalidated
+      // ways)
+      return mux(anyFillUpdate, fillNewValue,
+          mux(anyReadInvalidate, Const(0), validBits[way]));
     });
 
     // Register the valid bits with updates.
@@ -198,7 +213,12 @@ class FullyAssociativeCache extends Cache {
           ...List.generate(numFills, (_) => AccessInterface(ways)),
         ],
         List.generate(numFills, (_) => AccessInterface(ways)),
-        List.generate(numFills, (_) => AccessInterface(ways)),
+        [
+          // Read-invalidate interfaces come first
+          ...List.generate(numReads, (_) => AccessInterface(ways)),
+          // Fill-invalidate interfaces come after
+          ...List.generate(numFills, (_) => AccessInterface(ways)),
+        ],
         ways: ways,
         name: 'fullyAssocReplacementPolicy');
 
@@ -246,19 +266,36 @@ class FullyAssociativeCache extends Cache {
         final shouldInvalidate =
             readPort.readWithInvalidate & hasHit & readPort.en;
 
+        // Flop both the valid bit updates AND the replacement policy
+        // invalidates to delay by one cycle (avoids RegisterFile read/write
+        // conflicts when fills try to allocate to ways being invalidated in the
+        // same cycle)
         for (var way = 0; way < ways; way++) {
           final isHitWay = (ways == 1)
               ? Const(1)
               : hitWay.eq(Const(way, width: wayAddrWidth));
           final invalidateThisWay = shouldInvalidate & isHitWay;
 
+          // Flop the valid bit update signal
           readValidBitUpdates[way][readIdx] <=
               flop(clk, invalidateThisWay, reset: reset);
         }
+
+        // Also flop the replacement policy invalidate signals (matches
+        // SetAssociativeCache)
+        replacementPolicy.invalidates[readIdx].access <=
+            flop(clk, shouldInvalidate, reset: reset);
+        replacementPolicy.invalidates[readIdx].way <=
+            flop(clk, hitWay, reset: reset);
       } else {
         for (var way = 0; way < ways; way++) {
           readValidBitUpdates[way][readIdx] <= Const(0);
         }
+
+        // No invalidation for this read port
+        replacementPolicy.invalidates[readIdx].access <= Const(0);
+        replacementPolicy.invalidates[readIdx].way <=
+            Const(0, width: wayAddrWidth);
       }
 
       replacementPolicy.hits[readIdx].access <= readPort.en & hasHit;
@@ -327,8 +364,8 @@ class FullyAssociativeCache extends Cache {
         replacementPolicy.hits[numReads + fillIdx].way <
             Const(0, width: wayAddrWidth),
         replacementPolicy.allocs[fillIdx].access < Const(0),
-        replacementPolicy.invalidates[fillIdx].access < Const(0),
-        replacementPolicy.invalidates[fillIdx].way <
+        replacementPolicy.invalidates[numReads + fillIdx].access < Const(0),
+        replacementPolicy.invalidates[numReads + fillIdx].way <
             Const(0, width: wayAddrWidth),
         If(fillPort.en, then: [
           If.block([
@@ -349,8 +386,9 @@ class FullyAssociativeCache extends Cache {
               replacementPolicy.allocs[fillIdx].access < Const(1),
             ]),
             ElseIf(~fillPort.valid & hasHit, [
-              replacementPolicy.invalidates[fillIdx].access < Const(1),
-              replacementPolicy.invalidates[fillIdx].way < hitWay,
+              replacementPolicy.invalidates[numReads + fillIdx].access <
+                  Const(1),
+              replacementPolicy.invalidates[numReads + fillIdx].way < hitWay,
             ]),
           ])
         ])
