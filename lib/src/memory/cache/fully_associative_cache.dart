@@ -266,10 +266,6 @@ class FullyAssociativeCache extends Cache {
         final shouldInvalidate =
             readPort.readWithInvalidate & hasHit & readPort.en;
 
-        // Flop both the valid bit updates AND the replacement policy
-        // invalidates to delay by one cycle (avoids RegisterFile read/write
-        // conflicts when fills try to allocate to ways being invalidated in the
-        // same cycle)
         for (var way = 0; way < ways; way++) {
           final isHitWay = (ways == 1)
               ? Const(1)
@@ -281,8 +277,6 @@ class FullyAssociativeCache extends Cache {
               flop(clk, invalidateThisWay, reset: reset);
         }
 
-        // Also flop the replacement policy invalidate signals (matches
-        // SetAssociativeCache)
         replacementPolicy.invalidates[readIdx].access <=
             flop(clk, shouldInvalidate, reset: reset);
         replacementPolicy.invalidates[readIdx].way <=
