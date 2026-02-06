@@ -56,10 +56,10 @@
       
   <div>
     <ol class="annotation-list">
-        <li>@<a href="https://api.dart.dev/stable/3.9.4/dart-core/override-constant.html">override</a></li>
+        <li>@<a href="https://api.dart.dev/stable/3.10.9/dart-core/override-constant.html">override</a></li>
     </ol>
   </div>
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
 <span class="name ">run</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="run-param-phase"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd_vf/0.6.0/rohd_vf/Phase-class.html">Phase</a></span> <span class="parameter-name">phase</span></span></li>
 </ol>)
 
@@ -102,30 +102,30 @@ Future&lt;void&gt; run(Phase phase) async {
 
   sIntf.clk.posedge.listen((event) {
     &#47;&#47; track write requests
-    if (wIntf.awValid.previousValue!.isValid &amp;&amp;
-        wIntf.awValid.previousValue!.toBool()) {
-      final id = wIntf.awId?.previousValue!.toInt() ?? 0;
-      final len = (wIntf.awLen?.previousValue!.toInt() ?? 0) + 1;
+    if (reqIntf.valid.previousValue!.isValid &amp;&amp;
+        reqIntf.valid.previousValue!.toBool()) {
+      final id = reqIntf.id?.previousValue!.toInt() ?? 0;
+      final len = (reqIntf.len?.previousValue!.toInt() ?? 0) + 1;
       if (!writeReqMap.containsKey(id)) {
         writeReqMap[id] = [];
       }
       writeReqMap[id]!.add([len, 0]);
       lastWriteReqId.add(id);
       if (Axi4SizeField.getImpliedSize(
-              Axi4SizeField.fromValue(wIntf.awSize!.value.toInt())) &gt;
-          wIntf.dataWidth) {
+              Axi4SizeField.fromValue(reqIntf.size!.value.toInt())) &gt;
+          dataIntf.dataWidth) {
         logger.severe(
-            &#39;The AWSIZE value of ${wIntf.awSize!.value.toInt()} must be &#39;
+            &#39;The AWSIZE value of ${reqIntf.size!.value.toInt()} must be &#39;
             &#39;less than or equal to &#39;
-            &#39;${Axi4SizeField.fromSize(wIntf.dataWidth).value} &#39;
+            &#39;${Axi4SizeField.fromSize(dataIntf.dataWidth).value} &#39;
             &#39;corresponding to the interface &#39;
-            &#39;data width of ${wIntf.dataWidth}.&#39;);
+            &#39;data width of ${dataIntf.dataWidth}.&#39;);
       }
     }
 
     &#47;&#47; track write data flits
-    if (wIntf.wValid.previousValue!.isValid &amp;&amp;
-        wIntf.wValid.previousValue!.toBool()) {
+    if (dataIntf.valid.previousValue!.isValid &amp;&amp;
+        dataIntf.valid.previousValue!.toBool()) {
       final id = lastWriteReqId.isEmpty ? -1 : lastWriteReqId[0];
       if (!writeReqMap.containsKey(id) || writeReqMap[id]!.isEmpty) {
         logger.severe(&#39;There is no pending write request &#39;
@@ -138,11 +138,13 @@ Future&lt;void&gt; run(Phase phase) async {
           logger.severe(
               &#39;Sent more write data flits than indicated by the request &#39;
               &#39;with ID $id AWLEN. Expected $len but sent $currCount&#39;);
-        } else if (currCount == len &amp;&amp; !wIntf.wLast.previousValue!.toBool()) {
+        } else if (currCount == len &amp;&amp;
+            !dataIntf.last!.previousValue!.toBool()) {
           logger
               .severe(&#39;Sent the final flit in the write data per the request &#39;
                   &#39;with ID $id AWLEN but WLAST is not asserted.&#39;);
-        } else if (currCount == len &amp;&amp; wIntf.wLast.previousValue!.toBool()) {
+        } else if (currCount == len &amp;&amp;
+            dataIntf.last!.previousValue!.toBool()) {
           writeReqMap[id]!.removeAt(0);
           lastWriteReqId.removeAt(0);
         }
