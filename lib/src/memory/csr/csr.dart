@@ -103,8 +103,9 @@ class Csr extends LogicStructure {
     required this.config,
     required this.rsvdIndices,
     required List<Logic> fields,
-    String? logicName,
-  }) : super(fields, name: logicName ?? config.name);
+    // String? logicName,
+    // }) : super(fields, name: logicName ?? config.name);
+  }) : super(fields, name: config.name);
 
   // Historically the CSR disallowed renaming because the architectural
   // name is tied to its configuration. However, interface cloning and
@@ -119,7 +120,7 @@ class Csr extends LogicStructure {
         config: config,
         rsvdIndices: rsvdIndices,
         fields: elements.map((e) => e.clone()).toList(),
-        logicName: name,
+        // logicName: name,
       );
 
   /// Accessor to the bits of a particular field
