@@ -54,14 +54,15 @@
 
     <section class="multi-line-signature">
       
-      <span class="name ">FloatToFixed</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="-param-float"><span class="type-annotation"><a href="../../rohd_hcl/FloatingPoint-class.html">FloatingPoint</a></span> <span class="parameter-name">float</span>, {</span></li>
-<li><span class="parameter" id="-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.5/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span> = <span class="default-value">&#39;FloatToFixed&#39;</span>, </span></li>
-<li><span class="parameter" id="-param-integerWidth"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.5/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">integerWidth</span>, </span></li>
-<li><span class="parameter" id="-param-fractionWidth"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.5/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">fractionWidth</span>, </span></li>
-<li><span class="parameter" id="-param-checkOverflow"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.5/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">checkOverflow</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="-param-reserveName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.5/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">reserveName</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="-param-reserveDefinitionName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.5/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">reserveDefinitionName</span> = <span class="default-value">false</span>, </span></li>
-<li><span class="parameter" id="-param-definitionName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.5/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">definitionName</span>, </span></li>
+      <span class="name ">FloatToFixed</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="param-float"><span class="type-annotation"><a href="../../rohd_hcl/FloatingPoint-class.html">FloatingPoint</a></span> <span class="parameter-name">float</span>, {</span></li>
+<li><span class="parameter" id="param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span> = <span class="default-value">&#39;FloatToFixed&#39;</span>, </span></li>
+<li><span class="parameter" id="param-integerWidth"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">integerWidth</span>, </span></li>
+<li><span class="parameter" id="param-fractionWidth"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">fractionWidth</span>, </span></li>
+<li><span class="parameter" id="param-checkOverflow"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">checkOverflow</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="param-roundingMode"><span class="type-annotation"><a href="../../rohd_hcl/FloatingPointRoundingMode.html">FloatingPointRoundingMode</a></span> <span class="parameter-name">roundingMode</span> = <span class="default-value">FloatingPointRoundingMode.truncate</span>, </span></li>
+<li><span class="parameter" id="param-reserveName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">reserveName</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="param-reserveDefinitionName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">reserveDefinitionName</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="param-definitionName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">definitionName</span>, </span></li>
 </ol>})
     </section>
     
@@ -75,6 +76,9 @@ floating-point value into a fixed-point value.</li>
 <li><code>checkOverflow</code> set to <code>true</code> will cause overflow detection to happen in
 case that loss can occur and an optional output <a href="../../rohd_hcl/FloatToFixed/overflow.html">overflow</a> will be
 produced that returns <code>true</code> when overflow occurs.</li>
+<li><code>roundingMode</code> selects how a fraction narrower than the incoming
+mantissa is rounded. Defaults to <a href="../../rohd_hcl/FloatingPointRoundingMode.html">FloatingPointRoundingMode.truncate</a>,
+matching prior (rounding-free) behavior.</li>
 </ul>
 </section>
 
@@ -87,6 +91,8 @@ produced that returns <code>true</code> when overflow occurs.</li>
     int? integerWidth,
     int? fractionWidth,
     this.checkOverflow = false,
+    FloatingPointRoundingMode roundingMode =
+        FloatingPointRoundingMode.truncate,
     super.reserveName,
     super.reserveDefinitionName,
     String? definitionName})
@@ -97,20 +103,31 @@ produced that returns <code>true</code> when overflow occurs.</li>
   float = addTypedInput(&#39;float&#39;, float);
 
   final bias = float.floatingPointValue.bias;
+
+  &#47;&#47; [float.mantissa] includes the explicit j-bit as its top bit when
+  &#47;&#47; [FloatingPoint.explicitJBit] is set; separate it out here so the rest
+  &#47;&#47; of this component can work uniformly with just the fraction bits and
+  &#47;&#47; its own independently-computed [jBit], matching the implicit-j-bit
+  &#47;&#47; convention used throughout.
+  final fractionBitsWidth =
+      float.mantissa.width - (float.explicitJBit ? 1 : 0);
+  final mantissaFractionBits = float.explicitJBit
+      ? float.mantissa.slice(fractionBitsWidth - 1, 0)
+      : float.mantissa;
+
   &#47;&#47; E4M3 expands the max exponent by 1.
-  final noLossM = ((float.exponent.width == 4) &amp; (float.mantissa.width == 3))
+  final noLossM = ((float.exponent.width == 4) &amp; (fractionBitsWidth == 3))
       ? bias + 2
       : bias + 1; &#47;&#47; accomodate the jbit
-  final noLossN = bias + float.mantissa.width - 1;
-
-  &#47;&#47; TODO(desmonddak): Check what happens with an explicitJBit FP
+  final noLossN = bias + fractionBitsWidth - 1;
 
   this.integerWidth = integerWidth ?? noLossM;
   this.fractionWidth = fractionWidth ?? noLossN;
   final outputWidth = this.integerWidth + this.fractionWidth + 1;
 
   final jBit = Logic(name: &#39;jBit&#39;)..gets(float.isNormal);
-  final fullMantissa = [jBit, float.mantissa].swizzle().named(&#39;fullMantissa&#39;);
+  final fullMantissa =
+      [jBit, mantissaFractionBits].swizzle().named(&#39;fullMantissa&#39;);
 
   final eWidth = max(log2Ceil(this.fractionWidth + this.integerWidth),
           float.exponent.width) +
@@ -131,7 +148,22 @@ produced that returns <code>true</code> when overflow occurs.</li>
             Const(noLossN - this.fractionWidth, width: eWidth)
                 .named(&#39;deltaN&#39;);
   }
-  &#47;&#47; TODO(desmonddak): Could use signed shifter if we unified shift math
+  &#47;&#47; Note: this cannot simply be replaced with the reusable [SignedShifter]
+  &#47;&#47; (`mux(shift[-1], preNumber &gt;&gt;&gt; shift.abs(), preNumber &lt;&lt; shift)`),
+  &#47;&#47; because [preNumber] below is only the top `outputWidth` bits of
+  &#47;&#47; [fullMantissa] whenever [fullMantissa] is wider than the output
+  &#47;&#47; (dropping its low `fullMantissa.width - outputWidth` bits before any
+  &#47;&#47; shifting happens, as a hardware-cost optimization so the shifter only
+  &#47;&#47; needs to be `outputWidth` bits wide instead of
+  &#47;&#47; `fullMantissa.width` bits wide). That pre-truncation is itself
+  &#47;&#47; equivalent to an implicit right-shift-and-discard of
+  &#47;&#47; `fullMantissa.width - outputWidth` positions, so the *remaining*
+  &#47;&#47; right-shift actually needed on [preNumber] is the true magnitude
+  &#47;&#47; shift minus that already-applied amount -- double-counting it (as a
+  &#47;&#47; naive [SignedShifter] swap would) was verified empirically to corrupt
+  &#47;&#47; results (e.g. silently shifting a correct 0.25 result down to 0.0) in
+  &#47;&#47; exactly the scenario this adjustment exists for, which had no
+  &#47;&#47; existing regression test until one was added alongside this comment.
   final shiftRight = ((fullMantissa.width &gt; outputWidth)
           ? (~shift + 1) - (fullMantissa.width - outputWidth)
           : (~shift + 1))
@@ -147,13 +179,31 @@ produced that returns <code>true</code> when overflow occurs.</li>
     final fShift = shift.zeroExtend(sWidth).named(&#39;wideShift&#39;);
     final leadOne = leadDetect.out.zeroExtend(sWidth).named(&#39;leadOne&#39;);
 
+    &#47;&#47; At the exact overflow threshold, a negative value that rounds down
+    &#47;&#47; to an exact power of two still fits, since two&#39;s-complement negative
+    &#47;&#47; range extends one step further than positive range (e.g. -4 fits in
+    &#47;&#47; a signed format whose maximum positive value is only 3.5). Since
+    &#47;&#47; truncation always discards the low `discardedBits` bits regardless
+    &#47;&#47; of their value, whether the result is an exact power of two depends
+    &#47;&#47; only on the *retained* higher bits being all zero; the number of
+    &#47;&#47; discarded bits is a compile-time constant at this exact threshold.
+    final threshold = outputWidth - fractionBitsWidth - 1;
+    final discardedBits = (-threshold).clamp(0, fractionBitsWidth);
+    final atThresholdIsExactPowerOfTwo = discardedBits &lt; fractionBitsWidth
+        ? ~mantissaFractionBits
+            .getRange(discardedBits, fractionBitsWidth)
+            .or()
+        : Const(1);
+
     Combinational([
       If(jBit, then: [
-        overflow &lt; shift.gte(outputWidth - float.mantissa.width - 1),
+        overflow &lt;
+            (_signedGtConst(shift, threshold) |
+                (shift.eq(Const(threshold, width: shift.width)) &amp;
+                    ~(float.sign &amp; atThresholdIsExactPowerOfTwo))),
       ], orElse: [
         If(fShift.gt(leadOne), then: [
-          overflow &lt;
-              (fShift - leadOne).gte(outputWidth - float.mantissa.width - 1),
+          overflow &lt; _signedGteConst(fShift - leadOne, threshold),
         ], orElse: [
           overflow &lt; Const(0),
         ]),
@@ -165,9 +215,47 @@ produced that returns <code>true</code> when overflow occurs.</li>
           ? fullMantissa.zeroExtend(outputWidth)
           : fullMantissa.slice(-1, fullMantissa.width - outputWidth))
       .named(&#39;newMantissaPreShift&#39;);
-  &#47;&#47; TODO(desmonddak): Rounder is needed when shifting right
 
-  final number = mux(shift[-1], preNumber &gt;&gt;&gt; shiftRight, preNumber &lt;&lt; shift)
+  final unroundedNumber =
+      mux(shift[-1], preNumber &gt;&gt;&gt; shiftRight, preNumber &lt;&lt; shift)
+          .named(&#39;unroundedNumber&#39;);
+
+  &#47;&#47; Rounding support for the right-shift (fraction-truncating) path: a
+  &#47;&#47; left shift never discards bits, so only the right-shifted magnitude
+  &#47;&#47; can lose precision. A single extra zero bit is appended below
+  &#47;&#47; [fullMantissa] so that shifting the buffered value reveals the guard
+  &#47;&#47; bit that [preNumber] alone would otherwise silently discard; any bits
+  &#47;&#47; shifted below that position (including a shift wide enough to empty
+  &#47;&#47; the buffer entirely) are captured as sticky via a complementary left
+  &#47;&#47; shift of the pre-shift buffered value.
+  final bufferedFullMantissa =
+      [fullMantissa, Const(0)].swizzle().named(&#39;bufferedFullMantissa&#39;);
+  final bufferedOutputWidth = outputWidth + 1;
+  final bufferedPreNumber =
+      ((bufferedOutputWidth &gt;= bufferedFullMantissa.width)
+              ? bufferedFullMantissa.zeroExtend(bufferedOutputWidth)
+              : bufferedFullMantissa.slice(
+                  -1, bufferedFullMantissa.width - bufferedOutputWidth))
+          .named(&#39;bufferedPreNumber&#39;);
+  final guard =
+      (bufferedPreNumber &gt;&gt;&gt; shiftRight)[0].named(&#39;rightShiftGuard&#39;);
+  final safeShiftRight = mux(shiftRight.gte(bufferedPreNumber.width),
+          Const(bufferedPreNumber.width, width: shiftRight.width), shiftRight)
+      .named(&#39;safeShiftRight&#39;);
+  final sticky = (bufferedPreNumber &lt;&lt;
+          (Const(bufferedPreNumber.width, width: safeShiftRight.width) -
+              safeShiftRight))
+      .or()
+      .named(&#39;rightShiftSticky&#39;);
+  final rounder = FloatingPointRounder.fromGRS(
+      retainedLsb: unroundedNumber[0],
+      guard: guard,
+      sticky: sticky,
+      roundingMode: roundingMode,
+      sign: float.sign);
+
+  final number = (unroundedNumber +
+          (shift[-1] &amp; rounder.doRound).zeroExtend(unroundedNumber.width))
       .named(&#39;number&#39;);
 
   _fixed &lt;= mux(float.sign, ~number + 1, number).named(&#39;signedNumber&#39;);

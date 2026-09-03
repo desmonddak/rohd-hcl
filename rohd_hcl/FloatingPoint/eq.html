@@ -56,10 +56,10 @@
       
   <div>
     <ol class="annotation-list">
-        <li>@<a href="https://api.dart.dev/stable/3.11.5/dart-core/override-constant.html">override</a></li>
+        <li>@<a href="https://api.dart.dev/stable/3.13.3/dart-core/override-constant.html">override</a></li>
     </ol>
   </div>
-<span class="returntype"><a href="https://pub.dev/documentation/rohd/0.6.9/rohd/Logic-class.html">Logic</a></span>
+<span class="returntype"><a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a></span>
 <span class="name ">eq</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="eq-param-other"><span class="type-annotation">dynamic</span> <span class="parameter-name">other</span></span></li>
 </ol>)
 
@@ -68,7 +68,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Equal</p>
+  <p>IEEE quiet equality.</p>
 </section>
 
 
@@ -76,8 +76,12 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-Logic eq(dynamic other) =&gt;
-    mux(_verifyComparable(other), super.eq(other), Const(0));</code></pre>
+Logic eq(dynamic other) {
+  final comparable = _validateComparable(other);
+  final bothZero = isAZero &amp; comparable.isAZero;
+  return mux(
+      _areOrdered(comparable), bothZero | super.eq(comparable), Const(0));
+}</code></pre>
 </section>
 
 

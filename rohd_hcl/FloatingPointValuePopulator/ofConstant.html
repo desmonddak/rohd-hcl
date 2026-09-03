@@ -73,14 +73,18 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">FpvType ofConstant(FloatingPointConstants constantFloatingPoint) {
   if (explicitJBit) {
-    return ofFloatingPointValue(FloatingPointValue.populator(
+    final implicit = FloatingPointValue.populator(
             exponentWidth: exponentWidth, mantissaWidth: mantissaWidth - 1)
-        .ofConstant(constantFloatingPoint)) as FpvType;
+        .ofConstant(constantFloatingPoint);
+    final explicitJBitValue =
+        implicit.isNormal() || implicit.isAnInfinity || implicit.isNaN;
+    return populate(
+        sign: implicit.sign,
+        exponent: implicit.exponent,
+        mantissa: [LogicValue.ofBool(explicitJBitValue), implicit.mantissa]
+            .swizzle());
   }
-  final components =
-      &#47;&#47; ignore: invalid_use_of_visible_for_overriding_member, invalid_use_of_protected_member
-      _unpopulated.getSpecialConstantComponents(constantFloatingPoint) ??
-          getConstantComponents(constantFloatingPoint);
+  final components = _constantComponents(constantFloatingPoint);
 
   return populate(
       sign: components.sign,

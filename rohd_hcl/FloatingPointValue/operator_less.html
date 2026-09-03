@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.11.5/dart-core/bool-class.html">bool</a></span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span>
 <span class="name ">operator &lt;</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="<-param-other"><span class="type-annotation"><a href="../../rohd_hcl/FloatingPointValue-class.html">FloatingPointValue</a></span> <span class="parameter-name">other</span></span></li>
 </ol>)
 
@@ -70,7 +70,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">bool operator &lt;(FloatingPointValue other) =&gt; compareTo(other) &lt; 0;</code></pre>
+  <pre class="language-dart"><code class="language-dart">bool operator &lt;(FloatingPointValue other) {
+  _validateComparable(other);
+  return !(isNaN || other.isNaN) &amp;&amp; compareTo(other) &lt; 0;
+}</code></pre>
 </section>
 
 
