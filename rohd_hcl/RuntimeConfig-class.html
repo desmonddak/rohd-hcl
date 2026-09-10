@@ -66,7 +66,6 @@ dynamically configure a component at runtime.</p>
   <dd>
     <ul class="gt-separated dark clazz-relationships">
       <li><a href="https://api.dart.dev/stable/3.13.3/dart-core/Object-class.html">Object</a></li>
-        <li><a href="../rohd_hcl/StaticOrRuntimeValue-class.html">StaticOrRuntimeValue</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span>&gt;</span></li>
         <li><a href="../rohd_hcl/StaticOrRuntimeParameter-class.html">StaticOrRuntimeParameter</a></li>
       <li>RuntimeConfig</li>
     </ul>
@@ -113,38 +112,28 @@ dynamically configure a component at runtime.</p>
 
 </dd>
 
-        <dt id="isRuntime" class="property inherited">
-  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeValue/isRuntime.html">isRuntime</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span>
-  
-
-</dt>
-<dd class="inherited">
-  Whether this value is supplied at runtime.
-  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
-
-</dd>
-
         <dt id="name" class="property inherited">
-  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeValue/name.html">name</a></span>
+  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeParameter/name.html">name</a></span>
   <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.13.3/dart-core/String-class.html">String</a></span>
   
 
 </dt>
 <dd class="inherited">
-  The module input name used for <a href="../rohd_hcl/StaticOrRuntimeValue/runtimeConfig.html">runtimeConfig</a>.
+  The name of the configuration, especially needed for runtime to add as
+a module input.
   <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
         <dt id="runtimeConfig" class="property inherited">
-  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeValue/runtimeConfig.html">runtimeConfig</a></span>
+  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeParameter/runtimeConfig.html">runtimeConfig</a></span>
   <span class="signature">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a>?</span>
   
 
 </dt>
 <dd class="inherited">
-  The runtime configuration signal, if this value is runtime-configurable.
+  The runtime configuration logic that can be used to configure the
+component at runtime
   <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
@@ -162,14 +151,15 @@ dynamically configure a component at runtime.</p>
 </dd>
 
         <dt id="staticConfig" class="property inherited">
-  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeValue/staticConfig.html">staticConfig</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span>
+  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeParameter/staticConfig.html">staticConfig</a></span>
+  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span>
   
 
 </dt>
 <dd class="inherited">
-  The static value used when <a href="../rohd_hcl/StaticOrRuntimeValue/runtimeConfig.html">runtimeConfig</a> is null.
-  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
+  The static configuration flag that indicates whether the
+feature is statically configured or not.
+  <div class="features"><span class="feature">late</span><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
 
@@ -209,14 +199,15 @@ either static or runtime.
 </dd>
 
         <dt id="getRuntimeInput" class="callable inherited">
-  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeValue/getRuntimeInput.html">getRuntimeInput</a></span><span class="signature">(<wbr><span class="parameter" id="getRuntimeInput-param-module"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Module-class.html">Module</a></span> <span class="parameter-name">module</span></span>)
+  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeParameter/getRuntimeInput.html">getRuntimeInput</a></span><span class="signature">(<wbr><span class="parameter" id="getRuntimeInput-param-module"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Module-class.html">Module</a></span> <span class="parameter-name">module</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a>?</span>
   </span>
   
 
 </dt>
 <dd class="inherited">
-  Constructs and returns the internal input when runtime-configured.
+  Construct and return a <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a>? that is a <code>true</code> input to the <code>module</code>
+if this is a runtime configuration signal.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
@@ -230,19 +221,6 @@ either static or runtime.
 </dt>
 <dd class="inherited">
   Invoked when a nonexistent method or property is accessed.
-  <div class="features"><span class="feature">inherited</span></div>
-
-</dd>
-
-        <dt id="resolve" class="callable inherited">
-  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeValue/resolve.html">resolve</a></span><span class="signature">(<wbr><span class="parameter" id="resolve-param-module"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Module-class.html">Module</a></span> <span class="parameter-name">module</span>, {</span><span class="parameter" id="resolve-param-staticToLogic"><span>required</span> <span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a></span> <span class="parameter-name">staticToLogic</span>(<span class="parameter" id="param-value"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">value</span></span>)</span>})
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a></span>
-  </span>
-  
-
-</dt>
-<dd class="inherited">
-  Resolves this value to <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a> within <code>module</code>.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
@@ -261,14 +239,14 @@ either static or runtime.
 </dd>
 
         <dt id="tryRuntimeInput" class="callable inherited">
-  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeValue/tryRuntimeInput.html">tryRuntimeInput</a></span><span class="signature">(<wbr><span class="parameter" id="tryRuntimeInput-param-module"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Module-class.html">Module</a></span> <span class="parameter-name">module</span></span>)
+  <span class="name"><a href="../rohd_hcl/StaticOrRuntimeParameter/tryRuntimeInput.html">tryRuntimeInput</a></span><span class="signature">(<wbr><span class="parameter" id="tryRuntimeInput-param-module"><span class="type-annotation"><a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Module-class.html">Module</a></span> <span class="parameter-name">module</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a>?</span>
   </span>
   
 
 </dt>
 <dd class="inherited">
-  Returns the existing internal runtime input on <code>module</code>, if any.
+  Returns a <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a>? that represents the module internalruntime input.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>

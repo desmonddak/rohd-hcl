@@ -623,7 +623,7 @@
     "FloatingPointAdderSinglePath": {
       "attributes": {
         "top": 1,
-        "src": "FloatingPointAdderSinglePath.sv:520.1-836.41"
+        "src": "FloatingPointAdderSinglePath.sv:520.1-743.41"
       },
       "ports": {
         "a": {
@@ -637,25 +637,45 @@
         "sum": {
           "direction": "output",
           "bits": [ 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 ]
-        },
-        "status": {
-          "direction": "output",
-          "bits": [ 32, "0", 33, 34, 35 ]
         }
       },
       "cells": {
-        "$add$FloatingPointAdderSinglePath.sv:770$160": {
+        "$add$FloatingPointAdderSinglePath.sv:691$126": {
+          "hide_name": 1,
+          "type": "$add",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "B_SIGNED": 0,
+            "B_WIDTH": 5,
+            "Y_WIDTH": 5
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:691.77-694.3"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 32, 33, 34, 35 ],
+            "B": [ 36, "0", "0", "0", "0" ],
+            "Y": [ 37, 38, 39, 40, 41 ]
+          }
+        },
+        "$add$FloatingPointAdderSinglePath.sv:697$132": {
           "hide_name": 1,
           "type": "$add",
           "parameters": {
             "A_SIGNED": 0,
             "A_WIDTH": 5,
             "B_SIGNED": 0,
-            "B_WIDTH": 6,
-            "Y_WIDTH": 6
+            "B_WIDTH": 4,
+            "Y_WIDTH": 5
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:770.68-773.3"
+            "src": "FloatingPointAdderSinglePath.sv:697.70-697.100"
           },
           "port_directions": {
             "A": "input",
@@ -663,36 +683,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 36, 37, 38, 39, 40 ],
-            "B": [ 41, "0", "0", "0", "0", "0" ],
-            "Y": [ 42, 43, 44, 45, 46, 47 ]
+            "A": [ 42, 43, 44, 45, 46 ],
+            "B": [ "1", "0", "0", "0" ],
+            "Y": [ 47, 48, 49, 50, 51 ]
           }
         },
-        "$add$FloatingPointAdderSinglePath.sv:779$166": {
-          "hide_name": 1,
-          "type": "$add",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 6,
-            "B_SIGNED": 0,
-            "B_WIDTH": 5,
-            "Y_WIDTH": 6
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:779.74-785.11"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 48, 49, 50, 51, 52, 53 ],
-            "B": [ "1", "0", "0", "0", "0" ],
-            "Y": [ 54, 55, 56, 57, 58, 59 ]
-          }
-        },
-        "$add$FloatingPointAdderSinglePath.sv:790$171": {
+        "$add$FloatingPointAdderSinglePath.sv:702$137": {
           "hide_name": 1,
           "type": "$add",
           "parameters": {
@@ -703,7 +699,7 @@
             "Y_WIDTH": 5
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:790.81-790.103"
+            "src": "FloatingPointAdderSinglePath.sv:702.81-702.103"
           },
           "port_directions": {
             "A": "input",
@@ -711,12 +707,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 60, 61, 62, 63 ],
+            "A": [ 52, 53, 54, 55 ],
             "B": [ "1", "0", "0", "0" ],
-            "Y": [ 64, 65, 66, 67, 68 ]
+            "Y": [ 56, 57, 58, 59, 60 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:699$71": {
+        "$and$FloatingPointAdderSinglePath.sv:645$70": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -727,7 +723,79 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:699.26-699.45"
+            "src": "FloatingPointAdderSinglePath.sv:645.18-645.60"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 61 ],
+            "B": [ 62 ],
+            "Y": [ 63 ]
+          }
+        },
+        "$and$FloatingPointAdderSinglePath.sv:645$73": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.65-645.107"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 64 ],
+            "B": [ 65 ],
+            "Y": [ 66 ]
+          }
+        },
+        "$and$FloatingPointAdderSinglePath.sv:645$75": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.114-645.151"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 67 ],
+            "B": [ 68 ],
+            "Y": [ 69 ]
+          }
+        },
+        "$and$FloatingPointAdderSinglePath.sv:645$77": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.113-645.178"
           },
           "port_directions": {
             "A": "input",
@@ -740,7 +808,7 @@
             "Y": [ 71 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:699$73": {
+        "$and$FloatingPointAdderSinglePath.sv:668$90": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -751,7 +819,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:699.25-699.57"
+            "src": "FloatingPointAdderSinglePath.sv:668.31-668.81"
           },
           "port_directions": {
             "A": "input",
@@ -759,12 +827,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 71 ],
-            "B": [ 72 ],
-            "Y": [ 33 ]
+            "A": [ 72 ],
+            "B": [ 73 ],
+            "Y": [ 74 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:701$78": {
+        "$and$FloatingPointAdderSinglePath.sv:668$91": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -775,79 +843,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.69-701.89"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 73 ],
-            "B": [ 74 ],
-            "Y": [ 75 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:701$80": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.26-701.91"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 76 ],
-            "B": [ 77 ],
-            "Y": [ 78 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:713$84": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:713.27-713.55"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 79 ],
-            "B": [ 80 ],
-            "Y": [ 81 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:714$86": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:714.27-714.55"
+            "src": "FloatingPointAdderSinglePath.sv:668.30-668.99"
           },
           "port_directions": {
             "A": "input",
@@ -856,11 +852,11 @@
           },
           "connections": {
             "A": [ 74 ],
-            "B": [ 82 ],
-            "Y": [ 83 ]
+            "B": [ 75 ],
+            "Y": [ 76 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:715$89": {
+        "$and$FloatingPointAdderSinglePath.sv:684$105": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -871,7 +867,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:715.18-715.54"
+            "src": "FloatingPointAdderSinglePath.sv:684.18-684.124"
           },
           "port_directions": {
             "A": "input",
@@ -879,36 +875,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 84 ],
-            "B": [ 85 ],
-            "Y": [ 74 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:716$92": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:716.18-716.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 86 ],
-            "B": [ 87 ],
+            "A": [ 77 ],
+            "B": [ 78 ],
             "Y": [ 79 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:717$95": {
+        "$and$FloatingPointAdderSinglePath.sv:688$117": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -919,7 +891,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.18-717.60"
+            "src": "FloatingPointAdderSinglePath.sv:688.28-688.110"
           },
           "port_directions": {
             "A": "input",
@@ -927,12 +899,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 88 ],
-            "B": [ 89 ],
-            "Y": [ 90 ]
+            "A": [ 64 ],
+            "B": [ 80 ],
+            "Y": [ 68 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:717$98": {
+        "$and$FloatingPointAdderSinglePath.sv:689$124": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -943,7 +915,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.65-717.107"
+            "src": "FloatingPointAdderSinglePath.sv:689.28-689.110"
           },
           "port_directions": {
             "A": "input",
@@ -951,12 +923,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 91 ],
-            "B": [ 92 ],
-            "Y": [ 93 ]
+            "A": [ 61 ],
+            "B": [ 81 ],
+            "Y": [ 67 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:740$112": {
+        "$and$FloatingPointAdderSinglePath.sv:707$138": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -967,7 +939,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:740.31-740.81"
+            "src": "FloatingPointAdderSinglePath.sv:707.28-707.59"
           },
           "port_directions": {
             "A": "input",
@@ -975,12 +947,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 94 ],
-            "B": [ 95 ],
-            "Y": [ 96 ]
+            "A": [ 73 ],
+            "B": [ 75 ],
+            "Y": [ 82 ]
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:740$113": {
+        "$and$FloatingPointAdderSinglePath.sv:707$140": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -991,7 +963,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:740.30-740.99"
+            "src": "FloatingPointAdderSinglePath.sv:707.27-707.80"
           },
           "port_directions": {
             "A": "input",
@@ -999,335 +971,23 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 96 ],
-            "B": [ 97 ],
-            "Y": [ 98 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:755$125": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.59-755.127"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 99 ],
-            "B": [ 100 ],
-            "Y": [ 101 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:757$128": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:757.29-757.66"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 102 ],
-            "B": [ 103 ],
-            "Y": [ 104 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:757$130": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:757.28-757.93"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 104 ],
-            "B": [ 105 ],
-            "Y": [ 106 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:758$137": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:758.28-758.110"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 91 ],
-            "B": [ 107 ],
-            "Y": [ 103 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:759$144": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:759.28-759.110"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 88 ],
-            "B": [ 108 ],
-            "Y": [ 102 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:761$147": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.36-761.65"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 109 ],
-            "B": [ 110 ],
-            "Y": [ 111 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:761$149": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.35-761.77"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 111 ],
-            "B": [ 72 ],
-            "Y": [ 34 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:765$155": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:765.18-765.172"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 112 ],
-            "B": [ 113 ],
-            "Y": [ 114 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:795$172": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:795.28-795.59"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 95 ],
-            "B": [ 97 ],
-            "Y": [ 115 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:795$174": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:795.27-795.80"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 115 ],
-            "B": [ 116 ],
-            "Y": [ 117 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:796$179": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:796.22-796.79"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 118 ],
-            "B": [ 119 ],
-            "Y": [ 120 ]
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:800$183": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:800.2-800.39"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 121 ],
-            "B": [ 117 ],
-            "Y": [ 119 ]
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:715$87": {
-          "hide_name": 1,
-          "type": "$eq",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 4,
-            "B_SIGNED": 0,
-            "B_WIDTH": 4,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:715.19-715.37"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 17, 18, 19, 20 ],
-            "B": [ "1", "1", "1", "1" ],
+            "A": [ 82 ],
+            "B": [ 83 ],
             "Y": [ 84 ]
           }
         },
-        "$eq$FloatingPointAdderSinglePath.sv:716$90": {
+        "$and$FloatingPointAdderSinglePath.sv:708$145": {
           "hide_name": 1,
-          "type": "$eq",
+          "type": "$and",
           "parameters": {
             "A_SIGNED": 0,
-            "A_WIDTH": 4,
+            "A_WIDTH": 1,
             "B_SIGNED": 0,
-            "B_WIDTH": 4,
+            "B_WIDTH": 1,
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:716.19-716.37"
+            "src": "FloatingPointAdderSinglePath.sv:708.22-708.79"
           },
           "port_directions": {
             "A": "input",
@@ -1335,12 +995,36 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 7, 8, 9, 10 ],
-            "B": [ "1", "1", "1", "1" ],
+            "A": [ 85 ],
+            "B": [ 86 ],
+            "Y": [ 87 ]
+          }
+        },
+        "$and$FloatingPointAdderSinglePath.sv:712$149": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:712.2-712.39"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 88 ],
+            "B": [ 84 ],
             "Y": [ 86 ]
           }
         },
-        "$eq$FloatingPointAdderSinglePath.sv:740$110": {
+        "$eq$FloatingPointAdderSinglePath.sv:668$88": {
           "hide_name": 1,
           "type": "$logic_not",
           "parameters": {
@@ -1349,42 +1033,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:740.47-740.62"
+            "src": "FloatingPointAdderSinglePath.sv:668.47-668.62"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 122, 123, 124, 125 ],
-            "Y": [ 126 ]
+            "A": [ 89, 90, 91, 92 ],
+            "Y": [ 93 ]
           }
         },
-        "$eq$FloatingPointAdderSinglePath.sv:755$123": {
-          "hide_name": 1,
-          "type": "$eq",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "B_SIGNED": 0,
-            "B_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.60-755.95"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 42, 43, 44, 45, 46 ],
-            "B": [ "0", "1", "1", "1", "0" ],
-            "Y": [ 99 ]
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:758$133": {
+        "$eq$FloatingPointAdderSinglePath.sv:686$108": {
           "hide_name": 1,
           "type": "$eq",
           "parameters": {
@@ -1395,7 +1055,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:758.65-758.86"
+            "src": "FloatingPointAdderSinglePath.sv:686.29-686.57"
           },
           "port_directions": {
             "A": "input",
@@ -1403,12 +1063,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 127, 128, 129, 130 ],
+            "A": [ 94, 95, 96, 97 ],
             "B": [ "1", "1", "1", "1" ],
-            "Y": [ 91 ]
+            "Y": [ 98 ]
           }
         },
-        "$eq$FloatingPointAdderSinglePath.sv:759$140": {
+        "$eq$FloatingPointAdderSinglePath.sv:688$113": {
           "hide_name": 1,
           "type": "$eq",
           "parameters": {
@@ -1419,7 +1079,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:759.65-759.86"
+            "src": "FloatingPointAdderSinglePath.sv:688.65-688.86"
           },
           "port_directions": {
             "A": "input",
@@ -1427,12 +1087,36 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 131, 132, 133, 134 ],
+            "A": [ 99, 100, 101, 102 ],
             "B": [ "1", "1", "1", "1" ],
-            "Y": [ 88 ]
+            "Y": [ 64 ]
           }
         },
-        "$ge$FloatingPointAdderSinglePath.sv:815$187": {
+        "$eq$FloatingPointAdderSinglePath.sv:689$120": {
+          "hide_name": 1,
+          "type": "$eq",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "B_SIGNED": 0,
+            "B_WIDTH": 4,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:689.65-689.86"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 103, 104, 105, 106 ],
+            "B": [ "1", "1", "1", "1" ],
+            "Y": [ 61 ]
+          }
+        },
+        "$ge$FloatingPointAdderSinglePath.sv:727$153": {
           "hide_name": 1,
           "type": "$ge",
           "parameters": {
@@ -1443,7 +1127,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:815.15-815.23"
+            "src": "FloatingPointAdderSinglePath.sv:727.15-727.23"
           },
           "port_directions": {
             "A": "input",
@@ -1451,60 +1135,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 122, 123, 124, 125 ],
+            "A": [ 89, 90, 91, 92 ],
             "B": [ "1", "1", "1", "0" ],
-            "Y": [ 135 ]
+            "Y": [ 107 ]
           }
         },
-        "$gt$FloatingPointAdderSinglePath.sv:755$122": {
-          "hide_name": 1,
-          "type": "$gt",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "B_SIGNED": 0,
-            "B_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.20-755.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 42, 43, 44, 45, 46 ],
-            "B": [ "0", "1", "1", "1", "0" ],
-            "Y": [ 136 ]
-          }
-        },
-        "$gt$FloatingPointAdderSinglePath.sv:755$124": {
-          "hide_name": 1,
-          "type": "$gt",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "B_SIGNED": 0,
-            "B_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.100-755.126"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 137, 138, 139, 140, 141 ],
-            "B": [ "1", "1", "1", "1", "1" ],
-            "Y": [ 100 ]
-          }
-        },
-        "$gt$FloatingPointAdderSinglePath.sv:778$162": {
+        "$gt$FloatingPointAdderSinglePath.sv:696$128": {
           "hide_name": 1,
           "type": "$gt",
           "parameters": {
@@ -1515,7 +1151,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:778.26-778.47"
+            "src": "FloatingPointAdderSinglePath.sv:696.26-696.47"
           },
           "port_directions": {
             "A": "input",
@@ -1523,12 +1159,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 142, 143, 144, 145 ],
-            "B": [ 131, 132, 133, 134 ],
-            "Y": [ 146 ]
+            "A": [ 108, 109, 110, 111 ],
+            "B": [ 103, 104, 105, 106 ],
+            "Y": [ 112 ]
           }
         },
-        "$lt$FloatingPointAdderSinglePath.sv:816$190": {
+        "$lt$FloatingPointAdderSinglePath.sv:685$106": {
           "hide_name": 1,
           "type": "$lt",
           "parameters": {
@@ -1539,7 +1175,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:816.16-816.26"
+            "src": "FloatingPointAdderSinglePath.sv:685.25-685.50"
           },
           "port_directions": {
             "A": "input",
@@ -1547,312 +1183,196 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 147, 148, 149, 150 ],
+            "A": [ 32, 33, 34, 35 ],
+            "B": [ "1", "1", "1", "1" ],
+            "Y": [ 113 ]
+          }
+        },
+        "$lt$FloatingPointAdderSinglePath.sv:728$156": {
+          "hide_name": 1,
+          "type": "$lt",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "B_SIGNED": 0,
+            "B_WIDTH": 4,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:728.16-728.26"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 114, 115, 116, 117 ],
             "B": [ "0", "1", "1", "0" ],
-            "Y": [ 151 ]
-          }
-        },
-        "$ne$FloatingPointAdderSinglePath.sv:795$173": {
-          "hide_name": 1,
-          "type": "$reduce_bool",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 4,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:795.64-795.79"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 122, 123, 124, 125 ],
-            "Y": [ 116 ]
-          }
-        },
-        "$ne$FloatingPointAdderSinglePath.sv:828$198": {
-          "hide_name": 1,
-          "type": "$reduce_bool",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 4,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:828.24-828.45"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 127, 128, 129, 130 ],
-            "Y": [ 152 ]
-          }
-        },
-        "$ne$FloatingPointAdderSinglePath.sv:835$201": {
-          "hide_name": 1,
-          "type": "$reduce_bool",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 4,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:835.24-835.45"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 131, 132, 133, 134 ],
-            "Y": [ 153 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:699$70": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:699.38-699.44"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 154 ],
-            "Y": [ 70 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:701$76": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.27-701.44"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 81 ],
-            "Y": [ 76 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:701$77": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.70-701.78"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 79 ],
-            "Y": [ 73 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:713$83": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:713.38-713.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 6 ],
-            "Y": [ 80 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:714$85": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:714.38-714.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 16 ],
-            "Y": [ 82 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:725$101": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:725.26-725.40"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 153 ],
-            "Y": [ 155 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:758$136": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:758.92-758.109"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 92 ],
-            "Y": [ 107 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:759$143": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:759.92-759.109"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 89 ],
-            "Y": [ 108 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:761$146": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.37-761.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 156 ],
-            "Y": [ 109 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:761$148": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.70-761.76"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 157 ],
-            "Y": [ 72 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:778$163": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:778.52-778.73"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 158 ],
-            "Y": [ 159 ]
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:796$176": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:796.23-796.36"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 160 ],
             "Y": [ 118 ]
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:797$180": {
+        "$ne$FloatingPointAdderSinglePath.sv:707$139": {
+          "hide_name": 1,
+          "type": "$reduce_bool",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:707.64-707.79"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 89, 90, 91, 92 ],
+            "Y": [ 83 ]
+          }
+        },
+        "$ne$FloatingPointAdderSinglePath.sv:740$164": {
+          "hide_name": 1,
+          "type": "$reduce_bool",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:740.24-740.45"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 99, 100, 101, 102 ],
+            "Y": [ 119 ]
+          }
+        },
+        "$ne$FloatingPointAdderSinglePath.sv:742$166": {
+          "hide_name": 1,
+          "type": "$reduce_bool",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:742.24-742.45"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 103, 104, 105, 106 ],
+            "Y": [ 120 ]
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:653$79": {
+          "hide_name": 1,
+          "type": "$not",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:653.26-653.40"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 120 ],
+            "Y": [ 121 ]
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:688$116": {
+          "hide_name": 1,
+          "type": "$not",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:688.92-688.109"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 65 ],
+            "Y": [ 80 ]
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:689$123": {
+          "hide_name": 1,
+          "type": "$not",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:689.92-689.109"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 62 ],
+            "Y": [ 81 ]
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:696$129": {
+          "hide_name": 1,
+          "type": "$not",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:696.52-696.73"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 122 ],
+            "Y": [ 123 ]
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:708$142": {
+          "hide_name": 1,
+          "type": "$not",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:708.23-708.36"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 124 ],
+            "Y": [ 85 ]
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:709$146": {
           "hide_name": 1,
           "type": "$not",
           "parameters": {
@@ -1861,18 +1381,18 @@
             "Y_WIDTH": 7
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:797.48-797.58"
+            "src": "FloatingPointAdderSinglePath.sv:709.48-709.58"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 161, 162, 163, 164, 165, 166, 167 ],
-            "Y": [ 168, 169, 170, 171, 172, 173, 174 ]
+            "A": [ 125, 126, 127, 128, 129, 130, 131 ],
+            "Y": [ 132, 133, 134, 135, 136, 137, 138 ]
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:800$182": {
+        "$not$FloatingPointAdderSinglePath.sv:712$148": {
           "hide_name": 1,
           "type": "$not",
           "parameters": {
@@ -1881,18 +1401,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:800.3-800.19"
+            "src": "FloatingPointAdderSinglePath.sv:712.3-712.19"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 175 ],
-            "Y": [ 121 ]
+            "A": [ 139 ],
+            "Y": [ 88 ]
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:818$194": {
+        "$not$FloatingPointAdderSinglePath.sv:730$160": {
           "hide_name": 1,
           "type": "$not",
           "parameters": {
@@ -1901,18 +1421,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:818.26-818.40"
+            "src": "FloatingPointAdderSinglePath.sv:730.26-730.40"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 152 ],
-            "Y": [ 176 ]
+            "A": [ 119 ],
+            "Y": [ 140 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:700$74": {
+        "$or$FloatingPointAdderSinglePath.sv:645$74": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -1923,7 +1443,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:700.28-700.63"
+            "src": "FloatingPointAdderSinglePath.sv:645.17-645.108"
           },
           "port_directions": {
             "A": "input",
@@ -1931,12 +1451,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 81 ],
-            "B": [ 83 ],
-            "Y": [ 177 ]
+            "A": [ 63 ],
+            "B": [ 66 ],
+            "Y": [ 141 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:700$75": {
+        "$or$FloatingPointAdderSinglePath.sv:645$78": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -1947,7 +1467,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:700.27-700.84"
+            "src": "FloatingPointAdderSinglePath.sv:645.16-645.179"
           },
           "port_directions": {
             "A": "input",
@@ -1955,12 +1475,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 177 ],
-            "B": [ 106 ],
-            "Y": [ 32 ]
+            "A": [ 141 ],
+            "B": [ 71 ],
+            "Y": [ 142 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:701$79": {
+        "$or$FloatingPointAdderSinglePath.sv:668$89": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -1971,7 +1491,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.49-701.90"
+            "src": "FloatingPointAdderSinglePath.sv:668.32-668.63"
           },
           "port_directions": {
             "A": "input",
@@ -1979,108 +1499,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 83 ],
-            "B": [ 75 ],
-            "Y": [ 77 ]
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:712$82": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:712.21-712.38"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 79 ],
-            "B": [ 74 ],
-            "Y": [ 178 ]
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:717$100": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.16-717.129"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 179 ],
-            "B": [ 106 ],
-            "Y": [ 157 ]
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:717$99": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.17-717.108"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 90 ],
+            "A": [ 87 ],
             "B": [ 93 ],
-            "Y": [ 179 ]
+            "Y": [ 72 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:740$111": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:740.32-740.63"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 120 ],
-            "B": [ 126 ],
-            "Y": [ 94 ]
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:743$115": {
+        "$or$FloatingPointAdderSinglePath.sv:671$93": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -2091,7 +1515,7 @@
             "Y_WIDTH": 7
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:743.2-743.33"
+            "src": "FloatingPointAdderSinglePath.sv:671.2-671.33"
           },
           "port_directions": {
             "A": "input",
@@ -2099,12 +1523,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 180, 181, 182, 183, 184, 185, 186 ],
-            "B": [ 175, "0", "0", "0", "0", "0", "0" ],
-            "Y": [ 187, 188, 189, 190, 191, 192, 193 ]
+            "A": [ 143, 144, 145, 146, 147, 148, 149 ],
+            "B": [ 139, "0", "0", "0", "0", "0", "0" ],
+            "Y": [ 150, 151, 152, 153, 154, 155, 156 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:755$126": {
+        "$or$FloatingPointAdderSinglePath.sv:684$102": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -2115,7 +1539,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.19-755.128"
+            "src": "FloatingPointAdderSinglePath.sv:684.45-684.92"
           },
           "port_directions": {
             "A": "input",
@@ -2123,12 +1547,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 136 ],
-            "B": [ 101 ],
-            "Y": [ 69 ]
+            "A": [ 157 ],
+            "B": [ 158 ],
+            "Y": [ 159 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:756$127": {
+        "$or$FloatingPointAdderSinglePath.sv:684$104": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -2139,7 +1563,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:756.16-756.53"
+            "src": "FloatingPointAdderSinglePath.sv:684.44-684.123"
           },
           "port_directions": {
             "A": "input",
@@ -2147,12 +1571,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 102 ],
-            "B": [ 103 ],
-            "Y": [ 154 ]
+            "A": [ 159 ],
+            "B": [ 160 ],
+            "Y": [ 78 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:762$150": {
+        "$or$FloatingPointAdderSinglePath.sv:686$109": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -2163,7 +1587,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:762.33-762.57"
+            "src": "FloatingPointAdderSinglePath.sv:686.20-686.58"
           },
           "port_directions": {
             "A": "input",
@@ -2171,12 +1595,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 33 ],
-            "B": [ 110 ],
-            "Y": [ 35 ]
+            "A": [ 161 ],
+            "B": [ 98 ],
+            "Y": [ 162 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:763$151": {
+        "$or$FloatingPointAdderSinglePath.sv:687$110": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -2187,7 +1611,31 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:763.19-763.90"
+            "src": "FloatingPointAdderSinglePath.sv:687.16-687.53"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 67 ],
+            "B": [ 68 ],
+            "Y": [ 161 ]
+          }
+        },
+        "$or$FloatingPointAdderSinglePath.sv:696$130": {
+          "hide_name": 1,
+          "type": "$or",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:696.25-696.74"
           },
           "port_directions": {
             "A": "input",
@@ -2196,104 +1644,100 @@
           },
           "connections": {
             "A": [ 112 ],
-            "B": [ 194 ],
-            "Y": [ 195 ]
+            "B": [ 123 ],
+            "Y": [ 163 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:763$152": {
+        "$procmux$176": {
           "hide_name": 1,
-          "type": "$or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
+            "WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:763.18-763.145"
+            "full_case": 1,
+            "src": "FloatingPointAdderSinglePath.sv:633.17-633.31|FloatingPointAdderSinglePath.sv:633.14-641.6"
           },
           "port_directions": {
             "A": "input",
             "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 195 ],
-            "B": [ 196 ],
-            "Y": [ 110 ]
+            "A": [ 94, 95, 96, 97 ],
+            "B": [ "0", "0", "0", "0" ],
+            "S": [ 163 ],
+            "Y": [ 164, 165, 166, 167 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:765$153": {
+        "$procmux$199": {
           "hide_name": 1,
-          "type": "$or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
+            "WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:765.57-765.116"
+            "full_case": 1,
+            "src": "FloatingPointAdderSinglePath.sv:629.17-629.26|FloatingPointAdderSinglePath.sv:629.14-641.6"
           },
           "port_directions": {
             "A": "input",
             "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 197 ],
-            "B": [ 194 ],
-            "Y": [ 198 ]
+            "A": [ 164, 165, 166, 167 ],
+            "B": [ "1", "1", "1", "1" ],
+            "S": [ 162 ],
+            "Y": [ 168, 169, 170, 171 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:765$154": {
+        "$procmux$205": {
           "hide_name": 1,
-          "type": "$or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
+            "WIDTH": 5
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:765.56-765.171"
+            "full_case": 1,
+            "src": "FloatingPointAdderSinglePath.sv:629.17-629.26|FloatingPointAdderSinglePath.sv:629.14-641.6"
           },
           "port_directions": {
             "A": "input",
             "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 198 ],
-            "B": [ 196 ],
-            "Y": [ 113 ]
+            "A": [ 172, 173, 174, 175, 176 ],
+            "B": [ "0", "0", "0", "0", "0" ],
+            "S": [ 162 ],
+            "Y": [ 177, 178, 179, 180, 181 ]
           }
         },
-        "$or$FloatingPointAdderSinglePath.sv:778$164": {
+        "$procmux$211": {
           "hide_name": 1,
-          "type": "$or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
+            "WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:778.25-778.74"
+            "full_case": 1,
+            "src": "FloatingPointAdderSinglePath.sv:625.6-625.11|FloatingPointAdderSinglePath.sv:625.3-641.6"
           },
           "port_directions": {
             "A": "input",
             "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 146 ],
-            "B": [ 159 ],
-            "Y": [ 199 ]
+            "A": [ 182 ],
+            "B": [ "0" ],
+            "S": [ 142 ],
+            "Y": [ 31 ]
           }
         },
         "$procmux$214": {
@@ -2304,7 +1748,7 @@
           },
           "attributes": {
             "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:687.17-687.31|FloatingPointAdderSinglePath.sv:687.14-695.6"
+            "src": "FloatingPointAdderSinglePath.sv:625.6-625.11|FloatingPointAdderSinglePath.sv:625.3-641.6"
           },
           "port_directions": {
             "A": "input",
@@ -2313,159 +1757,21 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 42, 43, 44, 45 ],
-            "B": [ "0", "0", "0", "0" ],
-            "S": [ 199 ],
-            "Y": [ 200, 201, 202, 203 ]
-          }
-        },
-        "$procmux$246": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:683.17-683.25|FloatingPointAdderSinglePath.sv:683.14-695.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 200, 201, 202, 203 ],
+            "A": [ 168, 169, 170, 171 ],
             "B": [ "1", "1", "1", "1" ],
-            "S": [ 69 ],
-            "Y": [ 204, 205, 206, 207 ]
-          }
-        },
-        "$procmux$255": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:683.17-683.25|FloatingPointAdderSinglePath.sv:683.14-695.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 137, 138, 139, 140, 141 ],
-            "B": [ "0", "0", "0", "0", "0" ],
-            "S": [ 69 ],
-            "Y": [ 208, 209, 210, 211, 212 ]
-          }
-        },
-        "$procmux$288": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:675.17-675.22|FloatingPointAdderSinglePath.sv:675.14-695.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 204, 205, 206, 207 ],
-            "B": [ "1", "1", "1", "1" ],
-            "S": [ 154 ],
-            "Y": [ 213, 214, 215, 216 ]
-          }
-        },
-        "$procmux$294": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:675.17-675.22|FloatingPointAdderSinglePath.sv:675.14-695.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 208, 209, 210, 211, 212 ],
-            "B": [ "0", "0", "0", "0", "0" ],
-            "S": [ 154 ],
-            "Y": [ 217, 218, 219, 220, 221 ]
-          }
-        },
-        "$procmux$300": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:668.6-668.11|FloatingPointAdderSinglePath.sv:668.3-695.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 217, 218, 219, 220, 221 ],
-            "B": [ 222, 223, 224, 225, 226 ],
-            "S": [ 157 ],
-            "Y": [ 22, 23, 24, 25, 26 ]
-          }
-        },
-        "$procmux$303": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:668.6-668.11|FloatingPointAdderSinglePath.sv:668.3-695.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 213, 214, 215, 216 ],
-            "B": [ "1", "1", "1", "1" ],
-            "S": [ 157 ],
+            "S": [ 142 ],
             "Y": [ 27, 28, 29, 30 ]
           }
         },
-        "$procmux$306": {
+        "$procmux$217": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
-            "WIDTH": 1
+            "WIDTH": 5
           },
           "attributes": {
             "full_case": 1,
-            "src": "FloatingPointAdderSinglePath.sv:668.6-668.11|FloatingPointAdderSinglePath.sv:668.3-695.6"
+            "src": "FloatingPointAdderSinglePath.sv:625.6-625.11|FloatingPointAdderSinglePath.sv:625.3-641.6"
           },
           "port_directions": {
             "A": "input",
@@ -2474,113 +1780,13 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 227 ],
-            "B": [ 228 ],
-            "S": [ 157 ],
-            "Y": [ 31 ]
+            "A": [ 177, 178, 179, 180, 181 ],
+            "B": [ "1", "0", "0", "0", "0" ],
+            "S": [ 142 ],
+            "Y": [ 22, 23, 24, 25, 26 ]
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:715$88": {
-          "hide_name": 1,
-          "type": "$reduce_or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:715.42-715.53"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 12, 13, 14, 15, 16 ],
-            "Y": [ 85 ]
-          }
-        },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:716$91": {
-          "hide_name": 1,
-          "type": "$reduce_or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:716.42-716.53"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 2, 3, 4, 5, 6 ],
-            "Y": [ 87 ]
-          }
-        },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:758$135": {
-          "hide_name": 1,
-          "type": "$reduce_or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:758.94-758.108"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 229, 230, 231, 232, 233 ],
-            "Y": [ 92 ]
-          }
-        },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:759$142": {
-          "hide_name": 1,
-          "type": "$reduce_or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:759.94-759.108"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 234, 235, 236, 237, 238 ],
-            "Y": [ 89 ]
-          }
-        },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:761$145": {
-          "hide_name": 1,
-          "type": "$reduce_or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 4,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.39-761.53"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 42, 43, 44, 45 ],
-            "Y": [ 156 ]
-          }
-        },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:766$156": {
+        "$reduce_or$FloatingPointAdderSinglePath.sv:684$103": {
           "hide_name": 1,
           "type": "$reduce_or",
           "parameters": {
@@ -2589,18 +1795,58 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:766.70-766.95"
+            "src": "FloatingPointAdderSinglePath.sv:684.97-684.122"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 239, 240, 241, 242, 243, 244 ],
-            "Y": [ 196 ]
+            "A": [ 183, 184, 185, 186, 187, 188 ],
+            "Y": [ 160 ]
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:796$175": {
+        "$reduce_or$FloatingPointAdderSinglePath.sv:688$115": {
+          "hide_name": 1,
+          "type": "$reduce_or",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 5,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:688.94-688.108"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 189, 190, 191, 192, 193 ],
+            "Y": [ 65 ]
+          }
+        },
+        "$reduce_or$FloatingPointAdderSinglePath.sv:689$122": {
+          "hide_name": 1,
+          "type": "$reduce_or",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 5,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:689.94-689.108"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 194, 195, 196, 197, 198 ],
+            "Y": [ 62 ]
+          }
+        },
+        "$reduce_or$FloatingPointAdderSinglePath.sv:708$141": {
           "hide_name": 1,
           "type": "$reduce_or",
           "parameters": {
@@ -2609,18 +1855,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:796.25-796.35"
+            "src": "FloatingPointAdderSinglePath.sv:708.25-708.35"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 161, 162, 163, 164, 165, 166, 167 ],
-            "Y": [ 160 ]
+            "A": [ 125, 126, 127, 128, 129, 130, 131 ],
+            "Y": [ 124 ]
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:806$184": {
+        "$reduce_or$FloatingPointAdderSinglePath.sv:718$150": {
           "hide_name": 1,
           "type": "$reduce_or",
           "parameters": {
@@ -2629,18 +1875,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:806.26-806.37"
+            "src": "FloatingPointAdderSinglePath.sv:718.26-718.37"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 245, 246, 247, 248, 249, 250 ],
-            "Y": [ 175 ]
+            "A": [ 199, 200, 201, 202, 203, 204 ],
+            "Y": [ 139 ]
           }
         },
-        "$shl$FloatingPointAdderSinglePath.sv:746$116": {
+        "$shl$FloatingPointAdderSinglePath.sv:674$94": {
           "hide_name": 1,
           "type": "$shl",
           "parameters": {
@@ -2651,7 +1897,7 @@
             "Y_WIDTH": 13
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:746.29-746.58"
+            "src": "FloatingPointAdderSinglePath.sv:674.29-674.58"
           },
           "port_directions": {
             "A": "input",
@@ -2659,12 +1905,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 187, 188, 189, 190, 191, 192, 193, 251, 252, 253, 254, 255, 256 ],
-            "B": [ 131, 132, 133, 134 ],
-            "Y": [ 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269 ]
+            "A": [ 150, 151, 152, 153, 154, 155, 156, 205, 206, 207, 208, 209, 210 ],
+            "B": [ 103, 104, 105, 106 ],
+            "Y": [ 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223 ]
           }
         },
-        "$shl$FloatingPointAdderSinglePath.sv:789$170": {
+        "$shl$FloatingPointAdderSinglePath.sv:701$136": {
           "hide_name": 1,
           "type": "$shl",
           "parameters": {
@@ -2675,7 +1921,7 @@
             "Y_WIDTH": 14
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:789.28-789.67"
+            "src": "FloatingPointAdderSinglePath.sv:701.28-701.67"
           },
           "port_directions": {
             "A": "input",
@@ -2683,12 +1929,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 187, 188, 189, 190, 191, 192, 193, 251, 252, 253, 254, 255, 256, 270 ],
-            "B": [ 60, 61, 62, 63 ],
-            "Y": [ 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284 ]
+            "A": [ 150, 151, 152, 153, 154, 155, 156, 205, 206, 207, 208, 209, 210, 224 ],
+            "B": [ 52, 53, 54, 55 ],
+            "Y": [ 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238 ]
           }
         },
-        "$shl$FloatingPointAdderSinglePath.sv:807$185": {
+        "$shl$FloatingPointAdderSinglePath.sv:719$151": {
           "hide_name": 1,
           "type": "$shl",
           "parameters": {
@@ -2699,7 +1945,7 @@
             "Y_WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:807.21-807.42"
+            "src": "FloatingPointAdderSinglePath.sv:719.21-719.42"
           },
           "port_directions": {
             "A": "input",
@@ -2707,12 +1953,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 285, 286, 287, 288, 289, 290 ],
-            "B": [ 291, 292, 293, 294 ],
-            "Y": [ 245, 246, 247, 248, 249, 250 ]
+            "A": [ 239, 240, 241, 242, 243, 244 ],
+            "B": [ 245, 246, 247, 248 ],
+            "Y": [ 199, 200, 201, 202, 203, 204 ]
           }
         },
-        "$shr$FloatingPointAdderSinglePath.sv:812$186": {
+        "$shr$FloatingPointAdderSinglePath.sv:724$152": {
           "hide_name": 1,
           "type": "$shr",
           "parameters": {
@@ -2723,7 +1969,7 @@
             "Y_WIDTH": 13
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:812.31-812.63"
+            "src": "FloatingPointAdderSinglePath.sv:724.31-724.63"
           },
           "port_directions": {
             "A": "input",
@@ -2731,23 +1977,23 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ "0", "0", "0", "0", "0", "0", "0", 285, 286, 287, 288, 289, 290 ],
-            "B": [ 122, 123, 124, 125 ],
-            "Y": [ 161, 162, 163, 164, 165, 166, 167, 295, 296, 297, 298, 299, 300 ]
+            "A": [ "0", "0", "0", "0", "0", "0", "0", 239, 240, 241, 242, 243, 244 ],
+            "B": [ 89, 90, 91, 92 ],
+            "Y": [ 125, 126, 127, 128, 129, 130, 131, 249, 250, 251, 252, 253, 254 ]
           }
         },
-        "$sub$FloatingPointAdderSinglePath.sv:779$165": {
+        "$sub$FloatingPointAdderSinglePath.sv:697$131": {
           "hide_name": 1,
           "type": "$sub",
           "parameters": {
             "A_SIGNED": 0,
-            "A_WIDTH": 6,
+            "A_WIDTH": 4,
             "B_SIGNED": 0,
-            "B_WIDTH": 6,
-            "Y_WIDTH": 6
+            "B_WIDTH": 4,
+            "Y_WIDTH": 5
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:779.75-785.3"
+            "src": "FloatingPointAdderSinglePath.sv:697.71-697.92"
           },
           "port_directions": {
             "A": "input",
@@ -2755,12 +2001,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 131, 132, 133, 134, "0", "0" ],
-            "B": [ 142, 143, 144, 145, "0", "0" ],
-            "Y": [ 48, 49, 50, 51, 52, 53 ]
+            "A": [ 103, 104, 105, 106 ],
+            "B": [ 108, 109, 110, 111 ],
+            "Y": [ 42, 43, 44, 45, 46 ]
           }
         },
-        "$sub$FloatingPointAdderSinglePath.sv:815$188": {
+        "$sub$FloatingPointAdderSinglePath.sv:727$154": {
           "hide_name": 1,
           "type": "$sub",
           "parameters": {
@@ -2771,7 +2017,7 @@
             "Y_WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:815.28-815.35"
+            "src": "FloatingPointAdderSinglePath.sv:727.28-727.35"
           },
           "port_directions": {
             "A": "input",
@@ -2779,12 +2025,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 122, 123, 124, 125 ],
+            "A": [ 89, 90, 91, 92 ],
             "B": [ "1", "1", "1", "0" ],
-            "Y": [ 301, 302, 303, 304 ]
+            "Y": [ 255, 256, 257, 258 ]
           }
         },
-        "$sub$FloatingPointAdderSinglePath.sv:816$191": {
+        "$sub$FloatingPointAdderSinglePath.sv:728$157": {
           "hide_name": 1,
           "type": "$sub",
           "parameters": {
@@ -2795,7 +2041,7 @@
             "Y_WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:816.31-816.41"
+            "src": "FloatingPointAdderSinglePath.sv:728.31-728.41"
           },
           "port_directions": {
             "A": "input",
@@ -2804,11 +2050,11 @@
           },
           "connections": {
             "A": [ "0", "1", "1", "0" ],
-            "B": [ 147, 148, 149, 150 ],
-            "Y": [ 305, 306, 307, 308 ]
+            "B": [ 114, 115, 116, 117 ],
+            "Y": [ 259, 260, 261, 262 ]
           }
         },
-        "$sub$FloatingPointAdderSinglePath.sv:817$193": {
+        "$sub$FloatingPointAdderSinglePath.sv:729$159": {
           "hide_name": 1,
           "type": "$sub",
           "parameters": {
@@ -2819,7 +2065,7 @@
             "Y_WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:817.18-817.47"
+            "src": "FloatingPointAdderSinglePath.sv:729.18-729.47"
           },
           "port_directions": {
             "A": "input",
@@ -2827,85 +2073,19 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 131, 132, 133, 134 ],
-            "B": [ 127, 128, 129, 130 ],
-            "Y": [ 122, 123, 124, 125 ]
+            "A": [ 103, 104, 105, 106 ],
+            "B": [ 99, 100, 101, 102 ],
+            "Y": [ 89, 90, 91, 92 ]
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:669$68": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:669.19-669.58"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0" ],
-            "B": [ 309 ],
-            "S": [ 178 ],
-            "Y": [ 228 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:671$69": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:671.23-674.11"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0", "0", "0", "0", "1" ],
-            "B": [ 310, 311, 312, 313, "1" ],
-            "S": [ 178 ],
-            "Y": [ 222, 223, 224, 225, 226 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:702$81": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 10
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:702.25-710.3"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ],
-            "B": [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 ],
-            "S": [ 78 ],
-            "Y": [ 310, 311, 312, 313, 314, 315, 316, 317, 318, 309 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:725$104": {
+        "$ternary$FloatingPointAdderSinglePath.sv:653$82": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:725.24-734.4"
+            "src": "FloatingPointAdderSinglePath.sv:653.24-662.4"
           },
           "port_directions": {
             "A": "input",
@@ -2914,20 +2094,20 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 319, 320, 321, 322, 323, 324 ],
-            "B": [ "0", 234, 235, 236, 237, 238 ],
-            "S": [ 325 ],
-            "Y": [ 326, 327, 328, 329, 330, 331 ]
+            "A": [ 263, 264, 265, 266, 267, 268 ],
+            "B": [ "0", 194, 195, 196, 197, 198 ],
+            "S": [ 269 ],
+            "Y": [ 270, 271, 272, 273, 274, 275 ]
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:728$103": {
+        "$ternary$FloatingPointAdderSinglePath.sv:656$81": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:728.7-734.3"
+            "src": "FloatingPointAdderSinglePath.sv:656.7-662.3"
           },
           "port_directions": {
             "A": "input",
@@ -2936,20 +2116,20 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ "0", "0", 234, 235, 236, 237 ],
-            "B": [ 234, 235, 236, 237, 238, "1" ],
-            "S": [ 153 ],
-            "Y": [ 319, 320, 321, 322, 323, 324 ]
+            "A": [ "0", "0", 194, 195, 196, 197 ],
+            "B": [ 194, 195, 196, 197, 198, "1" ],
+            "S": [ 120 ],
+            "Y": [ 263, 264, 265, 266, 267, 268 ]
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:740$114": {
+        "$ternary$FloatingPointAdderSinglePath.sv:668$92": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 7
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:740.29-740.130"
+            "src": "FloatingPointAdderSinglePath.sv:668.29-668.130"
           },
           "port_directions": {
             "A": "input",
@@ -2958,20 +2138,20 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 332, 333, 334, 335, 336, 337, 338 ],
-            "B": [ 339, 340, 341, 342, 343, 344, 345 ],
-            "S": [ 98 ],
-            "Y": [ 251, 252, 253, 254, 255, 256, 270 ]
+            "A": [ 276, 277, 278, 279, 280, 281, 282 ],
+            "B": [ 283, 284, 285, 286, 287, 288, 289 ],
+            "S": [ 76 ],
+            "Y": [ 205, 206, 207, 208, 209, 210, 224 ]
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:747$117": {
+        "$ternary$FloatingPointAdderSinglePath.sv:675$95": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 13
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:747.19-747.77"
+            "src": "FloatingPointAdderSinglePath.sv:675.19-675.77"
           },
           "port_directions": {
             "A": "input",
@@ -2980,42 +2160,20 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358 ],
-            "B": [ 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269 ],
-            "S": [ 199 ],
-            "Y": [ 239, 240, 241, 242, 243, 244, 194, 112, 197, 359, 360, 361, 362 ]
+            "A": [ 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302 ],
+            "B": [ 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223 ],
+            "S": [ 163 ],
+            "Y": [ 183, 184, 185, 186, 187, 188, 158, 77, 157, 303, 304, 305, 306 ]
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:774$161": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:774.26-777.19"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 54, 55, 56, 57, 58 ],
-            "B": [ "0", "0", "0", "0", "0" ],
-            "S": [ 199 ],
-            "Y": [ 36, 37, 38, 39, 40 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:787$167": {
+        "$ternary$FloatingPointAdderSinglePath.sv:685$107": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:787.21-787.97"
+            "src": "FloatingPointAdderSinglePath.sv:685.24-685.98"
           },
           "port_directions": {
             "A": "input",
@@ -3024,152 +2182,20 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 64, 65, 66, 67 ],
-            "B": [ 60, 61, 62, 63 ],
-            "S": [ 284 ],
-            "Y": [ 142, 143, 144, 145 ]
+            "A": [ 32, 33, 34, 35 ],
+            "B": [ 37, 38, 39, 40 ],
+            "S": [ 113 ],
+            "Y": [ 94, 95, 96, 97 ]
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:788$169": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 14
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:788.23-788.112"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0", 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283 ],
-            "B": [ 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, "1" ],
-            "S": [ 284 ],
-            "Y": [ 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 363 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:797$181": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 7
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:797.28-797.71"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 161, 162, 163, 164, 165, 166, 167 ],
-            "B": [ 168, 169, 170, 171, 172, 173, 174 ],
-            "S": [ 117 ],
-            "Y": [ 364, 365, 366, 367, 368, 369, 370 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:815$189": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:815.14-815.43"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0", "0", "0", "0" ],
-            "B": [ 301, 302, 303, 304 ],
-            "S": [ 135 ],
-            "Y": [ 147, 148, 149, 150 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:816$192": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:816.15-816.49"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0", "0", "0", "0" ],
-            "B": [ 305, 306, 307, 308 ],
-            "S": [ 151 ],
-            "Y": [ 291, 292, 293, 294 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:818$197": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 6
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:818.24-827.4"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 371, 372, 373, 374, 375, 376 ],
-            "B": [ "0", 229, 230, 231, 232, 233 ],
-            "S": [ 377 ],
-            "Y": [ 285, 286, 287, 288, 289, 290 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:821$196": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 6
-          },
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:821.7-827.3"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0", "0", 229, 230, 231, 232 ],
-            "B": [ 229, 230, 231, 232, 233, "1" ],
-            "S": [ 152 ],
-            "Y": [ 371, 372, 373, 374, 375, 376 ]
-          }
-        },
-        "$ternary$FloatingPointAdderSinglePath.sv:834$200": {
+        "$ternary$FloatingPointAdderSinglePath.sv:690$125": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:834.19-834.57"
+            "src": "FloatingPointAdderSinglePath.sv:690.19-690.57"
           },
           "port_directions": {
             "A": "input",
@@ -3178,13 +2204,189 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 378 ],
-            "B": [ 379 ],
-            "S": [ 97 ],
-            "Y": [ 227 ]
+            "A": [ 307 ],
+            "B": [ 308 ],
+            "S": [ 75 ],
+            "Y": [ 182 ]
           }
         },
-        "$xor$FloatingPointAdderSinglePath.sv:725$102": {
+        "$ternary$FloatingPointAdderSinglePath.sv:695$127": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 4
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:695.22-695.59"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 47, 48, 49, 50 ],
+            "B": [ "0", "0", "0", "0" ],
+            "S": [ 163 ],
+            "Y": [ 32, 33, 34, 35 ]
+          }
+        },
+        "$ternary$FloatingPointAdderSinglePath.sv:699$133": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 4
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:699.21-699.97"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 56, 57, 58, 59 ],
+            "B": [ 52, 53, 54, 55 ],
+            "S": [ 238 ],
+            "Y": [ 108, 109, 110, 111 ]
+          }
+        },
+        "$ternary$FloatingPointAdderSinglePath.sv:700$135": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 14
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:700.23-700.112"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ "0", 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237 ],
+            "B": [ 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, "1" ],
+            "S": [ 238 ],
+            "Y": [ 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 309 ]
+          }
+        },
+        "$ternary$FloatingPointAdderSinglePath.sv:709$147": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 7
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:709.28-709.71"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 125, 126, 127, 128, 129, 130, 131 ],
+            "B": [ 132, 133, 134, 135, 136, 137, 138 ],
+            "S": [ 84 ],
+            "Y": [ 310, 311, 312, 313, 314, 315, 316 ]
+          }
+        },
+        "$ternary$FloatingPointAdderSinglePath.sv:727$155": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 4
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:727.14-727.43"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ "0", "0", "0", "0" ],
+            "B": [ 255, 256, 257, 258 ],
+            "S": [ 107 ],
+            "Y": [ 114, 115, 116, 117 ]
+          }
+        },
+        "$ternary$FloatingPointAdderSinglePath.sv:728$158": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 4
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:728.15-728.49"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ "0", "0", "0", "0" ],
+            "B": [ 259, 260, 261, 262 ],
+            "S": [ 118 ],
+            "Y": [ 245, 246, 247, 248 ]
+          }
+        },
+        "$ternary$FloatingPointAdderSinglePath.sv:730$163": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 6
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:730.24-739.4"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 317, 318, 319, 320, 321, 322 ],
+            "B": [ "0", 189, 190, 191, 192, 193 ],
+            "S": [ 323 ],
+            "Y": [ 239, 240, 241, 242, 243, 244 ]
+          }
+        },
+        "$ternary$FloatingPointAdderSinglePath.sv:733$162": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 6
+          },
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:733.7-739.3"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ "0", "0", 189, 190, 191, 192 ],
+            "B": [ 189, 190, 191, 192, 193, "1" ],
+            "S": [ 119 ],
+            "Y": [ 317, 318, 319, 320, 321, 322 ]
+          }
+        },
+        "$xor$FloatingPointAdderSinglePath.sv:645$76": {
           "hide_name": 1,
           "type": "$xor",
           "parameters": {
@@ -3195,7 +2397,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:725.25-725.52"
+            "src": "FloatingPointAdderSinglePath.sv:645.156-645.177"
           },
           "port_directions": {
             "A": "input",
@@ -3203,12 +2405,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 155 ],
-            "B": [ 380 ],
-            "Y": [ 325 ]
+            "A": [ 308 ],
+            "B": [ 307 ],
+            "Y": [ 70 ]
           }
         },
-        "$xor$FloatingPointAdderSinglePath.sv:757$129": {
+        "$xor$FloatingPointAdderSinglePath.sv:653$80": {
           "hide_name": 1,
           "type": "$xor",
           "parameters": {
@@ -3219,7 +2421,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:757.71-757.92"
+            "src": "FloatingPointAdderSinglePath.sv:653.25-653.52"
           },
           "port_directions": {
             "A": "input",
@@ -3227,12 +2429,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 379 ],
-            "B": [ 378 ],
-            "Y": [ 105 ]
+            "A": [ 121 ],
+            "B": [ 324 ],
+            "Y": [ 269 ]
           }
         },
-        "$xor$FloatingPointAdderSinglePath.sv:818$195": {
+        "$xor$FloatingPointAdderSinglePath.sv:730$161": {
           "hide_name": 1,
           "type": "$xor",
           "parameters": {
@@ -3243,7 +2445,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:818.25-818.52"
+            "src": "FloatingPointAdderSinglePath.sv:730.25-730.52"
           },
           "port_directions": {
             "A": "input",
@@ -3251,12 +2453,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 176 ],
-            "B": [ 381 ],
-            "Y": [ 377 ]
+            "A": [ 140 ],
+            "B": [ 325 ],
+            "Y": [ 323 ]
           }
         },
-        "$xor$FloatingPointAdderSinglePath.sv:829$199": {
+        "$xor$FloatingPointAdderSinglePath.sv:741$165": {
           "hide_name": 1,
           "type": "$xor",
           "parameters": {
@@ -3267,7 +2469,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:829.25-829.40"
+            "src": "FloatingPointAdderSinglePath.sv:741.25-741.40"
           },
           "port_directions": {
             "A": "input",
@@ -3277,7 +2479,7 @@
           "connections": {
             "A": [ 11 ],
             "B": [ 21 ],
-            "Y": [ 95 ]
+            "Y": [ 73 ]
           }
         },
         "compound_adder": {
@@ -3287,7 +2489,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointAdderSinglePath.sv:735.44-735.236"
+            "src": "FloatingPointAdderSinglePath.sv:663.44-663.236"
           },
           "port_directions": {
             "a": "input",
@@ -3301,15 +2503,15 @@
             "sumP1": "output"
           },
           "connections": {
-            "a": [ 326, 327, 328, 329, 330, 331 ],
-            "b": [ 295, 296, 297, 298, 299, 300 ],
-            "carryOut": [ 97 ],
+            "a": [ 270, 271, 272, 273, 274, 275 ],
+            "b": [ 249, 250, 251, 252, 253, 254 ],
+            "carryOut": [ 75 ],
             "carryOutP1": [ ],
             "sign": [ ],
             "signP1": [ ],
-            "subtractIn": [ 95 ],
-            "sum": [ 332, 333, 334, 335, 336, 337, 338 ],
-            "sumP1": [ 339, 340, 341, 342, 343, 344, 345 ]
+            "subtractIn": [ 73 ],
+            "sum": [ 276, 277, 278, 279, 280, 281, 282 ],
+            "sumP1": [ 283, 284, 285, 286, 287, 288, 289 ]
           }
         },
         "leading_zero_anticipate_carry": {
@@ -3319,7 +2521,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointAdderSinglePath.sv:791.25-794.150"
+            "src": "FloatingPointAdderSinglePath.sv:703.25-706.150"
           },
           "port_directions": {
             "a": "input",
@@ -3331,13 +2533,13 @@
             "validLeadOne": "output"
           },
           "connections": {
-            "a": [ "0", "0", "0", "0", "0", "0", "0", 326, 327, 328, 329, 330, 331 ],
+            "a": [ "0", "0", "0", "0", "0", "0", "0", 270, 271, 272, 273, 274, 275 ],
             "aSign": [ "0" ],
-            "b": [ 161, 162, 163, 164, 165, 166, 167, 295, 296, 297, 298, 299, 300 ],
-            "bSign": [ 95 ],
-            "endAroundCarry": [ 97 ],
-            "leadingOne": [ 60, 61, 62, 63 ],
-            "validLeadOne": [ 158 ]
+            "b": [ 125, 126, 127, 128, 129, 130, 131, 249, 250, 251, 252, 253, 254 ],
+            "bSign": [ 73 ],
+            "endAroundCarry": [ 75 ],
+            "leadingOne": [ 52, 53, 54, 55 ],
+            "validLeadOne": [ 122 ]
           }
         },
         "native_adder": {
@@ -3347,7 +2549,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointAdderSinglePath.sv:798.17-801.44"
+            "src": "FloatingPointAdderSinglePath.sv:710.17-713.44"
           },
           "port_directions": {
             "a": "input",
@@ -3355,9 +2557,9 @@
             "sum": "output"
           },
           "connections": {
-            "a": [ 119, "0", "0", "0", "0", "0", "0" ],
-            "b": [ 364, 365, 366, 367, 368, 369, 370 ],
-            "sum": [ 180, 181, 182, 183, 184, 185, 186, 382 ]
+            "a": [ 86, "0", "0", "0", "0", "0", "0" ],
+            "b": [ 310, 311, 312, 313, 314, 315, 316 ],
+            "sum": [ 143, 144, 145, 146, 147, 148, 149, 326 ]
           }
         },
         "rndAdder": {
@@ -3367,7 +2569,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointAdderSinglePath.sv:749.17-752.18"
+            "src": "FloatingPointAdderSinglePath.sv:677.17-680.18"
           },
           "port_directions": {
             "a": "input",
@@ -3375,9 +2577,9 @@
             "sum": "output"
           },
           "connections": {
-            "a": [ 197, 359, 360, 361, 362 ],
-            "b": [ 114, "0", "0", "0", "0" ],
-            "sum": [ 137, 138, 139, 140, 141, 41 ]
+            "a": [ 157, 303, 304, 305, 306 ],
+            "b": [ 79, "0", "0", "0", "0" ],
+            "sum": [ 172, 173, 174, 175, 176, 36 ]
           }
         },
         "sorter_a_b": {
@@ -3387,7 +2589,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointAdderSinglePath.sv:718.29-718.150"
+            "src": "FloatingPointAdderSinglePath.sv:646.29-646.150"
           },
           "port_directions": {
             "a": "input",
@@ -3404,532 +2606,357 @@
             "b": [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 ],
             "inMetaA": [ "0" ],
             "inMetaB": [ "0" ],
-            "outA": [ 234, 235, 236, 237, 238, 131, 132, 133, 134, 379 ],
-            "outB": [ 229, 230, 231, 232, 233, 127, 128, 129, 130, 378 ],
-            "outMetaA": [ 380 ],
-            "outMetaB": [ 381 ]
+            "outA": [ 194, 195, 196, 197, 198, 103, 104, 105, 106, 308 ],
+            "outB": [ 189, 190, 191, 192, 193, 99, 100, 101, 102, 307 ],
+            "outMetaA": [ 324 ],
+            "outMetaB": [ 325 ]
           }
         }
       },
       "netnames": {
         "$2__sum_exponent[3:0]": {
           "hide_name": 1,
-          "bits": [ 213, 214, 215, 216 ],
+          "bits": [ 168, 169, 170, 171 ],
           "attributes": {
             "src": "FloatingPointAdderSinglePath.sv:0.0-0.0"
           }
         },
         "$2__sum_mantissa[4:0]": {
           "hide_name": 1,
-          "bits": [ 217, 218, 219, 220, 221 ],
+          "bits": [ 177, 178, 179, 180, 181 ],
           "attributes": {
             "src": "FloatingPointAdderSinglePath.sv:0.0-0.0"
           }
         },
         "$3__sum_exponent[3:0]": {
           "hide_name": 1,
-          "bits": [ 204, 205, 206, 207 ],
+          "bits": [ 164, 165, 166, 167 ],
           "attributes": {
             "src": "FloatingPointAdderSinglePath.sv:0.0-0.0"
           }
         },
-        "$3__sum_mantissa[4:0]": {
+        "$and$FloatingPointAdderSinglePath.sv:645$70_Y": {
           "hide_name": 1,
-          "bits": [ 208, 209, 210, 211, 212 ],
+          "bits": [ 63 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:0.0-0.0"
+            "src": "FloatingPointAdderSinglePath.sv:645.18-645.60"
           }
         },
-        "$5__sum_exponent[3:0]": {
+        "$and$FloatingPointAdderSinglePath.sv:645$73_Y": {
           "hide_name": 1,
-          "bits": [ 200, 201, 202, 203 ],
+          "bits": [ 66 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:0.0-0.0"
+            "src": "FloatingPointAdderSinglePath.sv:645.65-645.107"
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:699$71_Y": {
+        "$and$FloatingPointAdderSinglePath.sv:645$75_Y": {
+          "hide_name": 1,
+          "bits": [ 69 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.114-645.151"
+          }
+        },
+        "$and$FloatingPointAdderSinglePath.sv:645$77_Y": {
           "hide_name": 1,
           "bits": [ 71 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:699.26-699.45"
+            "src": "FloatingPointAdderSinglePath.sv:645.113-645.178"
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:701$78_Y": {
+        "$and$FloatingPointAdderSinglePath.sv:666$85_Y": {
           "hide_name": 1,
-          "bits": [ 75 ],
+          "bits": [ 74 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.69-701.89"
+            "src": "FloatingPointAdderSinglePath.sv:666.3-666.53"
           }
         },
-        "$and$FloatingPointAdderSinglePath.sv:717$95_Y": {
-          "hide_name": 1,
-          "bits": [ 90 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.18-717.60"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:717$98_Y": {
-          "hide_name": 1,
-          "bits": [ 93 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.65-717.107"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:738$107_Y": {
-          "hide_name": 1,
-          "bits": [ 96 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:738.3-738.53"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:738$108_Y": {
-          "hide_name": 1,
-          "bits": [ 98 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:738.2-738.71"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:755$125_Y": {
-          "hide_name": 1,
-          "bits": [ 101 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.59-755.127"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:757$128_Y": {
-          "hide_name": 1,
-          "bits": [ 104 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:757.29-757.66"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:761$147_Y": {
-          "hide_name": 1,
-          "bits": [ 111 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.36-761.65"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:795$172_Y": {
-          "hide_name": 1,
-          "bits": [ 115 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:795.28-795.59"
-          }
-        },
-        "$and$FloatingPointAdderSinglePath.sv:796$178_Y": {
-          "hide_name": 1,
-          "bits": [ 119 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:796.41-796.78"
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:715$87_Y": {
-          "hide_name": 1,
-          "bits": [ 84 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:715.19-715.37"
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:716$90_Y": {
-          "hide_name": 1,
-          "bits": [ 86 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:716.19-716.37"
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:717$93_Y": {
-          "hide_name": 1,
-          "bits": [ 88 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.19-717.40"
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:717$96_Y": {
-          "hide_name": 1,
-          "bits": [ 91 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.66-717.87"
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:738$105_Y": {
-          "hide_name": 1,
-          "bits": [ 126 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:738.19-738.34"
-          }
-        },
-        "$eq$FloatingPointAdderSinglePath.sv:755$123_Y": {
-          "hide_name": 1,
-          "bits": [ 99 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.60-755.95"
-          }
-        },
-        "$ge$FloatingPointAdderSinglePath.sv:815$187_Y": {
-          "hide_name": 1,
-          "bits": [ 135 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:815.15-815.23"
-          }
-        },
-        "$gt$FloatingPointAdderSinglePath.sv:755$122_Y": {
-          "hide_name": 1,
-          "bits": [ 136 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.20-755.54"
-          }
-        },
-        "$gt$FloatingPointAdderSinglePath.sv:755$124_Y": {
-          "hide_name": 1,
-          "bits": [ 100 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:755.100-755.126"
-          }
-        },
-        "$gt$FloatingPointAdderSinglePath.sv:778$162_Y": {
-          "hide_name": 1,
-          "bits": [ 146 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:778.26-778.47"
-          }
-        },
-        "$lt$FloatingPointAdderSinglePath.sv:816$190_Y": {
-          "hide_name": 1,
-          "bits": [ 151 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:816.16-816.26"
-          }
-        },
-        "$ne$FloatingPointAdderSinglePath.sv:795$173_Y": {
-          "hide_name": 1,
-          "bits": [ 116 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:795.64-795.79"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:699$70_Y": {
-          "hide_name": 1,
-          "bits": [ 70 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:699.38-699.44"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:699$72_Y": {
-          "hide_name": 1,
-          "bits": [ 72 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:699.50-699.56"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:701$76_Y": {
+        "$and$FloatingPointAdderSinglePath.sv:666$86_Y": {
           "hide_name": 1,
           "bits": [ 76 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.27-701.44"
+            "src": "FloatingPointAdderSinglePath.sv:666.2-666.71"
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:701$77_Y": {
-          "hide_name": 1,
-          "bits": [ 73 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.70-701.78"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:713$83_Y": {
-          "hide_name": 1,
-          "bits": [ 80 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:713.38-713.54"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:714$85_Y": {
+        "$and$FloatingPointAdderSinglePath.sv:707$138_Y": {
           "hide_name": 1,
           "bits": [ 82 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:714.38-714.54"
+            "src": "FloatingPointAdderSinglePath.sv:707.28-707.59"
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:725$101_Y": {
+        "$and$FloatingPointAdderSinglePath.sv:708$144_Y": {
           "hide_name": 1,
-          "bits": [ 155 ],
+          "bits": [ 86 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:725.26-725.40"
+            "src": "FloatingPointAdderSinglePath.sv:708.41-708.78"
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:758$136_Y": {
+        "$eq$FloatingPointAdderSinglePath.sv:645$68_Y": {
+          "hide_name": 1,
+          "bits": [ 61 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.19-645.40"
+          }
+        },
+        "$eq$FloatingPointAdderSinglePath.sv:645$71_Y": {
+          "hide_name": 1,
+          "bits": [ 64 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.66-645.87"
+          }
+        },
+        "$eq$FloatingPointAdderSinglePath.sv:666$83_Y": {
+          "hide_name": 1,
+          "bits": [ 93 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:666.19-666.34"
+          }
+        },
+        "$eq$FloatingPointAdderSinglePath.sv:686$108_Y": {
+          "hide_name": 1,
+          "bits": [ 98 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:686.29-686.57"
+          }
+        },
+        "$ge$FloatingPointAdderSinglePath.sv:727$153_Y": {
           "hide_name": 1,
           "bits": [ 107 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:758.92-758.109"
+            "src": "FloatingPointAdderSinglePath.sv:727.15-727.23"
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:759$143_Y": {
+        "$gt$FloatingPointAdderSinglePath.sv:696$128_Y": {
           "hide_name": 1,
-          "bits": [ 108 ],
+          "bits": [ 112 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:759.92-759.109"
+            "src": "FloatingPointAdderSinglePath.sv:696.26-696.47"
           }
         },
-        "$not$FloatingPointAdderSinglePath.sv:761$146_Y": {
-          "hide_name": 1,
-          "bits": [ 109 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.37-761.54"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:778$163_Y": {
-          "hide_name": 1,
-          "bits": [ 159 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:778.52-778.73"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:796$176_Y": {
-          "hide_name": 1,
-          "bits": [ 118 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:796.23-796.36"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:796$177_Y": {
-          "hide_name": 1,
-          "bits": [ 121 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:796.42-796.58"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:797$180_Y": {
-          "hide_name": 1,
-          "bits": [ 168, 169, 170, 171, 172, 173, 174 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:797.48-797.58"
-          }
-        },
-        "$not$FloatingPointAdderSinglePath.sv:818$194_Y": {
-          "hide_name": 1,
-          "bits": [ 176 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:818.26-818.40"
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:700$74_Y": {
-          "hide_name": 1,
-          "bits": [ 177 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:700.28-700.63"
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:701$79_Y": {
-          "hide_name": 1,
-          "bits": [ 77 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:701.49-701.90"
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:717$99_Y": {
-          "hide_name": 1,
-          "bits": [ 179 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.17-717.108"
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:738$106_Y": {
-          "hide_name": 1,
-          "bits": [ 94 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:738.4-738.35"
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:763$151_Y": {
-          "hide_name": 1,
-          "bits": [ 195 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:763.19-763.90"
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:765$153_Y": {
-          "hide_name": 1,
-          "bits": [ 198 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:765.57-765.116"
-          }
-        },
-        "$or$FloatingPointAdderSinglePath.sv:765$154_Y": {
+        "$lt$FloatingPointAdderSinglePath.sv:685$106_Y": {
           "hide_name": 1,
           "bits": [ 113 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:765.56-765.171"
+            "src": "FloatingPointAdderSinglePath.sv:685.25-685.50"
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:715$88_Y": {
+        "$lt$FloatingPointAdderSinglePath.sv:728$156_Y": {
+          "hide_name": 1,
+          "bits": [ 118 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:728.16-728.26"
+          }
+        },
+        "$ne$FloatingPointAdderSinglePath.sv:707$139_Y": {
+          "hide_name": 1,
+          "bits": [ 83 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:707.64-707.79"
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:653$79_Y": {
+          "hide_name": 1,
+          "bits": [ 121 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:653.26-653.40"
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:688$116_Y": {
+          "hide_name": 1,
+          "bits": [ 80 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:688.92-688.109"
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:689$123_Y": {
+          "hide_name": 1,
+          "bits": [ 81 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:689.92-689.109"
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:696$129_Y": {
+          "hide_name": 1,
+          "bits": [ 123 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:696.52-696.73"
+          }
+        },
+        "$not$FloatingPointAdderSinglePath.sv:708$142_Y": {
           "hide_name": 1,
           "bits": [ 85 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:715.42-715.53"
+            "src": "FloatingPointAdderSinglePath.sv:708.23-708.36"
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:716$91_Y": {
+        "$not$FloatingPointAdderSinglePath.sv:708$143_Y": {
           "hide_name": 1,
-          "bits": [ 87 ],
+          "bits": [ 88 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:716.42-716.53"
+            "src": "FloatingPointAdderSinglePath.sv:708.42-708.58"
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:717$94_Y": {
+        "$not$FloatingPointAdderSinglePath.sv:709$146_Y": {
           "hide_name": 1,
-          "bits": [ 89 ],
+          "bits": [ 132, 133, 134, 135, 136, 137, 138 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.45-717.59"
+            "src": "FloatingPointAdderSinglePath.sv:709.48-709.58"
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:717$97_Y": {
+        "$not$FloatingPointAdderSinglePath.sv:730$160_Y": {
           "hide_name": 1,
-          "bits": [ 92 ],
+          "bits": [ 140 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:717.92-717.106"
+            "src": "FloatingPointAdderSinglePath.sv:730.26-730.40"
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:761$145_Y": {
+        "$or$FloatingPointAdderSinglePath.sv:645$74_Y": {
           "hide_name": 1,
-          "bits": [ 156 ],
+          "bits": [ 141 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:761.39-761.53"
+            "src": "FloatingPointAdderSinglePath.sv:645.17-645.108"
           }
         },
-        "$reduce_or$FloatingPointAdderSinglePath.sv:796$175_Y": {
+        "$or$FloatingPointAdderSinglePath.sv:666$84_Y": {
+          "hide_name": 1,
+          "bits": [ 72 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:666.4-666.35"
+          }
+        },
+        "$or$FloatingPointAdderSinglePath.sv:684$102_Y": {
+          "hide_name": 1,
+          "bits": [ 159 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:684.45-684.92"
+          }
+        },
+        "$or$FloatingPointAdderSinglePath.sv:684$104_Y": {
+          "hide_name": 1,
+          "bits": [ 78 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:684.44-684.123"
+          }
+        },
+        "$reduce_or$FloatingPointAdderSinglePath.sv:645$69_Y": {
+          "hide_name": 1,
+          "bits": [ 62 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.45-645.59"
+          }
+        },
+        "$reduce_or$FloatingPointAdderSinglePath.sv:645$72_Y": {
+          "hide_name": 1,
+          "bits": [ 65 ],
+          "attributes": {
+            "src": "FloatingPointAdderSinglePath.sv:645.92-645.106"
+          }
+        },
+        "$reduce_or$FloatingPointAdderSinglePath.sv:684$103_Y": {
           "hide_name": 1,
           "bits": [ 160 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:796.25-796.35"
+            "src": "FloatingPointAdderSinglePath.sv:684.97-684.122"
           }
         },
-        "$sub$FloatingPointAdderSinglePath.sv:779$165_Y": {
+        "$reduce_or$FloatingPointAdderSinglePath.sv:708$141_Y": {
           "hide_name": 1,
-          "bits": [ 48, 49, 50, 51, 52, 53 ],
+          "bits": [ 124 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:779.75-785.3"
+            "src": "FloatingPointAdderSinglePath.sv:708.25-708.35"
           }
         },
-        "$sub$FloatingPointAdderSinglePath.sv:815$188_Y": {
+        "$sub$FloatingPointAdderSinglePath.sv:697$131_Y": {
           "hide_name": 1,
-          "bits": [ 301, 302, 303, 304 ],
+          "bits": [ 42, 43, 44, 45, 46 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:815.28-815.35"
+            "src": "FloatingPointAdderSinglePath.sv:697.71-697.92"
           }
         },
-        "$sub$FloatingPointAdderSinglePath.sv:816$191_Y": {
+        "$sub$FloatingPointAdderSinglePath.sv:727$154_Y": {
           "hide_name": 1,
-          "bits": [ 305, 306, 307, 308 ],
+          "bits": [ 255, 256, 257, 258 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:816.31-816.41"
+            "src": "FloatingPointAdderSinglePath.sv:727.28-727.35"
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:669$68_Y": {
+        "$sub$FloatingPointAdderSinglePath.sv:728$157_Y": {
           "hide_name": 1,
-          "bits": [ 228 ],
+          "bits": [ 259, 260, 261, 262 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:669.19-669.58"
+            "src": "FloatingPointAdderSinglePath.sv:728.31-728.41"
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:671$69_Y": {
+        "$ternary$FloatingPointAdderSinglePath.sv:656$81_Y": {
           "hide_name": 1,
-          "bits": [ 222, 223, 224, 225, 226 ],
+          "bits": [ 263, 264, 265, 266, 267, 268 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:671.23-674.11"
+            "src": "FloatingPointAdderSinglePath.sv:656.7-662.3"
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:728$103_Y": {
+        "$ternary$FloatingPointAdderSinglePath.sv:733$162_Y": {
           "hide_name": 1,
-          "bits": [ 319, 320, 321, 322, 323, 324 ],
+          "bits": [ 317, 318, 319, 320, 321, 322 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:728.7-734.3"
+            "src": "FloatingPointAdderSinglePath.sv:733.7-739.3"
           }
         },
-        "$ternary$FloatingPointAdderSinglePath.sv:821$196_Y": {
+        "$xor$FloatingPointAdderSinglePath.sv:645$76_Y": {
           "hide_name": 1,
-          "bits": [ 371, 372, 373, 374, 375, 376 ],
+          "bits": [ 70 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:821.7-827.3"
+            "src": "FloatingPointAdderSinglePath.sv:645.156-645.177"
           }
         },
-        "$xor$FloatingPointAdderSinglePath.sv:725$102_Y": {
+        "$xor$FloatingPointAdderSinglePath.sv:653$80_Y": {
           "hide_name": 1,
-          "bits": [ 325 ],
+          "bits": [ 269 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:725.25-725.52"
+            "src": "FloatingPointAdderSinglePath.sv:653.25-653.52"
           }
         },
-        "$xor$FloatingPointAdderSinglePath.sv:757$129_Y": {
+        "$xor$FloatingPointAdderSinglePath.sv:730$161_Y": {
           "hide_name": 1,
-          "bits": [ 105 ],
+          "bits": [ 323 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:757.71-757.92"
-          }
-        },
-        "$xor$FloatingPointAdderSinglePath.sv:818$195_Y": {
-          "hide_name": 1,
-          "bits": [ 377 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:818.25-818.52"
+            "src": "FloatingPointAdderSinglePath.sv:730.25-730.52"
           }
         },
         "_d0__lead1Prediction_add_const_1": {
           "hide_name": 0,
-          "bits": [ 64, 65, 66, 67 ],
+          "bits": [ 56, 57, 58, 59 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:526.13-526.45"
+            "src": "FloatingPointAdderSinglePath.sv:525.13-525.45"
           }
         },
-        "_in0__subset_7_7_mantissaJBitShift": {
+        "_d1__outExponent_add__swizzled": {
           "hide_name": 0,
-          "bits": [ 112 ],
+          "bits": [ 37, 38, 39, 40 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:528.7-528.41"
+            "src": "FloatingPointAdderSinglePath.sv:526.13-526.43"
           }
         },
-        "_in1__const_0_or__uor__subset_5_0_mantissaJBitShift": {
+        "_exponent_subtract_lead1_add_const_1_carry": {
           "hide_name": 0,
-          "bits": [ 196 ],
+          "bits": [ 51 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:529.7-529.58"
-          }
-        },
-        "_in1__subset_6_6_mantissaJBitShift": {
-          "hide_name": 0,
-          "bits": [ 194 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:530.7-530.41"
-          }
-        },
-        "_in1__swizzled": {
-          "hide_name": 0,
-          "bits": [ "0", "1", "1", "1", "0" ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:531.13-531.27"
+            "src": "FloatingPointAdderSinglePath.sv:527.7-527.49",
+            "unused_bits": "0 "
           }
         },
         "_lead1Prediction_add_const_1_carry": {
           "hide_name": 0,
-          "bits": [ 68 ],
+          "bits": [ 60 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:532.7-532.41",
+            "src": "FloatingPointAdderSinglePath.sv:529.7-529.41",
             "unused_bits": "0 "
           }
         },
-        "_original__out": {
+        "_outExponent_add__swizzled_carry": {
           "hide_name": 0,
-          "bits": [ 310, 311, 312, 313, 314, 315, 316, 317, 318, 309 ],
+          "bits": [ 41 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:533.13-533.27",
-            "unused_bits": "4 5 6 7 8"
-          }
-        },
-        "_outExponentWide_add__swizzled_carry": {
-          "hide_name": 0,
-          "bits": [ 47 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:534.7-534.43",
+            "src": "FloatingPointAdderSinglePath.sv:530.7-530.39",
             "unused_bits": "0 "
           }
         },
@@ -3937,22 +2964,14 @@
           "hide_name": 0,
           "bits": [ "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:535.14-535.34"
-          }
-        },
-        "_swizzled_subtract__swizzled_add_const_1_carry": {
-          "hide_name": 0,
-          "bits": [ 59 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:536.7-536.53",
-            "unused_bits": "0 "
+            "src": "FloatingPointAdderSinglePath.sv:531.14-531.34"
           }
         },
         "_uor_stickyBits": {
           "hide_name": 0,
-          "bits": [ 175 ],
+          "bits": [ 139 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:537.7-537.22"
+            "src": "FloatingPointAdderSinglePath.sv:532.7-532.22"
           }
         },
         "a": {
@@ -3966,28 +2985,28 @@
           "hide_name": 0,
           "bits": [ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:538.13-538.16"
+            "src": "FloatingPointAdderSinglePath.sv:533.13-533.16"
           }
         },
         "a_exponent": {
           "hide_name": 0,
           "bits": [ 7, 8, 9, 10 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:539.13-539.23"
+            "src": "FloatingPointAdderSinglePath.sv:534.13-534.23"
           }
         },
         "a_mantissa": {
           "hide_name": 0,
           "bits": [ 2, 3, 4, 5, 6 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:540.13-540.23"
+            "src": "FloatingPointAdderSinglePath.sv:535.13-535.23"
           }
         },
         "a_sign": {
           "hide_name": 0,
           "bits": [ 11 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:541.7-541.13"
+            "src": "FloatingPointAdderSinglePath.sv:536.7-536.13"
           }
         },
         "b": {
@@ -4001,612 +3020,436 @@
           "hide_name": 0,
           "bits": [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:542.13-542.16"
+            "src": "FloatingPointAdderSinglePath.sv:537.13-537.16"
           }
         },
         "b_exponent": {
           "hide_name": 0,
           "bits": [ 17, 18, 19, 20 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:543.13-543.23"
+            "src": "FloatingPointAdderSinglePath.sv:538.13-538.23"
           }
         },
         "b_mantissa": {
           "hide_name": 0,
           "bits": [ 12, 13, 14, 15, 16 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:544.13-544.23"
+            "src": "FloatingPointAdderSinglePath.sv:539.13-539.23"
           }
         },
         "b_sign": {
           "hide_name": 0,
           "bits": [ 21 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:545.7-545.13"
+            "src": "FloatingPointAdderSinglePath.sv:540.7-540.13"
           }
         },
         "chop": {
           "hide_name": 0,
-          "bits": [ 291, 292, 293, 294 ],
+          "bits": [ 245, 246, 247, 248 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:546.13-546.17"
+            "src": "FloatingPointAdderSinglePath.sv:541.13-541.17"
           }
         },
         "doRound": {
           "hide_name": 0,
-          "bits": [ 114 ],
+          "bits": [ 79 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:547.7-547.14"
-          }
-        },
-        "doRound_0": {
-          "hide_name": 0,
-          "bits": [ 114 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:548.7-548.16"
+            "src": "FloatingPointAdderSinglePath.sv:542.7-542.14"
           }
         },
         "eD": {
           "hide_name": 0,
-          "bits": [ 122, 123, 124, 125 ],
+          "bits": [ 89, 90, 91, 92 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:549.13-549.15"
+            "src": "FloatingPointAdderSinglePath.sv:543.13-543.15"
           }
         },
         "eW": {
           "hide_name": 0,
           "bits": [ "1", "1", "1", "0" ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:550.13-550.15"
+            "src": "FloatingPointAdderSinglePath.sv:544.13-544.15"
           }
         },
         "effSubtraction": {
           "hide_name": 0,
-          "bits": [ 95 ],
+          "bits": [ 73 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:551.7-551.21"
+            "src": "FloatingPointAdderSinglePath.sv:545.7-545.21"
           }
         },
         "endAroundCarry": {
           "hide_name": 0,
-          "bits": [ 97 ],
+          "bits": [ 75 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:552.7-552.21"
+            "src": "FloatingPointAdderSinglePath.sv:546.7-546.21"
           }
         },
         "expDiff": {
           "hide_name": 0,
-          "bits": [ 122, 123, 124, 125 ],
+          "bits": [ 89, 90, 91, 92 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:553.13-553.20"
+            "src": "FloatingPointAdderSinglePath.sv:547.13-547.20"
           }
         },
         "expMinusLead1": {
           "hide_name": 0,
-          "bits": [ 54, 55, 56, 57, 58 ],
+          "bits": [ 47, 48, 49, 50 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:554.13-554.26"
+            "src": "FloatingPointAdderSinglePath.sv:548.13-548.26"
           }
         },
         "exponentRound": {
           "hide_name": 0,
-          "bits": [ 42, 43, 44, 45 ],
+          "bits": [ 94, 95, 96, 97 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:555.13-555.26"
-          }
-        },
-        "exponentRoundWide": {
-          "hide_name": 0,
-          "bits": [ 42, 43, 44, 45, 46 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:556.13-556.30"
-          }
-        },
-        "finiteOverflow": {
-          "hide_name": 0,
-          "bits": [ 33 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:557.7-557.21"
+            "src": "FloatingPointAdderSinglePath.sv:549.13-549.26"
           }
         },
         "fullMantissa": {
           "hide_name": 0,
-          "bits": [ 187, 188, 189, 190, 191, 192, 193, 251, 252, 253, 254, 255, 256 ],
+          "bits": [ 150, 151, 152, 153, 154, 155, 156, 205, 206, 207, 208, 209, 210 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:558.14-558.26"
+            "src": "FloatingPointAdderSinglePath.sv:550.14-550.26"
           }
         },
         "fullMantissaWithIncr": {
           "hide_name": 0,
-          "bits": [ 187, 188, 189, 190, 191, 192, 193, 251, 252, 253, 254, 255, 256, 270 ],
+          "bits": [ 150, 151, 152, 153, 154, 155, 156, 205, 206, 207, 208, 209, 210, 224 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:559.14-559.34"
+            "src": "FloatingPointAdderSinglePath.sv:551.14-551.34"
           }
         },
         "highBitsLSB": {
           "hide_name": 0,
-          "bits": [ 120 ],
+          "bits": [ 87 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:560.7-560.18"
+            "src": "FloatingPointAdderSinglePath.sv:552.7-552.18"
           }
         },
         "highBitsSum": {
           "hide_name": 0,
-          "bits": [ 332, 333, 334, 335, 336, 337, 338 ],
+          "bits": [ 276, 277, 278, 279, 280, 281, 282 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:561.13-561.24"
+            "src": "FloatingPointAdderSinglePath.sv:553.13-553.24"
           }
         },
         "highBitsSumP1": {
           "hide_name": 0,
-          "bits": [ 339, 340, 341, 342, 343, 344, 345 ],
+          "bits": [ 283, 284, 285, 286, 287, 288, 289 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:562.13-562.26"
+            "src": "FloatingPointAdderSinglePath.sv:554.13-554.26"
           }
         },
         "incrementHighLSB_0": {
           "hide_name": 0,
-          "bits": [ 251, 252, 253, 254, 255, 256, 270 ],
+          "bits": [ 205, 206, 207, 208, 209, 210, 224 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:564.13-564.31"
-          }
-        },
-        "inexact": {
-          "hide_name": 0,
-          "bits": [ 110 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:565.7-565.14"
+            "src": "FloatingPointAdderSinglePath.sv:556.13-556.31"
           }
         },
         "infExponent": {
           "hide_name": 0,
           "bits": [ "1", "1", "1", "1" ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:566.13-566.24"
-          }
-        },
-        "inputIsNaN": {
-          "hide_name": 0,
-          "bits": [ 178 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:567.7-567.17"
-          }
-        },
-        "internalStatus_divideByZero": {
-          "hide_name": 0,
-          "bits": [ "0" ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:568.7-568.34"
-          }
-        },
-        "internalStatus_inexact": {
-          "hide_name": 0,
-          "bits": [ 35 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:569.7-569.29"
-          }
-        },
-        "internalStatus_invalid": {
-          "hide_name": 0,
-          "bits": [ 32 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:570.7-570.29"
-          }
-        },
-        "internalStatus_overflow": {
-          "hide_name": 0,
-          "bits": [ 33 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:571.7-571.30"
-          }
-        },
-        "internalStatus_underflow": {
-          "hide_name": 0,
-          "bits": [ 34 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:572.7-572.31"
-          }
-        },
-        "invalidArithmetic": {
-          "hide_name": 0,
-          "bits": [ 106 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:573.7-573.24"
-          }
-        },
-        "invalidOperation": {
-          "hide_name": 0,
-          "bits": [ 32 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:574.7-574.23"
+            "src": "FloatingPointAdderSinglePath.sv:557.13-557.24"
           }
         },
         "isAnInfinity_outA": {
           "hide_name": 0,
-          "bits": [ 102 ],
+          "bits": [ 67 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:575.7-575.24"
+            "src": "FloatingPointAdderSinglePath.sv:558.7-558.24"
           }
         },
         "isAnInfinity_outB": {
           "hide_name": 0,
-          "bits": [ 103 ],
+          "bits": [ 68 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:576.7-576.24"
+            "src": "FloatingPointAdderSinglePath.sv:559.7-559.24"
           }
         },
         "isInf": {
           "hide_name": 0,
-          "bits": [ 154 ],
+          "bits": [ 161 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:577.7-577.12"
+            "src": "FloatingPointAdderSinglePath.sv:560.7-560.12"
           }
         },
         "isNaN": {
           "hide_name": 0,
-          "bits": [ 157 ],
+          "bits": [ 142 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:578.7-578.12"
-          }
-        },
-        "isNaN_a": {
-          "hide_name": 0,
-          "bits": [ 79 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:579.7-579.14"
-          }
-        },
-        "isNaN_b": {
-          "hide_name": 0,
-          "bits": [ 74 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:580.7-580.14"
+            "src": "FloatingPointAdderSinglePath.sv:561.7-561.12"
           }
         },
         "isNormal_outA": {
           "hide_name": 0,
-          "bits": [ 153 ],
+          "bits": [ 120 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:581.7-581.20"
+            "src": "FloatingPointAdderSinglePath.sv:562.7-562.20"
           }
         },
         "isNormal_outB": {
           "hide_name": 0,
-          "bits": [ 152 ],
+          "bits": [ 119 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:582.7-582.20"
-          }
-        },
-        "isSignalingNaN_a": {
-          "hide_name": 0,
-          "bits": [ 81 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:583.7-583.23"
-          }
-        },
-        "isSignalingNaN_b": {
-          "hide_name": 0,
-          "bits": [ 83 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:584.7-584.23"
+            "src": "FloatingPointAdderSinglePath.sv:563.7-563.20"
           }
         },
         "largeMantissa": {
           "hide_name": 0,
-          "bits": [ 326, 327, 328, 329, 330, 331 ],
+          "bits": [ 270, 271, 272, 273, 274, 275 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:585.13-585.26"
+            "src": "FloatingPointAdderSinglePath.sv:564.13-564.26"
           }
         },
         "lead1": {
           "hide_name": 0,
-          "bits": [ 142, 143, 144, 145 ],
+          "bits": [ 108, 109, 110, 111 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:586.13-586.18"
+            "src": "FloatingPointAdderSinglePath.sv:565.13-565.18"
           }
         },
         "lead1Dominates": {
           "hide_name": 0,
-          "bits": [ 199 ],
+          "bits": [ 163 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:587.7-587.21"
+            "src": "FloatingPointAdderSinglePath.sv:566.7-566.21"
           }
         },
         "lead1Final": {
           "hide_name": 0,
-          "bits": [ 142, 143, 144, 145 ],
+          "bits": [ 108, 109, 110, 111 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:588.13-588.23"
+            "src": "FloatingPointAdderSinglePath.sv:567.13-567.23"
           }
         },
         "lead1Prediction": {
           "hide_name": 0,
-          "bits": [ 60, 61, 62, 63 ],
+          "bits": [ 52, 53, 54, 55 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:589.13-589.28"
+            "src": "FloatingPointAdderSinglePath.sv:568.13-568.28"
           }
         },
         "lead1PredictionValid": {
           "hide_name": 0,
-          "bits": [ 158 ],
+          "bits": [ 122 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:590.7-590.27"
+            "src": "FloatingPointAdderSinglePath.sv:569.7-569.27"
           }
         },
         "lowBitsIncrement": {
           "hide_name": 0,
-          "bits": [ 117 ],
+          "bits": [ 84 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:591.7-591.23"
+            "src": "FloatingPointAdderSinglePath.sv:570.7-570.23"
           }
         },
         "lowBitsSum": {
           "hide_name": 0,
-          "bits": [ 180, 181, 182, 183, 184, 185, 186, 382 ],
+          "bits": [ 143, 144, 145, 146, 147, 148, 149, 326 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:592.13-592.23",
+            "src": "FloatingPointAdderSinglePath.sv:571.13-571.23",
             "unused_bits": "7"
           }
         },
         "lowerBits": {
           "hide_name": 0,
-          "bits": [ 161, 162, 163, 164, 165, 166, 167 ],
+          "bits": [ 125, 126, 127, 128, 129, 130, 131 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:593.13-593.22"
+            "src": "FloatingPointAdderSinglePath.sv:572.13-572.22"
           }
         },
         "lowerBitsPolarity": {
           "hide_name": 0,
-          "bits": [ 364, 365, 366, 367, 368, 369, 370 ],
+          "bits": [ 310, 311, 312, 313, 314, 315, 316 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:594.13-594.30"
+            "src": "FloatingPointAdderSinglePath.sv:573.13-573.30"
           }
         },
         "mantissa": {
           "hide_name": 0,
-          "bits": [ 239, 240, 241, 242, 243, 244, 194, 112, 197, 359, 360, 361, 362 ],
+          "bits": [ 183, 184, 185, 186, 187, 188, 158, 77, 157, 303, 304, 305, 306 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:595.14-595.22"
+            "src": "FloatingPointAdderSinglePath.sv:574.14-574.22"
           }
         },
         "mantissaJBitShift": {
           "hide_name": 0,
-          "bits": [ 239, 240, 241, 242, 243, 244, 194, 112, 197, 359, 360, 361, 362 ],
+          "bits": [ 183, 184, 185, 186, 187, 188, 158, 77, 157, 303, 304, 305, 306 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:596.14-596.31"
+            "src": "FloatingPointAdderSinglePath.sv:575.14-575.31"
           }
         },
         "mantissaRound": {
           "hide_name": 0,
-          "bits": [ 137, 138, 139, 140, 141 ],
+          "bits": [ 172, 173, 174, 175, 176 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:597.13-597.26"
+            "src": "FloatingPointAdderSinglePath.sv:576.13-576.26"
           }
         },
         "mantissaRoundFinal": {
           "hide_name": 0,
-          "bits": [ 137, 138, 139, 140, 141 ],
+          "bits": [ 172, 173, 174, 175, 176 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:598.13-598.31"
+            "src": "FloatingPointAdderSinglePath.sv:577.13-577.31"
           }
         },
         "mantissaTrimmed": {
           "hide_name": 0,
-          "bits": [ 197, 359, 360, 361, 362 ],
+          "bits": [ 157, 303, 304, 305, 306 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:599.13-599.28"
+            "src": "FloatingPointAdderSinglePath.sv:578.13-578.28"
           }
         },
         "newRnd": {
           "hide_name": 0,
-          "bits": [ 137, 138, 139, 140, 141, 41 ],
+          "bits": [ 172, 173, 174, 175, 176, 36 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:600.13-600.19"
+            "src": "FloatingPointAdderSinglePath.sv:579.13-579.19"
           }
         },
         "outA": {
           "hide_name": 0,
-          "bits": [ 234, 235, 236, 237, 238, 131, 132, 133, 134, 379 ],
+          "bits": [ 194, 195, 196, 197, 198, 103, 104, 105, 106, 308 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:601.13-601.17"
+            "src": "FloatingPointAdderSinglePath.sv:580.13-580.17"
           }
         },
         "outA_exponent": {
           "hide_name": 0,
-          "bits": [ 131, 132, 133, 134 ],
+          "bits": [ 103, 104, 105, 106 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:602.13-602.26"
+            "src": "FloatingPointAdderSinglePath.sv:581.13-581.26"
           }
         },
         "outA_mantissa": {
           "hide_name": 0,
-          "bits": [ 234, 235, 236, 237, 238 ],
+          "bits": [ 194, 195, 196, 197, 198 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:603.13-603.26"
+            "src": "FloatingPointAdderSinglePath.sv:582.13-582.26"
           }
         },
         "outA_sign": {
           "hide_name": 0,
-          "bits": [ 379 ],
+          "bits": [ 308 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:604.7-604.16"
+            "src": "FloatingPointAdderSinglePath.sv:583.7-583.16"
           }
         },
         "outB": {
           "hide_name": 0,
-          "bits": [ 229, 230, 231, 232, 233, 127, 128, 129, 130, 378 ],
+          "bits": [ 189, 190, 191, 192, 193, 99, 100, 101, 102, 307 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:605.13-605.17"
+            "src": "FloatingPointAdderSinglePath.sv:584.13-584.17"
           }
         },
         "outB_exponent": {
           "hide_name": 0,
-          "bits": [ 127, 128, 129, 130 ],
+          "bits": [ 99, 100, 101, 102 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:606.13-606.26"
+            "src": "FloatingPointAdderSinglePath.sv:585.13-585.26"
           }
         },
         "outB_mantissa": {
           "hide_name": 0,
-          "bits": [ 229, 230, 231, 232, 233 ],
+          "bits": [ 189, 190, 191, 192, 193 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:607.13-607.26"
+            "src": "FloatingPointAdderSinglePath.sv:586.13-586.26"
           }
         },
         "outB_sign": {
           "hide_name": 0,
-          "bits": [ 378 ],
+          "bits": [ 307 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:608.7-608.16"
+            "src": "FloatingPointAdderSinglePath.sv:587.7-587.16"
           }
         },
         "outExponent": {
           "hide_name": 0,
-          "bits": [ 36, 37, 38, 39 ],
+          "bits": [ 32, 33, 34, 35 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:609.13-609.24"
-          }
-        },
-        "outExponentWide": {
-          "hide_name": 0,
-          "bits": [ 36, 37, 38, 39, 40 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:610.13-610.28"
+            "src": "FloatingPointAdderSinglePath.sv:588.13-588.24"
           }
         },
         "outMetaA": {
           "hide_name": 0,
-          "bits": [ 380 ],
+          "bits": [ 324 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:611.7-611.15"
+            "src": "FloatingPointAdderSinglePath.sv:589.7-589.15"
           }
         },
         "outMetaB": {
           "hide_name": 0,
-          "bits": [ 381 ],
+          "bits": [ 325 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:612.7-612.15"
+            "src": "FloatingPointAdderSinglePath.sv:590.7-590.15"
           }
         },
-        "overflow": {
+        "realIsInf": {
           "hide_name": 0,
-          "bits": [ 69 ],
+          "bits": [ 162 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:613.7-613.15"
+            "src": "FloatingPointAdderSinglePath.sv:591.7-591.16"
           }
         },
         "rem": {
           "hide_name": 0,
-          "bits": [ 147, 148, 149, 150 ],
+          "bits": [ 114, 115, 116, 117 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:614.13-614.16"
-          }
-        },
-        "selectSecondNaN": {
-          "hide_name": 0,
-          "bits": [ 78 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:615.7-615.22"
-          }
-        },
-        "selectedNaN_mantissa": {
-          "hide_name": 0,
-          "bits": [ 310, 311, 312, 313, 314 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:616.13-616.33",
-            "unused_bits": "4"
+            "src": "FloatingPointAdderSinglePath.sv:592.13-592.16"
           }
         },
         "shiftL1Final": {
           "hide_name": 0,
-          "bits": [ 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 363 ],
+          "bits": [ 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 309 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:617.14-617.26",
+            "src": "FloatingPointAdderSinglePath.sv:593.14-593.26",
             "unused_bits": "13"
           }
         },
         "shiftMantissaByExp": {
           "hide_name": 0,
-          "bits": [ 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269 ],
+          "bits": [ 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:618.14-618.32"
+            "src": "FloatingPointAdderSinglePath.sv:594.14-594.32"
           }
         },
         "shiftedPrediction": {
           "hide_name": 0,
-          "bits": [ 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284 ],
+          "bits": [ 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:619.14-619.31"
+            "src": "FloatingPointAdderSinglePath.sv:595.14-595.31"
           }
         },
         "smallExtendedMantissa": {
           "hide_name": 0,
-          "bits": [ "0", "0", "0", "0", "0", "0", "0", 285, 286, 287, 288, 289, 290 ],
+          "bits": [ "0", "0", "0", "0", "0", "0", "0", 239, 240, 241, 242, 243, 244 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:620.14-620.35"
+            "src": "FloatingPointAdderSinglePath.sv:596.14-596.35"
           }
         },
         "smallMantissa": {
           "hide_name": 0,
-          "bits": [ 285, 286, 287, 288, 289, 290 ],
+          "bits": [ 239, 240, 241, 242, 243, 244 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:621.13-621.26"
+            "src": "FloatingPointAdderSinglePath.sv:597.13-597.26"
           }
         },
         "smallShiftedMantissa": {
           "hide_name": 0,
-          "bits": [ 161, 162, 163, 164, 165, 166, 167, 295, 296, 297, 298, 299, 300 ],
+          "bits": [ 125, 126, 127, 128, 129, 130, 131, 249, 250, 251, 252, 253, 254 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:622.14-622.34"
-          }
-        },
-        "status": {
-          "hide_name": 0,
-          "bits": [ 32, "0", 33, 34, 35 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:524.20-524.26"
-          }
-        },
-        "status_divideByZero": {
-          "hide_name": 0,
-          "bits": [ "0" ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:623.7-623.26"
-          }
-        },
-        "status_inexact": {
-          "hide_name": 0,
-          "bits": [ 35 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:624.7-624.21"
-          }
-        },
-        "status_invalid": {
-          "hide_name": 0,
-          "bits": [ 32 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:625.7-625.21"
-          }
-        },
-        "status_overflow": {
-          "hide_name": 0,
-          "bits": [ 33 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:626.7-626.22"
-          }
-        },
-        "status_underflow": {
-          "hide_name": 0,
-          "bits": [ 34 ],
-          "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:627.7-627.23"
+            "src": "FloatingPointAdderSinglePath.sv:598.14-598.34"
           }
         },
         "stickyBits": {
           "hide_name": 0,
-          "bits": [ 245, 246, 247, 248, 249, 250 ],
+          "bits": [ 199, 200, 201, 202, 203, 204 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:628.13-628.23"
+            "src": "FloatingPointAdderSinglePath.sv:599.13-599.23"
           }
         },
         "sum": {
@@ -4620,35 +3463,35 @@
           "hide_name": 0,
           "bits": [ 27, 28, 29, 30 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:629.13-629.25"
+            "src": "FloatingPointAdderSinglePath.sv:600.13-600.25"
           }
         },
         "sum_mantissa": {
           "hide_name": 0,
           "bits": [ 22, 23, 24, 25, 26 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:630.13-630.25"
+            "src": "FloatingPointAdderSinglePath.sv:601.13-601.25"
           }
         },
         "sum_sign": {
           "hide_name": 0,
           "bits": [ 31 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:631.7-631.15"
+            "src": "FloatingPointAdderSinglePath.sv:602.7-602.15"
           }
         },
         "trueLowBits": {
           "hide_name": 0,
-          "bits": [ 175, "0", "0", "0", "0", "0", "0" ],
+          "bits": [ 139, "0", "0", "0", "0", "0", "0" ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:632.13-632.24"
+            "src": "FloatingPointAdderSinglePath.sv:603.13-603.24"
           }
         },
         "trueSign": {
           "hide_name": 0,
-          "bits": [ 227 ],
+          "bits": [ 182 ],
           "attributes": {
-            "src": "FloatingPointAdderSinglePath.sv:633.7-633.15"
+            "src": "FloatingPointAdderSinglePath.sv:604.7-604.15"
           }
         }
       }
@@ -6419,7 +5262,7 @@
             "Y": [ 23 ]
           }
         },
-        "$procmux$309": {
+        "$procmux$220": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -6442,7 +5285,7 @@
             "Y": [ 30, 31, 32, 33, 34 ]
           }
         },
-        "$procmux$315": {
+        "$procmux$226": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -6604,7 +5447,7 @@
         }
       },
       "cells": {
-        "$procmux$345": {
+        "$procmux$256": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -6627,7 +5470,7 @@
             "Y": [ 6, 7 ]
           }
         },
-        "$procmux$351": {
+        "$procmux$262": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -6728,7 +5571,7 @@
             "Y": [ 11 ]
           }
         },
-        "$procmux$336": {
+        "$procmux$247": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -6751,7 +5594,7 @@
             "Y": [ 14, 15, 16 ]
           }
         },
-        "$procmux$342": {
+        "$procmux$253": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -6913,7 +5756,7 @@
         }
       },
       "cells": {
-        "$procmux$327": {
+        "$procmux$238": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -7092,7 +5935,7 @@
             "Y": [ 16 ]
           }
         },
-        "$procmux$318": {
+        "$procmux$229": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -7115,7 +5958,7 @@
             "Y": [ 21, 22, 23, 24 ]
           }
         },
-        "$procmux$324": {
+        "$procmux$235": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {

@@ -76,8 +76,7 @@
     bool subNormalAsZero = false}) {
   final signLogic = Const(0);
   final exponent = Const(1, width: exponentWidth, fill: true);
-  final mantissa =
-      Const(BigInt.one &lt;&lt; (mantissaWidth - 1), width: mantissaWidth);
+  final mantissa = Const(1, width: mantissaWidth);
   return FloatingPoint._(
       signLogic, exponent, mantissa, explicitJBit, subNormalAsZero);
 }</code></pre>

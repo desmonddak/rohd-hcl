@@ -98,9 +98,7 @@
 
 </dt>
 <dd>
-  <p>Truncate the result.</p>
-<p>This is retained for compatibility and has the same finite-result
-behavior as <a href="../rohd_hcl/FloatingPointRoundingMode.html">roundTowardsZero</a>.</p>
+  <p>Truncate the result, no rounding.</p>
   
 
 </dd>
@@ -125,7 +123,8 @@ LSB.</p>
 
 </dt>
 <dd>
-  <p>Round to nearest, with exact ties rounded away from zero.</p>
+  <p>Round to nearest, tieas away from zero.  Round up for positive numbers,
+round down for negative numbers.</p>
   
 
 </dd>
@@ -137,7 +136,7 @@ LSB.</p>
 
 </dt>
 <dd>
-  <p>Round toward zero.</p>
+  <p>Round toward zero. Truncate.</p>
   
 
 </dd>
@@ -149,7 +148,7 @@ LSB.</p>
 
 </dt>
 <dd>
-  <p>Round toward positive infinity.</p>
+  <p>Round toward +infinity. Round up.</p>
   
 
 </dd>
@@ -161,7 +160,7 @@ LSB.</p>
 
 </dt>
 <dd>
-  <p>Round toward negative infinity.</p>
+  <p>Round toward -infinity.  Round down.</p>
   
 
 </dd>

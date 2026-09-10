@@ -109,16 +109,6 @@ the final addition of the products.</p>
     : super(
           definitionName: definitionName ??
               &#39;DotProductNative_W${multipliers[0].width}_&#39;) {
-  final hasRuntimeSign = signedMultiplicandParameter.runtimeConfig != null ||
-      signedMultiplierParameter.runtimeConfig != null;
-  _signedProduct = !hasRuntimeSign &amp;&amp;
-      (signedMultiplicandParameter.staticConfig ||
-          signedMultiplierParameter.staticConfig);
-  _selectSignedProduct = hasRuntimeSign
-      ? signedMultiplicandParameter.getLogic(this) |
-          signedMultiplierParameter.getLogic(this)
-      : null;
-
   final dotResults = [
     for (var i = 0; i &lt; multipliers.length; i++)
       multiplierGen(multiplicands[i], multipliers[i],
@@ -127,8 +117,11 @@ the final addition of the products.</p>
           .product
   ];
 
+  &#47;&#47; TODO(desmonddak): add sign extension option for use with unsigned
+  &#47;&#47; multipliers and multiplicands.
+
   final prefixAdd = ReductionTree(dotResults, addReduceAdders,
-      signExtend: _selectSignedProduct ?? _signedProduct,
+      signExtend: true,
       radix: treeRadix,
       name: &#39;dotproduct_reduction_tree&#39;,
       definitionName: &#39;DotProductReductionTree_W${multiplicands[0].width}_&#39;

@@ -71,8 +71,18 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">FloatingPointValue operator -(FloatingPointValue subend) {
-  _validateArithmeticFormat(subend);
-  return clonePopulator().add(this, subend.negate());
+  if (isAnInfinity &amp; subend.isAnInfinity) {
+    if (sign == subend.sign) {
+      return clonePopulator().nan;
+    } else {
+      return this;
+    }
+  } else if (subend.isAnInfinity) {
+    return subend.negate();
+  } else if (isAnInfinity) {
+    return this;
+  }
+  return _performOp(subend, (a, b) =&gt; a - b);
 }</code></pre>
 </section>
 

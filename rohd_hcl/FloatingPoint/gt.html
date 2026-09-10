@@ -68,7 +68,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>IEEE quiet greater-than.</p>
+  <p>Greater-than.</p>
 </section>
 
 
@@ -76,7 +76,8 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-Logic gt(dynamic other) =&gt; _validateComparable(other).lt(this);</code></pre>
+Logic gt(dynamic other) =&gt;
+    mux(_verifyComparable(other), ~lte(other), Const(0));</code></pre>
 </section>
 
 

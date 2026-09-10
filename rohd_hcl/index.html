@@ -2685,14 +2685,6 @@ if <code>mode</code> is <code>true</code>:
   A <a href="../rohd_hcl/Configurator-class.html">Configurator</a> for <a href="../rohd_hcl/FloatingPointMultiplierSimple-class.html">FloatingPointMultiplierSimple</a>s.
 </dd>
 
-          <dt id="FloatingPointRounder">
-  <span class="name "><a href="../rohd_hcl/FloatingPointRounder-class.html">FloatingPointRounder</a></span> 
-
-</dt>
-<dd>
-  Determines whether discarded floating-point bits require an increment.
-</dd>
-
           <dt id="FloatingPointSort">
   <span class="name "><a href="../rohd_hcl/FloatingPointSort-class.html">FloatingPointSort</a><span class="signature">&lt;<wbr><span class="type-parameter">FpType extends <a href="../rohd_hcl/FloatingPoint-class.html">FloatingPoint</a></span>&gt;</span></span> 
 
@@ -2733,14 +2725,6 @@ with the larger exponent first.
 </dt>
 <dd>
   A square root module for <a href="../rohd_hcl/FloatingPoint-class.html">FloatingPoint</a> logic signals.
-</dd>
-
-          <dt id="FloatingPointStatus">
-  <span class="name "><a href="../rohd_hcl/FloatingPointStatus-class.html">FloatingPointStatus</a></span> 
-
-</dt>
-<dd>
-  IEEE 754 floating-point exception status.
 </dd>
 
           <dt id="FloatingPointSwap">
@@ -2841,18 +2825,6 @@ for power savings.
 <dd>
   General version of the <a href="../rohd_hcl/DotProductBase-class.html">DotProductBase</a> module that uses provided
 <a href="../rohd_hcl/Multiplier-class.html">Multiplier</a> and <a href="../rohd_hcl/Adder-class.html">Adder</a> functions to construct the dot product computation.
-</dd>
-
-          <dt id="GenericMultiplyAccumulate">
-  <span class="name "><a href="../rohd_hcl/GenericMultiplyAccumulate-class.html">GenericMultiplyAccumulate</a></span> 
-
-</dt>
-<dd>
-  A <a href="../rohd_hcl/MultiplyAccumulate-class.html">MultiplyAccumulate</a> that accepts an arbitrary <a href="../rohd_hcl/Multiplier-class.html">Multiplier</a> generator
-<code>mulGen</code> to compute the product of <a href="../rohd_hcl/MultiplyAccumulate/a.html">a</a> and <a href="../rohd_hcl/MultiplyAccumulate/b.html">b</a>, then genuinely adds <a href="../rohd_hcl/MultiplyAccumulate/c.html">c</a>
-to produce <a href="../rohd_hcl/MultiplyAccumulate/accumulate.html">accumulate</a> using an <a href="../rohd_hcl/Adder-class.html">Adder</a> generator <code>adderGen</code> -- the same
-pluggable-generator convention already used for the final adder inside
-<a href="../rohd_hcl/CompressionTreeMultiplyAccumulate-class.html">CompressionTreeMultiplyAccumulate</a> and <a href="../rohd_hcl/CompressionTreeMultiplier-class.html">CompressionTreeMultiplier</a>.
 </dd>
 
           <dt id="GrayToBinaryConverter">
@@ -3922,7 +3894,7 @@ adder sequentially adds corresponding bits of two binary numbers.
 
 </dt>
 <dd>
-  Determines whether rounding-nearest-even requires an increment.
+  A rounding class that performs rounding-nearest-even
 </dd>
 
           <dt id="RoundRobinArbiter">
@@ -4164,15 +4136,8 @@ forms of <a href="../rohd_hcl/SignMagnitudeValue-class.html">SignMagnitudeValue<
 
 </dt>
 <dd>
-  A boolean configuration that can be selected statically or at runtime.
-</dd>
-
-          <dt id="StaticOrRuntimeValue">
-  <span class="name "><a href="../rohd_hcl/StaticOrRuntimeValue-class.html">StaticOrRuntimeValue</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
-
-</dt>
-<dd>
-  A value that can be configured statically or supplied by <a href="https://pub.dev/documentation/rohd/0.6.10/rohd/Logic-class.html">Logic</a> at runtime.
+  A general configuration class for specifying parameters that are
+for both static or runtime configurations of a component feature.
 </dd>
 
           <dt id="StopBitsSignExtension">
@@ -4802,19 +4767,6 @@ reset capabilities.
 </dt>
 <dd>
   Computes the bit width needed to store <code>w</code> addresses.
-  
-
-</dd>
-
-          <dt id="roundBigIntByPowerOfTwo" class="callable">
-  <span class="name"><a href="../rohd_hcl/roundBigIntByPowerOfTwo.html">roundBigIntByPowerOfTwo</a></span><span class="signature">(<wbr><span class="parameter" id="roundBigIntByPowerOfTwo-param-value"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/BigInt-class.html">BigInt</a></span> <span class="parameter-name">value</span>, </span><span class="parameter" id="roundBigIntByPowerOfTwo-param-discardedWidth"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.13.3/dart-core/int-class.html">int</a></span> <span class="parameter-name">discardedWidth</span>, {</span><span class="parameter" id="roundBigIntByPowerOfTwo-param-roundingMode"><span>required</span> <span class="type-annotation"><a href="../rohd_hcl/FloatingPointRoundingMode.html">FloatingPointRoundingMode</a></span> <span class="parameter-name">roundingMode</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.13.3/dart-core/BigInt-class.html">BigInt</a></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Divides <code>value</code> by <code>2^[discardedWidth]</code> using <code>roundingMode</code>.
   
 
 </dd>

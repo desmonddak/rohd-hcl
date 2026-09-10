@@ -39,7 +39,7 @@
     "FloatingPointMultiplierSimple": {
       "attributes": {
         "top": 1,
-        "src": "FloatingPointMultiplierSimple.sv:224.1-473.42"
+        "src": "FloatingPointMultiplierSimple.sv:224.1-356.42"
       },
       "ports": {
         "a": {
@@ -53,49 +53,21 @@
         "product": {
           "direction": "output",
           "bits": [ 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 ]
-        },
-        "status": {
-          "direction": "output",
-          "bits": [ 32, "0", 33, 34, 35 ]
         }
       },
       "cells": {
-        "$add$FloatingPointMultiplierSimple.sv:398$77": {
+        "$add$FloatingPointMultiplierSimple.sv:308$52": {
           "hide_name": 1,
           "type": "$add",
           "parameters": {
             "A_SIGNED": 0,
             "A_WIDTH": 6,
             "B_SIGNED": 0,
-            "B_WIDTH": 7,
-            "Y_WIDTH": 7
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:398.63-401.3"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 36, 37, 38, 39, 40, 41 ],
-            "B": [ 42, "0", "0", "0", "0", "0", "0" ],
-            "Y": [ 43, 44, 45, 46, 47, 48, 49 ]
-          }
-        },
-        "$add$FloatingPointMultiplierSimple.sv:420$101": {
-          "hide_name": 1,
-          "type": "$add",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 7,
-            "B_SIGNED": 0,
             "B_WIDTH": 6,
             "Y_WIDTH": 7
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:420.77-420.98"
+            "src": "FloatingPointMultiplierSimple.sv:308.68-308.97"
           },
           "port_directions": {
             "A": "input",
@@ -103,12 +75,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 50, 51, 52, 53, 54, 55, 56 ],
+            "A": [ 32, 33, 34, 35, 36, 37 ],
             "B": [ "1", "0", "0", "0", "0", "0" ],
-            "Y": [ 57, 58, 59, 60, 61, 62, 63 ]
+            "Y": [ 38, 39, 40, 41, 42, 43, 44 ]
           }
         },
-        "$add$FloatingPointMultiplierSimple.sv:428$105": {
+        "$add$FloatingPointMultiplierSimple.sv:335$63": {
           "hide_name": 1,
           "type": "$add",
           "parameters": {
@@ -119,7 +91,7 @@
             "Y_WIDTH": 7
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:428.68-428.97"
+            "src": "FloatingPointMultiplierSimple.sv:335.49-335.64"
           },
           "port_directions": {
             "A": "input",
@@ -127,36 +99,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 64, 65, 66, 67, 68, 69 ],
-            "B": [ "1", "0", "0", "0", "0", "0" ],
-            "Y": [ 36, 37, 38, 39, 40, 41, 70 ]
-          }
-        },
-        "$add$FloatingPointMultiplierSimple.sv:430$109": {
-          "hide_name": 1,
-          "type": "$add",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 6,
-            "B_SIGNED": 0,
-            "B_WIDTH": 6,
-            "Y_WIDTH": 7
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:430.49-430.64"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 71, 72, 73, 74, 75, 76 ],
+            "A": [ 45, 46, 47, 48, 49, 50 ],
             "B": [ "1", "0", "0", "1", "1", "1" ],
-            "Y": [ 77, 78, 79, 80, 81, 82, 83 ]
+            "Y": [ 51, 52, 53, 54, 55, 56, 57 ]
           }
         },
-        "$add$FloatingPointMultiplierSimple.sv:431$110": {
+        "$add$FloatingPointMultiplierSimple.sv:336$64": {
           "hide_name": 1,
           "type": "$add",
           "parameters": {
@@ -167,7 +115,7 @@
             "Y_WIDTH": 7
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:431.52-437.3"
+            "src": "FloatingPointMultiplierSimple.sv:336.50-342.3"
           },
           "port_directions": {
             "A": "input",
@@ -177,10 +125,10 @@
           "connections": {
             "A": [ 7, 8, 9, 10, "0", "0", "0" ],
             "B": [ 17, 18, 19, 20, "0", "0", "0" ],
-            "Y": [ 71, 72, 73, 74, 75, 76, 84 ]
+            "Y": [ 45, 46, 47, 48, 49, 50, 58 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:374$30": {
+        "$and$FloatingPointMultiplierSimple.sv:301$24": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -191,7 +139,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.69-374.89"
+            "src": "FloatingPointMultiplierSimple.sv:301.18-301.54"
           },
           "port_directions": {
             "A": "input",
@@ -199,12 +147,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 85 ],
-            "B": [ 86 ],
-            "Y": [ 87 ]
+            "A": [ 59 ],
+            "B": [ 60 ],
+            "Y": [ 61 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:374$32": {
+        "$and$FloatingPointMultiplierSimple.sv:301$27": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -215,7 +163,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.26-374.91"
+            "src": "FloatingPointMultiplierSimple.sv:301.59-301.95"
           },
           "port_directions": {
             "A": "input",
@@ -223,12 +171,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 88 ],
-            "B": [ 89 ],
-            "Y": [ 90 ]
+            "A": [ 62 ],
+            "B": [ 63 ],
+            "Y": [ 64 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:386$36": {
+        "$and$FloatingPointMultiplierSimple.sv:301$36": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -239,7 +187,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:386.27-386.55"
+            "src": "FloatingPointMultiplierSimple.sv:301.139-301.212"
           },
           "port_directions": {
             "A": "input",
@@ -247,12 +195,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 91 ],
-            "B": [ 92 ],
-            "Y": [ 93 ]
+            "A": [ 65 ],
+            "B": [ 66 ],
+            "Y": [ 67 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:388$46": {
+        "$and$FloatingPointMultiplierSimple.sv:301$43": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -263,7 +211,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.66-388.139"
+            "src": "FloatingPointMultiplierSimple.sv:301.217-301.290"
           },
           "port_directions": {
             "A": "input",
@@ -271,12 +219,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 94 ],
-            "B": [ 95 ],
-            "Y": [ 96 ]
+            "A": [ 68 ],
+            "B": [ 69 ],
+            "Y": [ 70 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:388$53": {
+        "$and$FloatingPointMultiplierSimple.sv:301$45": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -287,7 +235,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.144-388.217"
+            "src": "FloatingPointMultiplierSimple.sv:301.101-301.292"
           },
           "port_directions": {
             "A": "input",
@@ -295,12 +243,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 97 ],
-            "B": [ 98 ],
-            "Y": [ 99 ]
+            "A": [ 71 ],
+            "B": [ 72 ],
+            "Y": [ 73 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:388$55": {
+        "$and$FloatingPointMultiplierSimple.sv:304$51": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -311,7 +259,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.28-388.219"
+            "src": "FloatingPointMultiplierSimple.sv:304.27-307.4"
           },
           "port_directions": {
             "A": "input",
@@ -319,12 +267,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 100 ],
-            "B": [ 101 ],
-            "Y": [ 102 ]
+            "A": [ 74 ],
+            "B": [ 75 ],
+            "Y": [ 76 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:390$58": {
+        "$and$FloatingPointMultiplierSimple.sv:354$72": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -335,7 +283,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:390.35-390.60"
+            "src": "FloatingPointMultiplierSimple.sv:354.25-354.98"
           },
           "port_directions": {
             "A": "input",
@@ -343,12 +291,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 103 ],
-            "B": [ 104 ],
-            "Y": [ 105 ]
+            "A": [ 62 ],
+            "B": [ 69 ],
+            "Y": [ 77 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:390$60": {
+        "$and$FloatingPointMultiplierSimple.sv:355$79": {
           "hide_name": 1,
           "type": "$and",
           "parameters": {
@@ -359,7 +307,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:390.34-390.72"
+            "src": "FloatingPointMultiplierSimple.sv:355.25-355.98"
           },
           "port_directions": {
             "A": "input",
@@ -367,300 +315,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 105 ],
-            "B": [ 106 ],
-            "Y": [ 33 ]
+            "A": [ 59 ],
+            "B": [ 66 ],
+            "Y": [ 78 ]
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:391$65": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.36-391.92"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 107 ],
-            "B": [ 108 ],
-            "Y": [ 109 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:391$67": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.35-391.104"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 109 ],
-            "B": [ 106 ],
-            "Y": [ 34 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:392$72": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.90-392.151"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 110 ],
-            "B": [ 111 ],
-            "Y": [ 112 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:392$74": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.25-392.153"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 113 ],
-            "B": [ 114 ],
-            "Y": [ 103 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:402$81": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:402.26-402.92"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 115 ],
-            "B": [ 116 ],
-            "Y": [ 42 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:412$86": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.28-412.61"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 117 ],
-            "B": [ 118 ],
-            "Y": [ 119 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:414$94": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:414.26-414.108"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 120 ],
-            "B": [ 121 ],
-            "Y": [ 122 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:466$122": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:466.25-466.98"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 123 ],
-            "B": [ 98 ],
-            "Y": [ 124 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:467$129": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:467.25-467.98"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 125 ],
-            "B": [ 95 ],
-            "Y": [ 126 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:468$131": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:468.27-468.55"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 86 ],
-            "B": [ 127 ],
-            "Y": [ 128 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:469$134": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:469.18-469.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 123 ],
-            "B": [ 129 ],
-            "Y": [ 86 ]
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:470$137": {
-          "hide_name": 1,
-          "type": "$and",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:470.18-470.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 125 ],
-            "B": [ 130 ],
-            "Y": [ 91 ]
-          }
-        },
-        "$eq$FloatingPointMultiplierSimple.sv:388$42": {
+        "$eq$FloatingPointMultiplierSimple.sv:301$32": {
           "hide_name": 1,
           "type": "$logic_not",
           "parameters": {
@@ -669,7 +329,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.100-388.118"
+            "src": "FloatingPointMultiplierSimple.sv:301.173-301.191"
           },
           "port_directions": {
             "A": "input",
@@ -677,10 +337,10 @@
           },
           "connections": {
             "A": [ 7, 8, 9, 10 ],
-            "Y": [ 94 ]
+            "Y": [ 65 ]
           }
         },
-        "$eq$FloatingPointMultiplierSimple.sv:388$49": {
+        "$eq$FloatingPointMultiplierSimple.sv:301$39": {
           "hide_name": 1,
           "type": "$logic_not",
           "parameters": {
@@ -689,7 +349,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.178-388.196"
+            "src": "FloatingPointMultiplierSimple.sv:301.251-301.269"
           },
           "port_directions": {
             "A": "input",
@@ -697,34 +357,10 @@
           },
           "connections": {
             "A": [ 17, 18, 19, 20 ],
-            "Y": [ 97 ]
+            "Y": [ 68 ]
           }
         },
-        "$eq$FloatingPointMultiplierSimple.sv:392$70": {
-          "hide_name": 1,
-          "type": "$eq",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 6,
-            "B_SIGNED": 0,
-            "B_WIDTH": 6,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.91-392.124"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 43, 44, 45, 46, 47, 48 ],
-            "B": [ "0", "1", "1", "1", "0", "0" ],
-            "Y": [ 110 ]
-          }
-        },
-        "$eq$FloatingPointMultiplierSimple.sv:469$132": {
+        "$eq$FloatingPointMultiplierSimple.sv:354$68": {
           "hide_name": 1,
           "type": "$eq",
           "parameters": {
@@ -735,7 +371,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:469.19-469.37"
+            "src": "FloatingPointMultiplierSimple.sv:354.59-354.77"
           },
           "port_directions": {
             "A": "input",
@@ -745,10 +381,10 @@
           "connections": {
             "A": [ 17, 18, 19, 20 ],
             "B": [ "1", "1", "1", "1" ],
-            "Y": [ 123 ]
+            "Y": [ 62 ]
           }
         },
-        "$eq$FloatingPointMultiplierSimple.sv:470$135": {
+        "$eq$FloatingPointMultiplierSimple.sv:355$75": {
           "hide_name": 1,
           "type": "$eq",
           "parameters": {
@@ -759,7 +395,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:470.19-470.37"
+            "src": "FloatingPointMultiplierSimple.sv:355.59-355.77"
           },
           "port_directions": {
             "A": "input",
@@ -769,10 +405,10 @@
           "connections": {
             "A": [ 7, 8, 9, 10 ],
             "B": [ "1", "1", "1", "1" ],
-            "Y": [ 125 ]
+            "Y": [ 59 ]
           }
         },
-        "$ge$FloatingPointMultiplierSimple.sv:418$96": {
+        "$ge$FloatingPointMultiplierSimple.sv:304$50": {
           "hide_name": 1,
           "type": "$ge",
           "parameters": {
@@ -783,7 +419,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:418.26-418.50"
+            "src": "FloatingPointMultiplierSimple.sv:304.51-307.3"
           },
           "port_directions": {
             "A": "input",
@@ -791,36 +427,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 131, 132, 133, 134, 135, 136 ],
-            "B": [ "0", "0", "1", "1", "0", "0" ],
-            "Y": [ 137 ]
+            "A": [ 38, 39, 40, 41, 42, 43 ],
+            "B": [ "1", "1", "1", "1", "0", "0" ],
+            "Y": [ 75 ]
           }
         },
-        "$ge$FloatingPointMultiplierSimple.sv:426$102": {
-          "hide_name": 1,
-          "type": "$ge",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 6,
-            "B_SIGNED": 0,
-            "B_WIDTH": 6,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:426.30-426.59"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 138, 139, 140, 141, "0", "0" ],
-            "B": [ "0", "0", "1", "1", "0", "0" ],
-            "Y": [ 142 ]
-          }
-        },
-        "$gt$FloatingPointMultiplierSimple.sv:392$69": {
+        "$gt$FloatingPointMultiplierSimple.sv:317$57": {
           "hide_name": 1,
           "type": "$gt",
           "parameters": {
@@ -831,7 +443,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.53-392.85"
+            "src": "FloatingPointMultiplierSimple.sv:317.30-317.58"
           },
           "port_directions": {
             "A": "input",
@@ -839,36 +451,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 43, 44, 45, 46, 47, 48 ],
-            "B": [ "0", "1", "1", "1", "0", "0" ],
-            "Y": [ 143 ]
+            "A": [ 79, 80, 81, 82, "0", "0" ],
+            "B": [ "0", "0", "1", "1", "0", "0" ],
+            "Y": [ 83 ]
           }
         },
-        "$gt$FloatingPointMultiplierSimple.sv:392$71": {
-          "hide_name": 1,
-          "type": "$gt",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 5,
-            "B_SIGNED": 0,
-            "B_WIDTH": 5,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.129-392.150"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 144, 145, 146, 147, 148 ],
-            "B": [ "1", "1", "1", "1", "1" ],
-            "Y": [ 111 ]
-          }
-        },
-        "$lt$FloatingPointMultiplierSimple.sv:429$106": {
+        "$lt$FloatingPointMultiplierSimple.sv:310$54": {
           "hide_name": 1,
           "type": "$lt",
           "parameters": {
@@ -879,7 +467,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:429.42-429.73"
+            "src": "FloatingPointMultiplierSimple.sv:310.90-310.121"
           },
           "port_directions": {
             "A": "input",
@@ -887,12 +475,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 77, 78, 79, 80, 81, 82 ],
-            "B": [ 149, 150, 151, 152, 153, 154 ],
-            "Y": [ 155 ]
+            "A": [ 51, 52, 53, 54, 55, 56 ],
+            "B": [ 84, 85, 86, 87, 88, 89 ],
+            "Y": [ 90 ]
           }
         },
-        "$ne$FloatingPointMultiplierSimple.sv:457$113": {
+        "$ne$FloatingPointMultiplierSimple.sv:326$60": {
           "hide_name": 1,
           "type": "$reduce_bool",
           "parameters": {
@@ -901,7 +489,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:457.21-457.39"
+            "src": "FloatingPointMultiplierSimple.sv:326.21-326.39"
           },
           "port_directions": {
             "A": "input",
@@ -909,10 +497,10 @@
           },
           "connections": {
             "A": [ 7, 8, 9, 10 ],
-            "Y": [ 156 ]
+            "Y": [ 91 ]
           }
         },
-        "$ne$FloatingPointMultiplierSimple.sv:465$115": {
+        "$ne$FloatingPointMultiplierSimple.sv:334$62": {
           "hide_name": 1,
           "type": "$reduce_bool",
           "parameters": {
@@ -921,7 +509,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:465.21-465.39"
+            "src": "FloatingPointMultiplierSimple.sv:334.21-334.39"
           },
           "port_directions": {
             "A": "input",
@@ -929,70 +517,10 @@
           },
           "connections": {
             "A": [ 17, 18, 19, 20 ],
-            "Y": [ 157 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:374$28": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.27-374.44"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 93 ],
-            "Y": [ 88 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:374$29": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.70-374.78"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 91 ],
-            "Y": [ 85 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:386$35": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:386.38-386.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 6 ],
             "Y": [ 92 ]
           }
         },
-        "$not$FloatingPointMultiplierSimple.sv:390$57": {
+        "$not$FloatingPointMultiplierSimple.sv:301$35": {
           "hide_name": 1,
           "type": "$not",
           "parameters": {
@@ -1001,18 +529,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:390.53-390.59"
+            "src": "FloatingPointMultiplierSimple.sv:301.197-301.211"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 100 ],
-            "Y": [ 104 ]
+            "A": [ 60 ],
+            "Y": [ 66 ]
           }
         },
-        "$not$FloatingPointMultiplierSimple.sv:391$63": {
+        "$not$FloatingPointMultiplierSimple.sv:304$49": {
           "hide_name": 1,
           "type": "$not",
           "parameters": {
@@ -1021,18 +549,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.61-391.80"
+            "src": "FloatingPointMultiplierSimple.sv:304.28-304.46"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 158 ],
-            "Y": [ 159 ]
+            "A": [ 43 ],
+            "Y": [ 74 ]
           }
         },
-        "$not$FloatingPointMultiplierSimple.sv:391$66": {
+        "$not$FloatingPointMultiplierSimple.sv:354$71": {
           "hide_name": 1,
           "type": "$not",
           "parameters": {
@@ -1041,158 +569,18 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.97-391.103"
+            "src": "FloatingPointMultiplierSimple.sv:354.83-354.97"
           },
           "port_directions": {
             "A": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 160 ],
-            "Y": [ 106 ]
+            "A": [ 63 ],
+            "Y": [ 69 ]
           }
         },
-        "$not$FloatingPointMultiplierSimple.sv:392$68": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.26-392.47"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 48 ],
-            "Y": [ 113 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:402$79": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:402.48-402.64"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 161 ],
-            "Y": [ 162 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:412$85": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.43-412.60"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 163 ],
-            "Y": [ 118 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:420$100": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 7,
-            "Y_WIDTH": 7
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:420.78-420.90"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 164, 165, 166, 167, 168, 120, "0" ],
-            "Y": [ 50, 51, 52, 53, 54, 55, 56 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:466$121": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:466.83-466.97"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 129 ],
-            "Y": [ 98 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:467$128": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:467.83-467.97"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 130 ],
-            "Y": [ 95 ]
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:468$130": {
-          "hide_name": 1,
-          "type": "$not",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:468.38-468.54"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 16 ],
-            "Y": [ 127 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:373$26": {
+        "$or$FloatingPointMultiplierSimple.sv:301$28": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -1203,7 +591,55 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:373.28-373.63"
+            "src": "FloatingPointMultiplierSimple.sv:301.17-301.96"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 61 ],
+            "B": [ 64 ],
+            "Y": [ 93 ]
+          }
+        },
+        "$or$FloatingPointMultiplierSimple.sv:301$44": {
+          "hide_name": 1,
+          "type": "$or",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.138-301.291"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 67 ],
+            "B": [ 70 ],
+            "Y": [ 72 ]
+          }
+        },
+        "$or$FloatingPointMultiplierSimple.sv:301$46": {
+          "hide_name": 1,
+          "type": "$or",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.16-301.293"
           },
           "port_directions": {
             "A": "input",
@@ -1212,11 +648,11 @@
           },
           "connections": {
             "A": [ 93 ],
-            "B": [ 128 ],
-            "Y": [ 169 ]
+            "B": [ 73 ],
+            "Y": [ 94 ]
           }
         },
-        "$or$FloatingPointMultiplierSimple.sv:373$27": {
+        "$or$FloatingPointMultiplierSimple.sv:302$47": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -1227,7 +663,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:373.27-373.84"
+            "src": "FloatingPointMultiplierSimple.sv:302.16-302.47"
           },
           "port_directions": {
             "A": "input",
@@ -1235,12 +671,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 169 ],
-            "B": [ 102 ],
-            "Y": [ 32 ]
+            "A": [ 78 ],
+            "B": [ 77 ],
+            "Y": [ 71 ]
           }
         },
-        "$or$FloatingPointMultiplierSimple.sv:374$31": {
+        "$or$FloatingPointMultiplierSimple.sv:303$48": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -1251,7 +687,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.49-374.90"
+            "src": "FloatingPointMultiplierSimple.sv:303.19-303.43"
           },
           "port_directions": {
             "A": "input",
@@ -1259,12 +695,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 128 ],
-            "B": [ 87 ],
-            "Y": [ 89 ]
+            "A": [ 71 ],
+            "B": [ 76 ],
+            "Y": [ 95 ]
           }
         },
-        "$or$FloatingPointMultiplierSimple.sv:387$37": {
+        "$or$FloatingPointMultiplierSimple.sv:310$55": {
           "hide_name": 1,
           "type": "$or",
           "parameters": {
@@ -1275,7 +711,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:387.17-387.34"
+            "src": "FloatingPointMultiplierSimple.sv:310.71-310.122"
           },
           "port_directions": {
             "A": "input",
@@ -1283,346 +719,12 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 91 ],
-            "B": [ 86 ],
-            "Y": [ 170 ]
+            "A": [ 56 ],
+            "B": [ 90 ],
+            "Y": [ 96 ]
           }
         },
-        "$or$FloatingPointMultiplierSimple.sv:387$38": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:387.16-387.55"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 170 ],
-            "B": [ 102 ],
-            "Y": [ 160 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:388$54": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.65-388.218"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 96 ],
-            "B": [ 99 ],
-            "Y": [ 101 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:389$56": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:389.16-389.47"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 126 ],
-            "B": [ 124 ],
-            "Y": [ 100 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:390$61": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:390.33-390.83"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 33 ],
-            "B": [ 108 ],
-            "Y": [ 35 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:391$64": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.37-391.81"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 48 ],
-            "B": [ 159 ],
-            "Y": [ 107 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:392$73": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.52-392.152"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 143 ],
-            "B": [ 112 ],
-            "Y": [ 114 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:402$80": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:402.27-402.65"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 41 ],
-            "B": [ 162 ],
-            "Y": [ 115 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:412$87": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.27-412.80"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 119 ],
-            "B": [ 122 ],
-            "Y": [ 171 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:413$88": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:413.19-413.58"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 172 ],
-            "B": [ 173 ],
-            "Y": [ 174 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:413$90": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:413.63-413.105"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 175 ],
-            "B": [ 171 ],
-            "Y": [ 176 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:413$91": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:413.18-413.106"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 174 ],
-            "B": [ 176 ],
-            "Y": [ 108 ]
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:429$107": {
-          "hide_name": 1,
-          "type": "$or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 1,
-            "B_SIGNED": 0,
-            "B_WIDTH": 1,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:429.23-429.74"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 82 ],
-            "B": [ 155 ],
-            "Y": [ 177 ]
-          }
-        },
-        "$procmux$141": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:355.22-355.42|FloatingPointMultiplierSimple.sv:355.19-359.22"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 43, 44, 45, 46 ],
-            "B": [ "0", "0", "0", "0" ],
-            "S": [ 48 ],
-            "Y": [ 178, 179, 180, 181 ]
-          }
-        },
-        "$procmux$161": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:349.18-349.32|FloatingPointMultiplierSimple.sv:349.15-362.18"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 178, 179, 180, 181 ],
-            "B": [ "0", "1", "1", "1" ],
-            "S": [ 103 ],
-            "Y": [ 182, 183, 184, 185 ]
-          }
-        },
-        "$procmux$170": {
+        "$procmux$102": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -1630,7 +732,7 @@
           },
           "attributes": {
             "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:349.18-349.32|FloatingPointMultiplierSimple.sv:349.15-362.18"
+            "src": "FloatingPointMultiplierSimple.sv:282.10-282.18|FloatingPointMultiplierSimple.sv:282.7-295.10"
           },
           "port_directions": {
             "A": "input",
@@ -1639,105 +741,13 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 144, 145, 146, 147, 148 ],
-            "B": [ "1", "1", "1", "1", "1" ],
-            "S": [ 103 ],
-            "Y": [ 186, 187, 188, 189, 190 ]
-          }
-        },
-        "$procmux$203": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:339.10-339.15|FloatingPointMultiplierSimple.sv:339.7-366.10"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 182, 183, 184, 185 ],
-            "B": [ "1", "1", "1", "1" ],
-            "S": [ 100 ],
-            "Y": [ 191, 192, 193, 194 ]
-          }
-        },
-        "$procmux$209": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:339.10-339.15|FloatingPointMultiplierSimple.sv:339.7-366.10"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 186, 187, 188, 189, 190 ],
+            "A": [ 97, 98, 99, 100, 101 ],
             "B": [ "0", "0", "0", "0", "0" ],
-            "S": [ 100 ],
-            "Y": [ 195, 196, 197, 198, 199 ]
+            "S": [ 95 ],
+            "Y": [ 102, 103, 104, 105, 106 ]
           }
         },
-        "$procmux$215": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:331.6-331.11|FloatingPointMultiplierSimple.sv:331.3-368.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 195, 196, 197, 198, 199 ],
-            "B": [ 200, 201, 202, 203, 204 ],
-            "S": [ 160 ],
-            "Y": [ 22, 23, 24, 25, 26 ]
-          }
-        },
-        "$procmux$218": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 4
-          },
-          "attributes": {
-            "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:331.6-331.11|FloatingPointMultiplierSimple.sv:331.3-368.6"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 191, 192, 193, 194 ],
-            "B": [ "1", "1", "1", "1" ],
-            "S": [ 160 ],
-            "Y": [ 27, 28, 29, 30 ]
-          }
-        },
-        "$procmux$221": {
+        "$procmux$108": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -1745,7 +755,7 @@
           },
           "attributes": {
             "full_case": 1,
-            "src": "FloatingPointMultiplierSimple.sv:331.6-331.11|FloatingPointMultiplierSimple.sv:331.3-368.6"
+            "src": "FloatingPointMultiplierSimple.sv:277.6-277.11|FloatingPointMultiplierSimple.sv:277.3-297.6"
           },
           "port_directions": {
             "A": "input",
@@ -1754,133 +764,105 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 205 ],
-            "B": [ 206 ],
-            "S": [ 160 ],
+            "A": [ 107 ],
+            "B": [ "0" ],
+            "S": [ 94 ],
             "Y": [ 31 ]
           }
         },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:391$62": {
+        "$procmux$111": {
           "hide_name": 1,
-          "type": "$reduce_or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 6,
-            "Y_WIDTH": 1
+            "WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.63-391.79"
+            "full_case": 1,
+            "src": "FloatingPointMultiplierSimple.sv:277.6-277.11|FloatingPointMultiplierSimple.sv:277.3-297.6"
           },
           "port_directions": {
             "A": "input",
+            "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 43, 44, 45, 46, 47, 48 ],
-            "Y": [ 158 ]
+            "A": [ 108, 109, 110, 111 ],
+            "B": [ "1", "1", "1", "1" ],
+            "S": [ 94 ],
+            "Y": [ 27, 28, 29, 30 ]
           }
         },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:402$78": {
+        "$procmux$114": {
           "hide_name": 1,
-          "type": "$reduce_or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 6,
-            "Y_WIDTH": 1
+            "WIDTH": 5
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:402.50-402.63"
+            "full_case": 1,
+            "src": "FloatingPointMultiplierSimple.sv:277.6-277.11|FloatingPointMultiplierSimple.sv:277.3-297.6"
           },
           "port_directions": {
             "A": "input",
+            "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 36, 37, 38, 39, 40, 41 ],
-            "Y": [ 161 ]
+            "A": [ 102, 103, 104, 105, 106 ],
+            "B": [ "1", "0", "0", "0", "0" ],
+            "S": [ 94 ],
+            "Y": [ 22, 23, 24, 25, 26 ]
           }
         },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:412$83": {
+        "$procmux$81": {
           "hide_name": 1,
-          "type": "$reduce_or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 12,
-            "Y_WIDTH": 1
+            "WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.29-412.38"
+            "full_case": 1,
+            "src": "FloatingPointMultiplierSimple.sv:288.14-288.31|FloatingPointMultiplierSimple.sv:288.11-292.14"
           },
           "port_directions": {
             "A": "input",
+            "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218 ],
-            "Y": [ 117 ]
+            "A": [ 38, 39, 40, 41 ],
+            "B": [ "0", "0", "0", "0" ],
+            "S": [ 43 ],
+            "Y": [ 112, 113, 114, 115 ]
           }
         },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:412$84": {
+        "$procmux$96": {
           "hide_name": 1,
-          "type": "$reduce_or",
+          "type": "$mux",
           "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 12,
-            "Y_WIDTH": 1
+            "WIDTH": 4
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.45-412.59"
+            "full_case": 1,
+            "src": "FloatingPointMultiplierSimple.sv:282.10-282.18|FloatingPointMultiplierSimple.sv:282.7-295.10"
           },
           "port_directions": {
             "A": "input",
+            "B": "input",
+            "S": "input",
             "Y": "output"
           },
           "connections": {
-            "A": [ 219, 220, 221, 222, 173, 172, 144, 145, 146, 147, 148, 116 ],
-            "Y": [ 163 ]
+            "A": [ 112, 113, 114, 115 ],
+            "B": [ "1", "1", "1", "1" ],
+            "S": [ 95 ],
+            "Y": [ 108, 109, 110, 111 ]
           }
         },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:413$89": {
-          "hide_name": 1,
-          "type": "$reduce_or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 4,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:413.64-413.85"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 219, 220, 221, 222 ],
-            "Y": [ 175 ]
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:414$93": {
-          "hide_name": 1,
-          "type": "$reduce_or",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 12,
-            "Y_WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:414.42-414.107"
-          },
-          "port_directions": {
-            "A": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234 ],
-            "Y": [ 121 ]
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:469$133": {
+        "$reduce_or$FloatingPointMultiplierSimple.sv:354$70": {
           "hide_name": 1,
           "type": "$reduce_or",
           "parameters": {
@@ -1889,7 +871,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:469.42-469.53"
+            "src": "FloatingPointMultiplierSimple.sv:354.85-354.96"
           },
           "port_directions": {
             "A": "input",
@@ -1897,10 +879,10 @@
           },
           "connections": {
             "A": [ 12, 13, 14, 15, 16 ],
-            "Y": [ 129 ]
+            "Y": [ 63 ]
           }
         },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:470$136": {
+        "$reduce_or$FloatingPointMultiplierSimple.sv:355$77": {
           "hide_name": 1,
           "type": "$reduce_or",
           "parameters": {
@@ -1909,7 +891,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:470.42-470.53"
+            "src": "FloatingPointMultiplierSimple.sv:355.85-355.96"
           },
           "port_directions": {
             "A": "input",
@@ -1917,34 +899,10 @@
           },
           "connections": {
             "A": [ 2, 3, 4, 5, 6 ],
-            "Y": [ 130 ]
+            "Y": [ 60 ]
           }
         },
-        "$shl$FloatingPointMultiplierSimple.sv:414$92": {
-          "hide_name": 1,
-          "type": "$shl",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 12,
-            "B_SIGNED": 0,
-            "B_WIDTH": 6,
-            "Y_WIDTH": 12
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:414.44-414.106"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218 ],
-            "B": [ 235, 236, 237, 238, 239, 240 ],
-            "Y": [ 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234 ]
-          }
-        },
-        "$sub$FloatingPointMultiplierSimple.sv:417$95": {
+        "$sub$FloatingPointMultiplierSimple.sv:309$53": {
           "hide_name": 1,
           "type": "$sub",
           "parameters": {
@@ -1955,7 +913,7 @@
             "Y_WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:417.57-417.78"
+            "src": "FloatingPointMultiplierSimple.sv:309.33-309.64"
           },
           "port_directions": {
             "A": "input",
@@ -1963,109 +921,19 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ "0", "0", "1", "1", "0", "0" ],
-            "B": [ 241, 242, 243, 244, 245, 246 ],
-            "Y": [ 235, 236, 237, 238, 239, 240 ]
+            "A": [ 51, 52, 53, 54, 55, 56 ],
+            "B": [ 84, 85, 86, 87, 88, 89 ],
+            "Y": [ 32, 33, 34, 35, 36, 37 ]
           }
         },
-        "$sub$FloatingPointMultiplierSimple.sv:427$104": {
-          "hide_name": 1,
-          "type": "$sub",
-          "parameters": {
-            "A_SIGNED": 0,
-            "A_WIDTH": 6,
-            "B_SIGNED": 0,
-            "B_WIDTH": 6,
-            "Y_WIDTH": 6
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:427.33-427.64"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 77, 78, 79, 80, 81, 82 ],
-            "B": [ 149, 150, 151, 152, 153, 154 ],
-            "Y": [ 64, 65, 66, 67, 68, 69 ]
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:332$20": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 1
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:332.23-332.62"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0" ],
-            "B": [ 247 ],
-            "S": [ 170 ],
-            "Y": [ 206 ]
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:334$21": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 5
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:334.27-337.11"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ "0", "0", "0", "0", "1" ],
-            "B": [ 248, 249, 250, 251, "1" ],
-            "S": [ 170 ],
-            "Y": [ 200, 201, 202, 203, 204 ]
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:375$33": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 10
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:375.25-383.3"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ],
-            "B": [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 ],
-            "S": [ 90 ],
-            "Y": [ 248, 249, 250, 251, 252, 253, 254, 255, 256, 247 ]
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:418$97": {
+        "$ternary$FloatingPointMultiplierSimple.sv:310$56": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:418.25-418.77"
+            "src": "FloatingPointMultiplierSimple.sv:310.70-310.157"
           },
           "port_directions": {
             "A": "input",
@@ -2074,20 +942,20 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 131, 132, 133, 134, 135, 136 ],
-            "B": [ "0", "0", "0", "0", "0", "0" ],
-            "S": [ 137 ],
-            "Y": [ 241, 242, 243, 244, 245, 246 ]
+            "A": [ 84, 85, 86, 87, 88, 89 ],
+            "B": [ 51, 52, 53, 54, 55, 56 ],
+            "S": [ 96 ],
+            "Y": [ 116, 117, 118, 119, 120, 121 ]
           }
         },
-        "$ternary$FloatingPointMultiplierSimple.sv:419$98": {
+        "$ternary$FloatingPointMultiplierSimple.sv:317$58": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:419.27-419.90"
+            "src": "FloatingPointMultiplierSimple.sv:317.29-317.90"
           },
           "port_directions": {
             "A": "input",
@@ -2096,64 +964,20 @@
             "Y": "output"
           },
           "connections": {
-            "A": [ 164, 165, 166, 167, 168, "0" ],
-            "B": [ 57, 58, 59, 60, 61, 62 ],
-            "S": [ 120 ],
-            "Y": [ 131, 132, 133, 134, 135, 136 ]
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:426$103": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 6
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:426.29-426.91"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 138, 139, 140, 141, "0", "0" ],
+            "A": [ 79, 80, 81, 82, "0", "0" ],
             "B": [ "0", "0", "0", "1", "0", "0" ],
-            "S": [ 142 ],
-            "Y": [ 149, 150, 151, 152, 153, 154 ]
+            "S": [ 83 ],
+            "Y": [ 84, 85, 86, 87, 88, 89 ]
           }
         },
-        "$ternary$FloatingPointMultiplierSimple.sv:429$108": {
+        "$ternary$FloatingPointMultiplierSimple.sv:319$59": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:429.22-429.109"
-          },
-          "port_directions": {
-            "A": "input",
-            "B": "input",
-            "S": "input",
-            "Y": "output"
-          },
-          "connections": {
-            "A": [ 149, 150, 151, 152, 153, 154 ],
-            "B": [ 77, 78, 79, 80, 81, 82 ],
-            "S": [ 177 ],
-            "Y": [ 164, 165, 166, 167, 168, 120 ]
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:450$112": {
-          "hide_name": 1,
-          "type": "$mux",
-          "parameters": {
-            "WIDTH": 6
-          },
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:450.20-456.3"
+            "src": "FloatingPointMultiplierSimple.sv:319.20-325.3"
           },
           "port_directions": {
             "A": "input",
@@ -2164,18 +988,18 @@
           "connections": {
             "A": [ "0", 2, 3, 4, 5, 6 ],
             "B": [ 2, 3, 4, 5, 6, "1" ],
-            "S": [ 156 ],
-            "Y": [ 257, 258, 259, 260, 261, 262 ]
+            "S": [ 91 ],
+            "Y": [ 122, 123, 124, 125, 126, 127 ]
           }
         },
-        "$ternary$FloatingPointMultiplierSimple.sv:458$114": {
+        "$ternary$FloatingPointMultiplierSimple.sv:327$61": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
             "WIDTH": 6
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:458.20-464.3"
+            "src": "FloatingPointMultiplierSimple.sv:327.20-333.3"
           },
           "port_directions": {
             "A": "input",
@@ -2186,11 +1010,11 @@
           "connections": {
             "A": [ "0", 12, 13, 14, 15, 16 ],
             "B": [ 12, 13, 14, 15, 16, "1" ],
-            "S": [ 157 ],
-            "Y": [ 263, 264, 265, 266, 267, 268 ]
+            "S": [ 92 ],
+            "Y": [ 128, 129, 130, 131, 132, 133 ]
           }
         },
-        "$xor$FloatingPointMultiplierSimple.sv:472$139": {
+        "$xor$FloatingPointMultiplierSimple.sv:287$21": {
           "hide_name": 1,
           "type": "$xor",
           "parameters": {
@@ -2201,7 +1025,7 @@
             "Y_WIDTH": 1
           },
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:472.29-472.44"
+            "src": "FloatingPointMultiplierSimple.sv:287.27-287.42"
           },
           "port_directions": {
             "A": "input",
@@ -2211,7 +1035,7 @@
           "connections": {
             "A": [ 11 ],
             "B": [ 21 ],
-            "Y": [ 205 ]
+            "Y": [ 107 ]
           }
         },
         "full_mantissa_shifter": {
@@ -2221,7 +1045,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointMultiplierSimple.sv:416.20-416.106"
+            "src": "FloatingPointMultiplierSimple.sv:310.20-310.184"
           },
           "port_directions": {
             "bits": "input",
@@ -2229,9 +1053,9 @@
             "shifted": "output"
           },
           "connections": {
-            "bits": [ 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218 ],
-            "shift": [ 164, 165, 166, 167, 168, 120 ],
-            "shifted": [ 219, 220, 221, 222, 173, 172, 144, 145, 146, 147, 148, 116 ]
+            "bits": [ 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145 ],
+            "shift": [ 116, 117, 118, 119, 120, 121 ],
+            "shifted": [ 146, 147, 148, 149, 150, 151, 97, 98, 99, 100, 101, 152 ]
           }
         },
         "leading_one_encoder": {
@@ -2241,15 +1065,15 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointMultiplierSimple.sv:421.37-421.233"
+            "src": "FloatingPointMultiplierSimple.sv:312.37-312.233"
           },
           "port_directions": {
             "inp": "input",
             "out": "output"
           },
           "connections": {
-            "inp": [ 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207 ],
-            "out": [ 138, 139, 140, 141 ]
+            "inp": [ 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134 ],
+            "out": [ 79, 80, 81, 82 ]
           }
         },
         "mantissa_mult": {
@@ -2259,7 +1083,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "FloatingPointMultiplierSimple.sv:449.30-449.110"
+            "src": "FloatingPointMultiplierSimple.sv:318.30-318.110"
           },
           "port_directions": {
             "a": "input",
@@ -2268,487 +1092,218 @@
             "product": "output"
           },
           "connections": {
-            "a": [ 257, 258, 259, 260, 261, 262 ],
-            "b": [ 263, 264, 265, 266, 267, 268 ],
+            "a": [ 122, 123, 124, 125, 126, 127 ],
+            "b": [ 128, 129, 130, 131, 132, 133 ],
             "isProductSigned": [ ],
-            "product": [ 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218 ]
+            "product": [ 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145 ]
           }
         }
       },
       "netnames": {
         "$2__product_exponent[3:0]": {
           "hide_name": 1,
-          "bits": [ 191, 192, 193, 194 ],
+          "bits": [ 108, 109, 110, 111 ],
           "attributes": {
             "src": "FloatingPointMultiplierSimple.sv:0.0-0.0"
           }
         },
         "$2__product_mantissa[4:0]": {
           "hide_name": 1,
-          "bits": [ 195, 196, 197, 198, 199 ],
+          "bits": [ 102, 103, 104, 105, 106 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:0.0-0.0"
+          }
+        },
+        "$2__product_sign[0:0]": {
+          "hide_name": 1,
+          "bits": [ 107 ],
           "attributes": {
             "src": "FloatingPointMultiplierSimple.sv:0.0-0.0"
           }
         },
         "$3__product_exponent[3:0]": {
           "hide_name": 1,
-          "bits": [ 182, 183, 184, 185 ],
+          "bits": [ 112, 113, 114, 115 ],
           "attributes": {
             "src": "FloatingPointMultiplierSimple.sv:0.0-0.0"
           }
         },
-        "$3__product_mantissa[4:0]": {
+        "$and$FloatingPointMultiplierSimple.sv:301$24_Y": {
           "hide_name": 1,
-          "bits": [ 186, 187, 188, 189, 190 ],
+          "bits": [ 61 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:0.0-0.0"
+            "src": "FloatingPointMultiplierSimple.sv:301.18-301.54"
           }
         },
-        "$5__product_exponent[3:0]": {
+        "$and$FloatingPointMultiplierSimple.sv:301$27_Y": {
           "hide_name": 1,
-          "bits": [ 178, 179, 180, 181 ],
+          "bits": [ 64 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:0.0-0.0"
+            "src": "FloatingPointMultiplierSimple.sv:301.59-301.95"
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:372$23_Y": {
+        "$and$FloatingPointMultiplierSimple.sv:301$36_Y": {
           "hide_name": 1,
-          "bits": [ 105 ],
+          "bits": [ 67 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:372.35-372.60"
+            "src": "FloatingPointMultiplierSimple.sv:301.139-301.212"
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:374$30_Y": {
+        "$and$FloatingPointMultiplierSimple.sv:301$43_Y": {
           "hide_name": 1,
-          "bits": [ 87 ],
+          "bits": [ 70 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.69-374.89"
+            "src": "FloatingPointMultiplierSimple.sv:301.217-301.290"
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:388$46_Y": {
+        "$and$FloatingPointMultiplierSimple.sv:301$45_Y": {
+          "hide_name": 1,
+          "bits": [ 73 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.101-301.292"
+          }
+        },
+        "$eq$FloatingPointMultiplierSimple.sv:301$22_Y": {
+          "hide_name": 1,
+          "bits": [ 59 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.19-301.37"
+          }
+        },
+        "$eq$FloatingPointMultiplierSimple.sv:301$25_Y": {
+          "hide_name": 1,
+          "bits": [ 62 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.60-301.78"
+          }
+        },
+        "$eq$FloatingPointMultiplierSimple.sv:301$30_Y": {
+          "hide_name": 1,
+          "bits": [ 65 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.149-301.167"
+          }
+        },
+        "$eq$FloatingPointMultiplierSimple.sv:301$37_Y": {
+          "hide_name": 1,
+          "bits": [ 68 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.227-301.245"
+          }
+        },
+        "$ge$FloatingPointMultiplierSimple.sv:304$50_Y": {
+          "hide_name": 1,
+          "bits": [ 75 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:304.51-307.3"
+          }
+        },
+        "$gt$FloatingPointMultiplierSimple.sv:317$57_Y": {
+          "hide_name": 1,
+          "bits": [ 83 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:317.30-317.58"
+          }
+        },
+        "$lt$FloatingPointMultiplierSimple.sv:310$54_Y": {
+          "hide_name": 1,
+          "bits": [ 90 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:310.90-310.121"
+          }
+        },
+        "$not$FloatingPointMultiplierSimple.sv:301$35_Y": {
+          "hide_name": 1,
+          "bits": [ 66 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.197-301.211"
+          }
+        },
+        "$not$FloatingPointMultiplierSimple.sv:301$42_Y": {
+          "hide_name": 1,
+          "bits": [ 69 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.275-301.289"
+          }
+        },
+        "$not$FloatingPointMultiplierSimple.sv:304$49_Y": {
+          "hide_name": 1,
+          "bits": [ 74 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:304.28-304.46"
+          }
+        },
+        "$or$FloatingPointMultiplierSimple.sv:301$28_Y": {
+          "hide_name": 1,
+          "bits": [ 93 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.17-301.96"
+          }
+        },
+        "$or$FloatingPointMultiplierSimple.sv:301$44_Y": {
+          "hide_name": 1,
+          "bits": [ 72 ],
+          "attributes": {
+            "src": "FloatingPointMultiplierSimple.sv:301.138-301.291"
+          }
+        },
+        "$or$FloatingPointMultiplierSimple.sv:310$55_Y": {
           "hide_name": 1,
           "bits": [ 96 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.66-388.139"
+            "src": "FloatingPointMultiplierSimple.sv:310.71-310.122"
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:388$53_Y": {
+        "$reduce_or$FloatingPointMultiplierSimple.sv:301$23_Y": {
           "hide_name": 1,
-          "bits": [ 99 ],
+          "bits": [ 60 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.144-388.217"
+            "src": "FloatingPointMultiplierSimple.sv:301.42-301.53"
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:391$65_Y": {
+        "$reduce_or$FloatingPointMultiplierSimple.sv:301$26_Y": {
           "hide_name": 1,
-          "bits": [ 109 ],
+          "bits": [ 63 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.36-391.92"
+            "src": "FloatingPointMultiplierSimple.sv:301.83-301.94"
           }
         },
-        "$and$FloatingPointMultiplierSimple.sv:392$72_Y": {
+        "$ternary$FloatingPointMultiplierSimple.sv:310$56_Y": {
           "hide_name": 1,
-          "bits": [ 112 ],
+          "bits": [ 116, 117, 118, 119, 120, 121 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.90-392.151"
-          }
-        },
-        "$and$FloatingPointMultiplierSimple.sv:412$86_Y": {
-          "hide_name": 1,
-          "bits": [ 119 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.28-412.61"
-          }
-        },
-        "$eq$FloatingPointMultiplierSimple.sv:388$40_Y": {
-          "hide_name": 1,
-          "bits": [ 94 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.76-388.94"
-          }
-        },
-        "$eq$FloatingPointMultiplierSimple.sv:388$47_Y": {
-          "hide_name": 1,
-          "bits": [ 97 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.154-388.172"
-          }
-        },
-        "$eq$FloatingPointMultiplierSimple.sv:392$70_Y": {
-          "hide_name": 1,
-          "bits": [ 110 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.91-392.124"
-          }
-        },
-        "$eq$FloatingPointMultiplierSimple.sv:466$116_Y": {
-          "hide_name": 1,
-          "bits": [ 123 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:466.35-466.53"
-          }
-        },
-        "$eq$FloatingPointMultiplierSimple.sv:467$123_Y": {
-          "hide_name": 1,
-          "bits": [ 125 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:467.35-467.53"
-          }
-        },
-        "$ge$FloatingPointMultiplierSimple.sv:418$96_Y": {
-          "hide_name": 1,
-          "bits": [ 137 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:418.26-418.50"
-          }
-        },
-        "$ge$FloatingPointMultiplierSimple.sv:426$102_Y": {
-          "hide_name": 1,
-          "bits": [ 142 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:426.30-426.59"
-          }
-        },
-        "$gt$FloatingPointMultiplierSimple.sv:392$69_Y": {
-          "hide_name": 1,
-          "bits": [ 143 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.53-392.85"
-          }
-        },
-        "$gt$FloatingPointMultiplierSimple.sv:392$71_Y": {
-          "hide_name": 1,
-          "bits": [ 111 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.129-392.150"
-          }
-        },
-        "$lt$FloatingPointMultiplierSimple.sv:429$106_Y": {
-          "hide_name": 1,
-          "bits": [ 155 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:429.42-429.73"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:372$22_Y": {
-          "hide_name": 1,
-          "bits": [ 104 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:372.53-372.59"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:372$24_Y": {
-          "hide_name": 1,
-          "bits": [ 106 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:372.65-372.71"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:374$28_Y": {
-          "hide_name": 1,
-          "bits": [ 88 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.27-374.44"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:374$29_Y": {
-          "hide_name": 1,
-          "bits": [ 85 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.70-374.78"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:386$35_Y": {
-          "hide_name": 1,
-          "bits": [ 92 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:386.38-386.54"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:388$45_Y": {
-          "hide_name": 1,
-          "bits": [ 95 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.124-388.138"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:388$52_Y": {
-          "hide_name": 1,
-          "bits": [ 98 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.202-388.216"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:391$63_Y": {
-          "hide_name": 1,
-          "bits": [ 159 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.61-391.80"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:392$68_Y": {
-          "hide_name": 1,
-          "bits": [ 113 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.26-392.47"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:402$79_Y": {
-          "hide_name": 1,
-          "bits": [ 162 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:402.48-402.64"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:412$85_Y": {
-          "hide_name": 1,
-          "bits": [ 118 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.43-412.60"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:420$100_Y": {
-          "hide_name": 1,
-          "bits": [ 50, 51, 52, 53, 54, 55, 56 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:420.78-420.90"
-          }
-        },
-        "$not$FloatingPointMultiplierSimple.sv:468$130_Y": {
-          "hide_name": 1,
-          "bits": [ 127 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:468.38-468.54"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:373$26_Y": {
-          "hide_name": 1,
-          "bits": [ 169 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:373.28-373.63"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:374$31_Y": {
-          "hide_name": 1,
-          "bits": [ 89 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:374.49-374.90"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:388$54_Y": {
-          "hide_name": 1,
-          "bits": [ 101 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.65-388.218"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:391$64_Y": {
-          "hide_name": 1,
-          "bits": [ 107 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.37-391.81"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:392$73_Y": {
-          "hide_name": 1,
-          "bits": [ 114 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:392.52-392.152"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:402$80_Y": {
-          "hide_name": 1,
-          "bits": [ 115 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:402.27-402.65"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:413$88_Y": {
-          "hide_name": 1,
-          "bits": [ 174 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:413.19-413.58"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:413$90_Y": {
-          "hide_name": 1,
-          "bits": [ 176 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:413.63-413.105"
-          }
-        },
-        "$or$FloatingPointMultiplierSimple.sv:429$107_Y": {
-          "hide_name": 1,
-          "bits": [ 177 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:429.23-429.74"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:388$44_Y": {
-          "hide_name": 1,
-          "bits": [ 130 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.126-388.137"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:388$51_Y": {
-          "hide_name": 1,
-          "bits": [ 129 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:388.204-388.215"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:391$62_Y": {
-          "hide_name": 1,
-          "bits": [ 158 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:391.63-391.79"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:402$78_Y": {
-          "hide_name": 1,
-          "bits": [ 161 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:402.50-402.63"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:412$83_Y": {
-          "hide_name": 1,
-          "bits": [ 117 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.29-412.38"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:412$84_Y": {
-          "hide_name": 1,
-          "bits": [ 163 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:412.45-412.59"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:413$89_Y": {
-          "hide_name": 1,
-          "bits": [ 175 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:413.64-413.85"
-          }
-        },
-        "$reduce_or$FloatingPointMultiplierSimple.sv:414$93_Y": {
-          "hide_name": 1,
-          "bits": [ 121 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:414.42-414.107"
-          }
-        },
-        "$shl$FloatingPointMultiplierSimple.sv:414$92_Y": {
-          "hide_name": 1,
-          "bits": [ 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:414.44-414.106"
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:332$20_Y": {
-          "hide_name": 1,
-          "bits": [ 206 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:332.23-332.62"
-          }
-        },
-        "$ternary$FloatingPointMultiplierSimple.sv:334$21_Y": {
-          "hide_name": 1,
-          "bits": [ 200, 201, 202, 203, 204 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:334.27-337.11"
-          }
-        },
-        "_a_sign_xor_b_sign": {
-          "hide_name": 0,
-          "bits": [ 205 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:230.7-230.25"
+            "src": "FloatingPointMultiplierSimple.sv:310.70-310.157"
           }
         },
         "_addExp_add_rebias_carry": {
           "hide_name": 0,
-          "bits": [ 83 ],
+          "bits": [ 57 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:231.7-231.31",
+            "src": "FloatingPointMultiplierSimple.sv:229.7-229.31",
             "unused_bits": "0 "
-          }
-        },
-        "_d1__shiftAmount_b_add_const_1": {
-          "hide_name": 0,
-          "bits": [ 57, 58, 59, 60, 61, 62 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:232.13-232.43"
-          }
-        },
-        "_in1__swizzled": {
-          "hide_name": 0,
-          "bits": [ "0", "1", "1", "1", "0", "0" ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:233.13-233.27"
-          }
-        },
-        "_original__out": {
-          "hide_name": 0,
-          "bits": [ 248, 249, 250, 251, 252, 253, 254, 255, 256, 247 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:234.13-234.27",
-            "unused_bits": "4 5 6 7 8"
           }
         },
         "_productExpMinusLeadOne_add_const_1_carry": {
           "hide_name": 0,
-          "bits": [ 70 ],
+          "bits": [ 44 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:235.7-235.48",
-            "unused_bits": "0 "
-          }
-        },
-        "_remainingExp_add__swizzled_carry": {
-          "hide_name": 0,
-          "bits": [ 49 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:236.7-236.40",
-            "unused_bits": "0 "
-          }
-        },
-        "_shiftAmount__const_12_subtract_safeRightShift": {
-          "hide_name": 0,
-          "bits": [ 235, 236, 237, 238, 239, 240 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:237.13-237.59"
-          }
-        },
-        "_shiftAmount_b_add_const_1_carry": {
-          "hide_name": 0,
-          "bits": [ 63 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:238.7-238.39",
+            "src": "FloatingPointMultiplierSimple.sv:230.7-230.48",
             "unused_bits": "0 "
           }
         },
         "_swizzled_add__swizzled_carry": {
           "hide_name": 0,
-          "bits": [ "0" ],
+          "bits": [ 58 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:239.7-239.36"
+            "src": "FloatingPointMultiplierSimple.sv:231.7-231.36",
+            "unused_bits": "0 "
           }
         },
         "_swizzled_add__swizzled_carry_0": {
           "hide_name": 0,
-          "bits": [ 84 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:240.7-240.38",
-            "unused_bits": "0 "
-          }
-        },
-        "_swizzled_add__swizzled_carry_1": {
-          "hide_name": 0,
           "bits": [ "0" ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:241.7-241.38"
+            "src": "FloatingPointMultiplierSimple.sv:232.7-232.38"
           }
         },
         "a": {
@@ -2760,44 +1315,44 @@
         },
         "aMantissa": {
           "hide_name": 0,
-          "bits": [ 257, 258, 259, 260, 261, 262 ],
+          "bits": [ 122, 123, 124, 125, 126, 127 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:242.13-242.22"
+            "src": "FloatingPointMultiplierSimple.sv:233.13-233.22"
           }
         },
         "a_exponent": {
           "hide_name": 0,
           "bits": [ 7, 8, 9, 10 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:243.13-243.23"
+            "src": "FloatingPointMultiplierSimple.sv:234.13-234.23"
           }
         },
         "a_mantissa": {
           "hide_name": 0,
           "bits": [ 2, 3, 4, 5, 6 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:244.13-244.23"
+            "src": "FloatingPointMultiplierSimple.sv:235.13-235.23"
           }
         },
         "a_sign": {
           "hide_name": 0,
           "bits": [ 11 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:245.7-245.13"
+            "src": "FloatingPointMultiplierSimple.sv:236.7-236.13"
           }
         },
         "addBias": {
           "hide_name": 0,
           "bits": [ "0", "1", "1", "1", "0", "0" ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:246.13-246.20"
+            "src": "FloatingPointMultiplierSimple.sv:237.13-237.20"
           }
         },
         "addExp": {
           "hide_name": 0,
-          "bits": [ 71, 72, 73, 74, 75, 76 ],
+          "bits": [ 45, 46, 47, 48, 49, 50 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:247.13-247.19"
+            "src": "FloatingPointMultiplierSimple.sv:238.13-238.19"
           }
         },
         "b": {
@@ -2809,233 +1364,128 @@
         },
         "bMantissa": {
           "hide_name": 0,
-          "bits": [ 263, 264, 265, 266, 267, 268 ],
+          "bits": [ 128, 129, 130, 131, 132, 133 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:248.13-248.22"
+            "src": "FloatingPointMultiplierSimple.sv:239.13-239.22"
           }
         },
         "b_exponent": {
           "hide_name": 0,
           "bits": [ 17, 18, 19, 20 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:249.13-249.23"
+            "src": "FloatingPointMultiplierSimple.sv:240.13-240.23"
           }
         },
         "b_mantissa": {
           "hide_name": 0,
           "bits": [ 12, 13, 14, 15, 16 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:250.13-250.23"
+            "src": "FloatingPointMultiplierSimple.sv:241.13-241.23"
           }
         },
         "b_sign": {
           "hide_name": 0,
           "bits": [ 21 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:251.7-251.13"
-          }
-        },
-        "doRound": {
-          "hide_name": 0,
-          "bits": [ "0" ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:252.7-252.14"
+            "src": "FloatingPointMultiplierSimple.sv:242.7-242.13"
           }
         },
         "finalMantissa": {
           "hide_name": 0,
-          "bits": [ 144, 145, 146, 147, 148 ],
+          "bits": [ 97, 98, 99, 100, 101 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:253.13-253.26"
-          }
-        },
-        "finiteOverflow": {
-          "hide_name": 0,
-          "bits": [ 103 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:254.7-254.21"
+            "src": "FloatingPointMultiplierSimple.sv:243.13-243.26"
           }
         },
         "fullMantissa": {
           "hide_name": 0,
-          "bits": [ 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218 ],
+          "bits": [ 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:255.14-255.26"
+            "src": "FloatingPointMultiplierSimple.sv:244.14-244.26"
           }
         },
-        "inexact": {
+        "internalOverflow": {
           "hide_name": 0,
-          "bits": [ 108 ],
+          "bits": [ 76 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:256.7-256.14"
-          }
-        },
-        "inputIsNaN": {
-          "hide_name": 0,
-          "bits": [ 170 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:257.7-257.17"
-          }
-        },
-        "internalStatus_divideByZero": {
-          "hide_name": 0,
-          "bits": [ "0" ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:258.7-258.34"
-          }
-        },
-        "internalStatus_inexact": {
-          "hide_name": 0,
-          "bits": [ 35 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:259.7-259.29"
-          }
-        },
-        "internalStatus_invalid": {
-          "hide_name": 0,
-          "bits": [ 32 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:260.7-260.29"
-          }
-        },
-        "internalStatus_overflow": {
-          "hide_name": 0,
-          "bits": [ 33 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:261.7-261.30"
-          }
-        },
-        "internalStatus_underflow": {
-          "hide_name": 0,
-          "bits": [ 34 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:262.7-262.31"
-          }
-        },
-        "invalidArithmetic": {
-          "hide_name": 0,
-          "bits": [ 102 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:263.7-263.24"
-          }
-        },
-        "invalidOperation": {
-          "hide_name": 0,
-          "bits": [ 32 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:264.7-264.23"
+            "src": "FloatingPointMultiplierSimple.sv:245.7-245.23"
           }
         },
         "isAnInfinity_a": {
           "hide_name": 0,
-          "bits": [ 126 ],
+          "bits": [ 78 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:265.7-265.21"
+            "src": "FloatingPointMultiplierSimple.sv:246.7-246.21"
           }
         },
         "isAnInfinity_b": {
           "hide_name": 0,
-          "bits": [ 124 ],
+          "bits": [ 77 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:266.7-266.21"
+            "src": "FloatingPointMultiplierSimple.sv:247.7-247.21"
           }
         },
         "isInf": {
           "hide_name": 0,
-          "bits": [ 100 ],
+          "bits": [ 71 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:267.7-267.12"
+            "src": "FloatingPointMultiplierSimple.sv:248.7-248.12"
           }
         },
         "isNaN": {
           "hide_name": 0,
-          "bits": [ 160 ],
+          "bits": [ 94 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:268.7-268.12"
-          }
-        },
-        "isNaN_a": {
-          "hide_name": 0,
-          "bits": [ 91 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:269.7-269.14"
-          }
-        },
-        "isNaN_b": {
-          "hide_name": 0,
-          "bits": [ 86 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:270.7-270.14"
+            "src": "FloatingPointMultiplierSimple.sv:249.7-249.12"
           }
         },
         "isNormal_a": {
           "hide_name": 0,
-          "bits": [ 156 ],
+          "bits": [ 91 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:271.7-271.17"
+            "src": "FloatingPointMultiplierSimple.sv:250.7-250.17"
           }
         },
         "isNormal_b": {
           "hide_name": 0,
-          "bits": [ 157 ],
+          "bits": [ 92 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:272.7-272.17"
-          }
-        },
-        "isRightShift": {
-          "hide_name": 0,
-          "bits": [ 120 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:273.7-273.19"
-          }
-        },
-        "isSignalingNaN_a": {
-          "hide_name": 0,
-          "bits": [ 93 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:274.7-274.23"
-          }
-        },
-        "isSignalingNaN_b": {
-          "hide_name": 0,
-          "bits": [ 128 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:275.7-275.23"
+            "src": "FloatingPointMultiplierSimple.sv:251.7-251.17"
           }
         },
         "leadingOnePosition": {
           "hide_name": 0,
-          "bits": [ 149, 150, 151, 152, 153, 154 ],
+          "bits": [ 84, 85, 86, 87, 88, 89 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:276.13-276.31"
+            "src": "FloatingPointMultiplierSimple.sv:252.13-252.31"
           }
         },
         "leadingOneRaw": {
           "hide_name": 0,
-          "bits": [ 138, 139, 140, 141 ],
+          "bits": [ 79, 80, 81, 82 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:277.13-277.26"
+            "src": "FloatingPointMultiplierSimple.sv:253.13-253.26"
           }
         },
         "leadingOneRawExtended": {
           "hide_name": 0,
-          "bits": [ 138, 139, 140, 141, "0", "0" ],
+          "bits": [ 79, 80, 81, 82, "0", "0" ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:278.13-278.34"
+            "src": "FloatingPointMultiplierSimple.sv:254.13-254.34"
           }
         },
         "mantissa": {
           "hide_name": 0,
-          "bits": [ 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218 ],
+          "bits": [ 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:279.14-279.22"
+            "src": "FloatingPointMultiplierSimple.sv:255.14-255.22"
           }
         },
-        "partialLostBits": {
+        "overflow": {
           "hide_name": 0,
-          "bits": [ 122 ],
+          "bits": [ 95 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:280.7-280.22"
+            "src": "FloatingPointMultiplierSimple.sv:256.7-256.15"
           }
         },
         "product": {
@@ -3047,185 +1497,59 @@
         },
         "productExp": {
           "hide_name": 0,
-          "bits": [ 77, 78, 79, 80, 81, 82 ],
+          "bits": [ 51, 52, 53, 54, 55, 56 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:281.13-281.23"
+            "src": "FloatingPointMultiplierSimple.sv:257.13-257.23"
           }
         },
         "productExpMinusLeadOne": {
           "hide_name": 0,
-          "bits": [ 64, 65, 66, 67, 68, 69 ],
+          "bits": [ 32, 33, 34, 35, 36, 37 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:282.13-282.35"
+            "src": "FloatingPointMultiplierSimple.sv:258.13-258.35"
           }
         },
         "product_exponent": {
           "hide_name": 0,
           "bits": [ 27, 28, 29, 30 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:283.13-283.29"
+            "src": "FloatingPointMultiplierSimple.sv:259.13-259.29"
           }
         },
         "product_mantissa": {
           "hide_name": 0,
           "bits": [ 22, 23, 24, 25, 26 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:284.13-284.29"
+            "src": "FloatingPointMultiplierSimple.sv:260.13-260.29"
           }
         },
         "product_sign": {
           "hide_name": 0,
           "bits": [ 31 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:285.7-285.19"
+            "src": "FloatingPointMultiplierSimple.sv:261.7-261.19"
           }
         },
         "rebias": {
           "hide_name": 0,
           "bits": [ "1", "0", "0", "1", "1", "1" ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:286.13-286.19"
+            "src": "FloatingPointMultiplierSimple.sv:262.13-262.19"
           }
         },
         "remainingExp": {
           "hide_name": 0,
-          "bits": [ 36, 37, 38, 39, 40, 41 ],
+          "bits": [ 38, 39, 40, 41, 42, 43 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:287.13-287.25"
-          }
-        },
-        "resultSign": {
-          "hide_name": 0,
-          "bits": [ 205 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:288.7-288.17"
-          }
-        },
-        "retainedSignificand": {
-          "hide_name": 0,
-          "bits": [ 144, 145, 146, 147, 148, 116 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:289.13-289.32"
-          }
-        },
-        "rightShiftAmount": {
-          "hide_name": 0,
-          "bits": [ 131, 132, 133, 134, 135, 136 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:290.13-290.29"
-          }
-        },
-        "roundedExponent": {
-          "hide_name": 0,
-          "bits": [ 43, 44, 45, 46, 47, 48 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:291.13-291.28"
-          }
-        },
-        "roundedSignificand": {
-          "hide_name": 0,
-          "bits": [ 144, 145, 146, 147, 148, 116, "0" ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:292.13-292.31"
-          }
-        },
-        "roundedToNormal": {
-          "hide_name": 0,
-          "bits": [ 42 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:293.7-293.22"
-          }
-        },
-        "roundingCarry": {
-          "hide_name": 0,
-          "bits": [ "0" ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:294.7-294.20"
-          }
-        },
-        "safeRightShift": {
-          "hide_name": 0,
-          "bits": [ 241, 242, 243, 244, 245, 246 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:295.13-295.27"
-          }
-        },
-        "selectSecondNaN": {
-          "hide_name": 0,
-          "bits": [ 90 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:296.7-296.22"
-          }
-        },
-        "selectedNaN_mantissa": {
-          "hide_name": 0,
-          "bits": [ 248, 249, 250, 251, 252 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:297.13-297.33",
-            "unused_bits": "4"
-          }
-        },
-        "shiftAmount": {
-          "hide_name": 0,
-          "bits": [ 164, 165, 166, 167, 168, 120 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:298.13-298.24"
+            "src": "FloatingPointMultiplierSimple.sv:263.13-263.25"
           }
         },
         "shiftMantissa": {
           "hide_name": 0,
-          "bits": [ 219, 220, 221, 222, 173, 172, 144, 145, 146, 147, 148, 116 ],
+          "bits": [ 146, 147, 148, 149, 150, 151, 97, 98, 99, 100, 101, 152 ],
           "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:299.14-299.27"
-          }
-        },
-        "shiftedOutSticky": {
-          "hide_name": 0,
-          "bits": [ 171 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:300.7-300.23"
-          }
-        },
-        "status": {
-          "hide_name": 0,
-          "bits": [ 32, "0", 33, 34, 35 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:228.20-228.26"
-          }
-        },
-        "status_divideByZero": {
-          "hide_name": 0,
-          "bits": [ "0" ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:301.7-301.26"
-          }
-        },
-        "status_inexact": {
-          "hide_name": 0,
-          "bits": [ 35 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:302.7-302.21"
-          }
-        },
-        "status_invalid": {
-          "hide_name": 0,
-          "bits": [ 32 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:303.7-303.21"
-          }
-        },
-        "status_overflow": {
-          "hide_name": 0,
-          "bits": [ 33 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:304.7-304.22"
-          }
-        },
-        "status_underflow": {
-          "hide_name": 0,
-          "bits": [ 34 ],
-          "attributes": {
-            "src": "FloatingPointMultiplierSimple.sv:305.7-305.23"
+            "src": "FloatingPointMultiplierSimple.sv:264.14-264.27",
+            "unused_bits": "0 1 2 3 4 5 11"
           }
         }
       }
@@ -3331,7 +1655,7 @@
         }
       },
       "cells": {
-        "$procmux$224": {
+        "$procmux$117": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -3486,7 +1810,7 @@
         }
       },
       "cells": {
-        "$procmux$251": {
+        "$procmux$144": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -3509,7 +1833,7 @@
             "Y": [ 6, 7 ]
           }
         },
-        "$procmux$257": {
+        "$procmux$150": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -3610,7 +1934,7 @@
             "Y": [ 11 ]
           }
         },
-        "$procmux$242": {
+        "$procmux$135": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -3633,7 +1957,7 @@
             "Y": [ 14, 15, 16 ]
           }
         },
-        "$procmux$248": {
+        "$procmux$141": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -3819,7 +2143,7 @@
             "Y": [ 16 ]
           }
         },
-        "$procmux$233": {
+        "$procmux$126": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {
@@ -3842,7 +2166,7 @@
             "Y": [ 21, 22, 23, 24 ]
           }
         },
-        "$procmux$239": {
+        "$procmux$132": {
           "hide_name": 1,
           "type": "$mux",
           "parameters": {

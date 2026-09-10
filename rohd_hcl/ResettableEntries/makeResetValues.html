@@ -94,15 +94,33 @@ entries will get the default of <code>0</code>.</li>
   <pre class="language-dart"><code class="language-dart">@protected
 List&lt;Logic&gt; makeResetValues(dynamic resetValue,
     {required int numEntries, required int entryWidth}) {
-  if (resetValue is List) {
+  if (resetValue == null) {
+    return List.generate(numEntries, (_) =&gt; Const(0, width: entryWidth));
+  } else if (resetValue is Logic) {
+    _validateResetValue(resetValue, entryWidth: entryWidth);
+    final resetValueInput = addTypedInput(&#39;resetValue&#39;, resetValue);
+    return List.generate(numEntries, (_) =&gt; resetValueInput);
+  } else if (resetValue is List) {
     if (resetValue.length != numEntries) {
       throw RohdHclException(&#39;resetValue list length (${resetValue.length})&#39;
           &#39; does not match numEntries ($numEntries)&#39;);
     }
+
+    for (final resetVal in resetValue) {
+      _validateResetValue(resetVal, entryWidth: entryWidth);
+    }
+
+    &#47;&#47; TODO(mkorbel1): it would be nice to use the `StaticOrDynamicParameter`
+    &#47;&#47;  instead of recreating it for int here, but it needs upgrades
+
     return [
       for (final (i, resetVal) in resetValue.indexed)
-        _makeResetValue(resetVal,
-            name: &#39;resetValue_$i&#39;, entryWidth: entryWidth)
+        if (resetVal is Logic)
+          addTypedInput(&#39;resetValue_$i&#39;, resetVal)
+        else if (resetVal == null)
+          Const(0, width: entryWidth)
+        else
+          Const(resetVal, width: entryWidth)
     ];
   } else if (resetValue is Map&lt;int, dynamic&gt;) {
     if (resetValue.keys.any((key) =&gt; key &lt; 0 || key &gt;= numEntries)) {
@@ -110,16 +128,23 @@ List&lt;Logic&gt; makeResetValues(dynamic resetValue,
           &#39; range (0 to ${numEntries - 1})&#39;);
     }
 
+    for (final resetVal in resetValue.values) {
+      _validateResetValue(resetVal, entryWidth: entryWidth);
+    }
+
     return [
       for (var i = 0; i &lt; numEntries; i++)
-        _makeResetValue(resetValue[i],
-            name: &#39;resetValue_$i&#39;, entryWidth: entryWidth)
+        if (resetValue[i] is Logic)
+          addTypedInput(&#39;resetValue_$i&#39;, resetValue[i] as Logic)
+        else if (resetValue[i] == null)
+          Const(0, width: entryWidth)
+        else
+          Const(resetValue[i], width: entryWidth)
     ];
+  } else {
+    return List.generate(
+        numEntries, (_) =&gt; Const(resetValue, width: entryWidth));
   }
-
-  final commonResetValue =
-      _makeResetValue(resetValue, name: &#39;resetValue&#39;, entryWidth: entryWidth);
-  return List.generate(numEntries, (_) =&gt; commonResetValue);
 }</code></pre>
 </section>
 

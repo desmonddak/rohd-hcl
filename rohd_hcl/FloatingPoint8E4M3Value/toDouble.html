@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the subtract method from the FixedPoint class, for the Dart programming language.">
-  <title>subtract method - FixedPoint class - rohd_hcl library - Dart API</title>
+  <meta name="description" content="API docs for the toDouble method from the FloatingPoint8E4M3Value class, for the Dart programming language.">
+  <title>toDouble method - FloatingPoint8E4M3Value class - rohd_hcl library - Dart API</title>
 
 
   
@@ -26,10 +26,10 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rohd_hcl</a></li>
     <li><a href="../../rohd_hcl/">rohd_hcl.dart</a></li>
-    <li><a href="../../rohd_hcl/FixedPoint-class.html">FixedPoint</a></li>
-    <li class="self-crumb">subtract method</li>
+    <li><a href="../../rohd_hcl/FloatingPoint8E4M3Value-class.html">FloatingPoint8E4M3Value</a></li>
+    <li class="self-crumb">toDouble method</li>
   </ol>
-  <div class="self-name">subtract</div>
+  <div class="self-name">toDouble</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -46,40 +46,40 @@
 <div
     id="dartdoc-main-content"
     class="main-content"
-    data-above-sidebar="rohd_hcl&#47;FixedPoint-class-sidebar.html"
+    data-above-sidebar="rohd_hcl&#47;FloatingPoint8E4M3Value-class-sidebar.html"
     data-below-sidebar="">
     <div>
-<h1><span class="kind-method">subtract</span> method 
+<h1><span class="kind-method">toDouble</span> method 
 </h1></div>
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="../../rohd_hcl/FixedPoint-class.html">FixedPoint</a></span>
-<span class="name ">subtract</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="subtract-param-other"><span class="type-annotation">dynamic</span> <span class="parameter-name">other</span></span></li>
-</ol>)
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.dart.dev/stable/3.13.3/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.13.3/dart-core/double-class.html">double</a></span>
+<span class="name ">toDouble</span>(<wbr>)
 
-      
+      <div class="features"><span class="feature">override</span></div>
 
     </section>
     
 <section class="desc markdown">
-  <p>Subtracts <code>other</code> and returns a full-precision signed <a href="../../rohd_hcl/FixedPoint-class.html">FixedPoint</a>.</p>
+  <p>Override the toDouble to avoid NaN</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">FixedPoint subtract(dynamic other) {
-  final comparable = _verifyCompatible(other);
-  final resultIntegerWidth = integerWidth + 1;
-  final resultWidth = resultIntegerWidth + fractionWidth + 1;
-  final left = signed ? signExtend(resultWidth) : zeroExtend(resultWidth);
-  final right = signed
-      ? comparable.signExtend(resultWidth)
-      : comparable.zeroExtend(resultWidth);
-  return FixedPoint.of(left - right,
-      integerWidth: resultIntegerWidth, fractionWidth: fractionWidth);
+  <pre class="language-dart"><code class="language-dart">@override
+double toDouble() {
+  if (exponent.toInt() == 15) {
+    return 448;
+  }
+  return super.toDouble();
 }</code></pre>
 </section>
 
@@ -95,11 +95,11 @@
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rohd_hcl</a></li>
     <li><a href="../../rohd_hcl/">rohd_hcl</a></li>
-    <li><a href="../../rohd_hcl/FixedPoint-class.html">FixedPoint</a></li>
-    <li class="self-crumb">subtract method</li>
+    <li><a href="../../rohd_hcl/FloatingPoint8E4M3Value-class.html">FloatingPoint8E4M3Value</a></li>
+    <li class="self-crumb">toDouble method</li>
 </ol>
 
-    <h5>FixedPoint class</h5>
+    <h5>FloatingPoint8E4M3Value class</h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
