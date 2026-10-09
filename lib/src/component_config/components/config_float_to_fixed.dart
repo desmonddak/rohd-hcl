@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Intel Corporation
+// Copyright (C) 2024-2026 Intel Corporation
 // SPDX-License-Identifier: BSD-3-Clause
 //
 // config_float_to_fixed.dart
@@ -14,6 +14,12 @@ import 'package:rohd_hcl/rohd_hcl.dart';
 
 /// A [Configurator] for [FloatToFixed].
 class FloatToFixedConfigurator extends Configurator {
+  @override
+  ComponentCategory get category => ComponentCategory.arithmetic;
+
+  @override
+  String get subcategory => 'conversion';
+
   /// Width of exponent, must be greater than 0.
   final IntConfigKnob exponentWidthKnob = IntConfigKnob(value: 8);
 

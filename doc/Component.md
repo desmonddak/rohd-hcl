@@ -97,9 +97,10 @@ more detail.
 ## Unit Testing
 
  A good component has unit tests to validate the component and provide examples
- of use. We use the Dart testing framework which requires that tests are stored
- in the `test/` directory and are named ending in `_test.dart`. An example of
- unit tests for a component is shown below.  Note that grouping of tests can
+ of use. We use the Dart testing framework, with tests stored under `test/` in
+ the directory matching the component family (for example, `test/memory/`).
+ Test files end in `_test.dart`. An example of unit tests for a component is
+ shown below. Note that grouping of tests can
  reuse a common component built for multiple tests.  Also note that each test
  with sequential logic will need a `SimpleClockGenerator`, a `Simulator.run()`
  and an `endSimulation`. Some helper methods (like `.waitCycles`) are available
@@ -165,12 +166,18 @@ functionality.
 
 ## ROHD-HCL Component Integration
 
-After implementing a component, export it from the appropriate library barrel
-and `lib/rohd_hcl.dart`. Add focused tests under `test/`, including a
-nested-parent build test for every composable module.
+After implementing a component, place it in the matching
+`lib/src/<category>/<subcategory>/` directory (see the source layout in
+[README.md](./README.md)) and export it from that subcategory's barrel. The
+category barrels are already exported by `lib/rohd_hcl.dart`. Add focused tests
+under `test/<category>/`, including a nested-parent build test for every
+composable module. When a category has more than about six direct test files,
+split tests into subdirectories matching the source subcategories under
+`lib/src/`.
 
 If the component should appear in the configuration application, create a
-`Configurator` under `lib/src/component_config/components/` and register it in
+`Configurator` under `lib/src/component_config/components/`, override its
+`category` and `subcategory` to match the source directory, and register it in
 `lib/src/component_config/components/component_registry.dart`. The registry
 drives both the configuration app and documentation netlist generation.
 

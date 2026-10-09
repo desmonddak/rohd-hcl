@@ -8,6 +8,7 @@
 // Author: Max Korbel <max.korbel@intel.com>
 
 import 'package:confapp/hcl/hcl.dart';
+import 'package:confapp/hcl/view/screen/sidebar_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:rohd_hcl/rohd_hcl.dart';
@@ -43,6 +44,21 @@ Future<void> showOnlyGeneratedSv(WidgetTester tester) async {
   await tester.pump();
 }
 
+Future<void> tapSidebarComponent(WidgetTester tester, String name) async {
+  final tile = find.text(name);
+  await tester.scrollUntilVisible(
+    tile,
+    250,
+    scrollable: find
+        .descendant(
+          of: find.byType(ComponentsSidebar),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await tester.tap(tile);
+}
+
 Future<void> pumpUntilOutputContains(
   WidgetTester tester,
   String expected,
@@ -67,6 +83,14 @@ void main() {
       find.text('Click "Generate" to see the ROHD schematic'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('shows component taxonomy categories and subcategories',
+      (tester) async {
+    await pumpHclPage(tester);
+
+    expect(find.text('Arithmetic'), findsOneWidget);
+    expect(find.text('accumulation'), findsWidgets);
   });
 
   testWidgets('keeps horizontally scrolled source below its scrollbar',
@@ -133,7 +157,7 @@ void main() {
   testWidgets('shows stable labels for type-valued choices', (tester) async {
     await pumpHclPage(tester);
 
-    await tester.tap(find.text('One-hot Converter'));
+    await tapSidebarComponent(tester, 'One-hot Converter');
     await tester.pump();
 
     final directionKnob = find.byKey(const Key('Direction'));
@@ -156,11 +180,9 @@ void main() {
     await pumpHclPage(tester);
     await showOnlyGeneratedSv(tester);
 
-    final sidebarPriorityArbiter = find.text('Priority Arbiter');
     final btnGenerateRTL = find.byKey(const Key('generateRTL'));
 
-    // tap on the priority Arbiter located in the sidebar
-    await tester.tap(sidebarPriorityArbiter);
+    await tapSidebarComponent(tester, 'Priority Arbiter');
 
     await tester.pump();
 
@@ -179,7 +201,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('generateRTL')));
     await tester.pump(const Duration(milliseconds: 20));
-    await tester.tap(find.text('Priority Arbiter'));
+    await tapSidebarComponent(tester, 'Priority Arbiter');
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(tester.takeException(), isNull);
